@@ -460,7 +460,7 @@
 <header>
   <button id="burger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
   <div class="logo-rune">A</div>
-  <div class="logo-text">AurionMC <span>Encyclopedia &amp; Lore</span></div>
+  <div class="logo-text">AurionMC <span>Enciclopédia &amp; Lore</span></div>
   <div class="header-divider"></div>
   <input id="search-box" type="text" placeholder="Buscar na wiki…" autocomplete="off" />
 </header>
@@ -495,6 +495,7 @@
 ════════════════════════════════════════════════════ */
 const SIDEBAR_URL  = 'https://raw.githubusercontent.com/wiki/gamesistem/AurionMC/_Sidebar.md';
 const FOOTER_URL   = 'https://raw.githubusercontent.com/wiki/gamesistem/AurionMC/_Footer.md';
+const HOME_PAGE_URL = 'https://raw.githubusercontent.com/wiki/gamesistem/AurionMC/Home.md';
 
 // Convert GitHub wiki page URL → raw githubusercontent URL
 function wikiPageToRaw(href) {
@@ -670,34 +671,38 @@ function renderArticle(md, label, tab) {
 }
 
 /* ════════════════════════════════════════════════════
-   HOME PAGE
+   HOME PAGE (Fetches from Home.md)
 ════════════════════════════════════════════════════ */
-function renderHome() {
-  const grouped = {};
-  allLinks.forEach(l => {
-    if (!grouped[l.tab]) grouped[l.tab] = [];
-    grouped[l.tab].push(l);
-  });
+async function renderHome() {
+  showLoading('Carregando a página inicial…');
+  try {
+    const homeMd = await fetchMd(HOME_PAGE_URL);
+    // Render the home page content without a tab badge
+    const renderer = new marked.Renderer();
+    renderer.link = function(href, title, text) {
+      const rawUrl = wikiPageToRaw(href);
+      if (rawUrl) {
+        const linkObj = allLinks.find(l => l.rawUrl === rawUrl) || { label: text };
+        return `<a href="#" onclick="event.preventDefault();loadPage('${encodeURIComponent(rawUrl)}','${escStr(linkObj.label || text)}','${linkObj.tab || 'Main'}',null)" title="${title || ''}">${text}</a>`;
+      }
+      return `<a href="${href}" target="_blank" rel="noopener" title="${title || ''}">${text}</a>`;
+    };
+    marked.use({ renderer, breaks: true });
+    const html = marked.parse(homeMd);
 
-  const cards = Object.entries(grouped).map(([tab, links]) =>
-    links.map(l => `
-      <div class="home-card" onclick="loadPage('${encodeURIComponent(l.rawUrl || '')}','${escStr(l.label)}','${l.tab}',null)">
-        <div class="home-card-label">${tab}</div>
-        <div class="home-card-name">${l.label}</div>
-      </div>`).join('')
-  ).join('');
-
-  const article = document.getElementById('article');
-  document.getElementById('loading-state').style.display = 'none';
-  article.style.display = 'block';
-  article.innerHTML = `
-    <h1>Bem-vindo à Wiki de AurionMC</h1>
-    <blockquote><p>Um servidor de RP/RPG para Bedrock e Java — explore o lore, as raças e os personagens do mundo de Aurion.</p></blockquote>
-    <h2>Explorar</h2>
-    <div class="home-grid">${cards}</div>
-    <div class="page-ornament">— ✦ —</div>
-  `;
-  document.title = 'AurionMC Wiki';
+    const article = document.getElementById('article');
+    const loading = document.getElementById('loading-state');
+    loading.style.display = 'none';
+    article.style.display = 'block';
+    article.innerHTML = `
+      ${html}
+      <div class="page-ornament">— ✦ —</div>
+    `;
+    document.title = 'AurionMC Wiki';
+  } catch (error) {
+    console.error('Failed to load home page:', error);
+    showError('Não foi possível carregar a página inicial. Verifique sua conexão ou tente novamente mais tarde.');
+  }
 }
 
 /* ════════════════════════════════════════════════════
@@ -792,7 +797,9 @@ async function init() {
 
   const sections = parseSidebar(sidebarMd);
   buildSidebar(sections);
-  renderHome();
+  
+  // Load the home page content from the wiki
+  await renderHome();
 }
 
 init();
