@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AurionMC Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<style>
+  /* ─── RESET & VARIABLES ─────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-deep:     #0b0c10;
+    --bg-mid:      #111318;
+    --bg-panel:    #14161d;
+    --bg-card:     #1a1d27;
+    --border:      #2a2d3a;
+    --border-glow: #c9a227;
+    --gold:        #c9a227;
+    --gold-light:  #e8c84a;
+    --gold-dim:    #7a631a;
+    --crimson:     #8b1a1a;
+    --text-main:   #d4c9b0;
+    --text-dim:    #7a7060;
+    --text-head:   #e8dfc8;
+    --scrollbar-w: 6px;
+    --sidebar-w:   280px;
+    --header-h:    64px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: var(--bg-deep);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── SCROLLBAR ──────────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: var(--scrollbar-w); }
+  ::-webkit-scrollbar-track { background: var(--bg-mid); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+  /* ─── BACKGROUND TEXTURE ─────────────────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,162,39,.06) 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HEADER ─────────────────────────────────────────────────────── */
+  header {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: var(--header-h);
+    background: linear-gradient(180deg, #0d0e14 0%, rgba(13,14,20,.92) 100%);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 14px;
+    padding: 0 24px;
+    z-index: 200;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 24px rgba(0,0,0,.5);
+  }
+
+  .logo-rune {
+    width: 38px; height: 38px;
+    border: 2px solid var(--gold);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-size: 18px; font-weight: 900;
+    color: var(--gold);
+    box-shadow: 0 0 12px rgba(201,162,39,.3), inset 0 0 8px rgba(201,162,39,.08);
+    text-shadow: 0 0 8px rgba(201,162,39,.6);
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-head);
+    letter-spacing: .12em;
+    line-height: 1;
+  }
+  .logo-text span { display: block; font-size: .6rem; font-weight: 400; color: var(--gold-dim); letter-spacing: .2em; margin-top: 3px; }
+
+  .header-divider { flex: 1; }
+
+  #search-box {
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 14px;
+    color: var(--text-main);
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    width: 220px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  #search-box::placeholder { color: var(--text-dim); font-style: italic; }
+  #search-box:focus { border-color: var(--gold-dim); box-shadow: 0 0 0 3px rgba(201,162,39,.12); }
+
+  /* ─── LAYOUT ─────────────────────────────────────────────────────── */
+  #layout {
+    display: flex;
+    padding-top: var(--header-h);
+    min-height: 100vh;
+    position: relative; z-index: 1;
+  }
+
+  /* ─── SIDEBAR ────────────────────────────────────────────────────── */
+  #sidebar {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    top: var(--header-h); bottom: 0; left: 0;
+    overflow-y: auto;
+    padding-bottom: 32px;
+    transition: transform .3s ease;
+    z-index: 100;
+  }
+
+  /* Tab pills */
+  .tab-bar {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    padding: 14px 12px 10px;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0;
+    background: var(--bg-panel);
+    z-index: 10;
+  }
+
+  .tab-pill {
+    font-family: 'Cinzel', serif;
+    font-size: .6rem; font-weight: 600;
+    letter-spacing: .1em;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .tab-pill:hover { color: var(--text-main); border-color: var(--gold-dim); }
+  .tab-pill.active {
+    background: var(--gold);
+    color: #0b0c10;
+    border-color: var(--gold);
+    box-shadow: 0 0 10px rgba(201,162,39,.3);
+  }
+
+  /* Nav sections */
+  .nav-section { display: none; }
+  .nav-section.visible { display: block; }
+
+  .nav-section-title {
+    font-family: 'Cinzel', serif;
+    font-size: .65rem; font-weight: 700;
+    letter-spacing: .18em;
+    color: var(--gold-dim);
+    padding: 16px 16px 6px;
+    text-transform: uppercase;
+  }
+
+  .nav-link {
+    display: block;
+    padding: 7px 16px 7px 22px;
+    color: var(--text-main);
+    font-size: 1rem;
+    font-style: italic;
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all .18s;
+    cursor: pointer;
+    position: relative;
+  }
+  .nav-link::before {
+    content: '◆';
+    font-style: normal;
+    font-size: .45rem;
+    position: absolute;
+    left: 9px;
+    top: 50%; transform: translateY(-50%);
+    color: var(--gold-dim);
+    opacity: 0;
+    transition: opacity .18s;
+  }
+  .nav-link:hover { color: var(--gold-light); border-left-color: var(--gold-dim); padding-left: 24px; }
+  .nav-link:hover::before { opacity: 1; }
+  .nav-link.active { color: var(--gold); border-left-color: var(--gold); font-style: normal; font-weight: 600; }
+  .nav-link.active::before { opacity: 1; color: var(--gold); }
+
+  /* ─── SIDEBAR FOOTER ─────────────────────────────────────────────── */
+  .sidebar-footer {
+    padding: 20px 16px 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 16px;
+    font-size: .8rem;
+    color: var(--text-dim);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* ─── MAIN ───────────────────────────────────────────────────────── */
+  #main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    padding: 48px 56px 80px;
+    min-height: calc(100vh - var(--header-h));
+    max-width: 900px;
+  }
+
+  /* ─── LOADING / ERROR ─────────────────────────────────────────────── */
+  .state-placeholder {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 50vh;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .state-rune {
+    font-family: 'Cinzel', serif;
+    font-size: 3rem;
+    color: var(--gold-dim);
+    opacity: .4;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100% { opacity: .3; } 50% { opacity: .7; } }
+
+  .state-msg {
+    font-family: 'Cinzel', serif;
+    font-size: .9rem;
+    letter-spacing: .1em;
+    color: var(--text-dim);
+  }
+
+  /* ─── ARTICLE STYLES ─────────────────────────────────────────────── */
+  #article { animation: fadeIn .4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  #article h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.4rem; font-weight: 700;
+    color: var(--text-head);
+    letter-spacing: .06em;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+    position: relative;
+  }
+  #article h1::after {
+    content: '';
+    position: absolute; bottom: -1px; left: 0;
+    width: 60px; height: 2px;
+    background: var(--gold);
+    box-shadow: 0 0 8px rgba(201,162,39,.4);
+  }
+
+  #article h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem; font-weight: 600;
+    color: var(--gold-light);
+    letter-spacing: .05em;
+    margin: 36px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(201,162,39,.2);
+  }
+
+  #article h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.05rem;
+    color: var(--text-head);
+    margin: 24px 0 10px;
+    letter-spacing: .06em;
+  }
+
+  #article p { line-height: 1.8; margin-bottom: 16px; font-size: 1.1rem; }
+
+  #article blockquote {
+    border-left: 3px solid var(--gold-dim);
+    margin: 20px 0;
+    padding: 14px 20px;
+    background: rgba(201,162,39,.04);
+    border-radius: 0 6px 6px 0;
+    font-style: italic;
+    color: #b8a98a;
+  }
+  #article blockquote p { margin: 0; }
+
+  #article a {
+    color: var(--gold-light);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--gold-dim);
+    transition: color .15s, border-color .15s;
+  }
+  #article a:hover { color: #fff; border-bottom-color: var(--gold); }
+
+  #article img {
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin: 12px 0;
+    box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  }
+
+  #article ul, #article ol { margin: 12px 0 16px 24px; line-height: 1.8; font-size: 1.05rem; }
+  #article li { margin-bottom: 4px; }
+
+  #article code {
+    background: rgba(201,162,39,.08);
+    border: 1px solid rgba(201,162,39,.15);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: .9em;
+    color: var(--gold-light);
+    font-family: monospace;
+  }
+
+  #article hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+  }
+
+  /* Tags badge */
+  .article-meta {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .badge {
+    font-family: 'Cinzel', serif;
+    font-size: .58rem; letter-spacing: .12em;
+    background: rgba(201,162,39,.1);
+    border: 1px solid rgba(201,162,39,.25);
+    color: var(--gold-dim);
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+  }
+
+  /* ─── SEARCH RESULTS ─────────────────────────────────────────────── */
+  .search-results { animation: fadeIn .3s ease; }
+  .search-result-item {
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all .2s;
+    background: var(--bg-card);
+  }
+  .search-result-item:hover {
+    border-color: var(--gold-dim);
+    background: rgba(201,162,39,.04);
+    transform: translateX(3px);
+  }
+  .search-result-title {
+    font-family: 'Cinzel', serif;
+    font-size: .95rem;
+    color: var(--text-head);
+    margin-bottom: 4px;
+  }
+  .search-result-sub {
+    font-size: .85rem;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  /* ─── HOME GRID ──────────────────────────────────────────────────── */
+  .home-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-top: 28px;
+  }
+  .home-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: all .22s;
+    text-decoration: none;
+  }
+  .home-card:hover {
+    border-color: var(--gold-dim);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  }
+  .home-card-label {
+    font-family: 'Cinzel', serif;
+    font-size: .58rem; letter-spacing: .15em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .home-card-name {
+    font-size: 1.05rem;
+    color: var(--text-head);
+    font-style: italic;
+  }
+
+  /* ─── MOBILE HAMBURGER ───────────────────────────────────────────── */
+  #burger {
+    display: none;
+    background: none; border: none;
+    cursor: pointer;
+    padding: 6px;
+    color: var(--text-main);
+    font-size: 1.4rem;
+  }
+
+  @media (max-width: 768px) {
+    #burger { display: flex; }
+    #sidebar { transform: translateX(-100%); }
+    #sidebar.open { transform: translateX(0); }
+    #main { margin-left: 0; padding: 28px 24px 60px; }
+    #search-box { width: 140px; }
+    #article h1 { font-size: 1.7rem; }
+  }
+
+  /* Overlay for mobile */
+  #overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.6);
+    z-index: 99;
+  }
+  #overlay.show { display: block; }
+
+  /* ─── ORNAMENT ───────────────────────────────────────────────────── */
+  .page-ornament {
+    text-align: center;
+    color: var(--gold-dim);
+    opacity: .3;
+    font-size: 1.2rem;
+    margin: 40px 0 20px;
+    letter-spacing: .4em;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <button id="burger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="logo-rune">A</div>
+  <div class="logo-text">AurionMC <span>Encyclopedia &amp; Lore</span></div>
+  <div class="header-divider"></div>
+  <input id="search-box" type="text" placeholder="Buscar na wiki…" autocomplete="off" />
+</header>
+
+<!-- OVERLAY (mobile) -->
+<div id="overlay" onclick="closeSidebar()"></div>
+
+<!-- LAYOUT -->
+<div id="layout">
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="tab-bar" id="tab-bar"><!-- tabs injected --></div>
+    <div id="nav-content"><!-- links injected --></div>
+    <div class="sidebar-footer" id="sidebar-footer"></div>
+  </nav>
+
+  <!-- MAIN -->
+  <main id="main">
+    <div class="state-placeholder" id="loading-state">
+      <div class="state-rune">✦</div>
+      <div class="state-msg">Carregando a Wiki…</div>
+    </div>
+    <div id="article" style="display:none"></div>
+  </main>
+
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════
+   CONFIG
+════════════════════════════════════════════════════ */
+const SIDEBAR_URL  = 'https://raw.githubusercontent.com/wiki/gamesistem/AurionMC/_Sidebar.md';
+const FOOTER_URL   = 'https://raw.githubusercontent.com/wiki/gamesistem/AurionMC/_Footer.md';
+
+// Convert GitHub wiki page URL → raw githubusercontent URL
+function wikiPageToRaw(href) {
+  // href: https://github.com/gamesistem/REPO/wiki/PAGE-NAME
+  try {
+    const url = new URL(href);
+    const parts = url.pathname.split('/'); // ['','user','repo','wiki','page']
+    if (parts[3] === 'wiki') {
+      const user = parts[1], repo = parts[2];
+      const page = decodeURIComponent(parts[4] || 'Home');
+      return `https://raw.githubusercontent.com/wiki/${user}/${repo}/${page}.md`;
+    }
+  } catch(_) {}
+  return null;
+}
+
+/* ════════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════════ */
+let allLinks   = [];   // {label, href, rawUrl, tab}
+let activeTab  = null;
+let activePage = null;
+
+/* ════════════════════════════════════════════════════
+   SIDEBAR PARSING
+════════════════════════════════════════════════════ */
+function parseSidebar(md) {
+  const TAB_MAP = {
+    'Main':        'Main',
+    'Personagens': 'Personagens',
+    'Raças':       'Raças',
+    'Objetos':     'Objetos',
+    'Eventos':     'Eventos',
+    'Reinos':      'Reinos',
+    'Classes':     'Classes',
+  };
+
+  const lines = md.split('\n');
+  const sections = {}; // tab → [{label, href, rawUrl}]
+  let currentTab = 'Main';
+
+  for (const line of lines) {
+    // Section heading: ### Main  or  ### Raças:
+    const sectionMatch = line.match(/^###\s+(.+)/);
+    if (sectionMatch) {
+      let title = sectionMatch[1].replace(':', '').trim();
+      currentTab = TAB_MAP[title] || title;
+      if (!sections[currentTab]) sections[currentTab] = [];
+      continue;
+    }
+
+    // Link item: - [Label](URL)
+    const linkMatch = line.match(/^-\s+\[([^\]]+)\]\(([^)]+)\)/);
+    if (linkMatch) {
+      const label  = linkMatch[1];
+      const href   = linkMatch[2];
+      const rawUrl = wikiPageToRaw(href);
+      if (!sections[currentTab]) sections[currentTab] = [];
+      sections[currentTab].push({ label, href, rawUrl, tab: currentTab });
+      allLinks.push({ label, href, rawUrl, tab: currentTab });
+    }
+  }
+  return sections;
+}
+
+/* ════════════════════════════════════════════════════
+   BUILD SIDEBAR UI
+════════════════════════════════════════════════════ */
+function buildSidebar(sections) {
+  const tabBar = document.getElementById('tab-bar');
+  const navContent = document.getElementById('nav-content');
+  const tabs = Object.keys(sections);
+
+  // Default tab
+  activeTab = tabs[0] || 'Main';
+
+  // Tab pills
+  tabBar.innerHTML = tabs.map(tab =>
+    `<button class="tab-pill${tab === activeTab ? ' active' : ''}"
+       onclick="switchTab('${tab}')">${tab}</button>`
+  ).join('');
+
+  // Nav sections
+  navContent.innerHTML = tabs.map(tab => `
+    <div class="nav-section${tab === activeTab ? ' visible' : ''}" id="nav-${CSS.escape(tab)}">
+      <div class="nav-section-title">${tab}</div>
+      ${sections[tab].map(link =>
+        `<span class="nav-link" data-raw="${link.rawUrl || ''}" data-label="${link.label}" data-tab="${tab}"
+          onclick="loadPage('${encodeURIComponent(link.rawUrl || '')}', '${escStr(link.label)}', '${tab}', this)"
+        >${link.label}</span>`
+      ).join('')}
+    </div>
+  `).join('');
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-pill').forEach(b => b.classList.toggle('active', b.textContent === tab));
+  document.querySelectorAll('.nav-section').forEach(s => s.classList.toggle('visible', s.id === `nav-${CSS.escape(tab)}`));
+}
+
+function escStr(s) { return s.replace(/'/g, "\\'"); }
+
+/* ════════════════════════════════════════════════════
+   PAGE LOADER
+════════════════════════════════════════════════════ */
+async function loadPage(encodedUrl, label, tab, el) {
+  const rawUrl = decodeURIComponent(encodedUrl);
+  activePage = rawUrl;
+
+  // Update active link
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  // Switch to correct tab
+  switchTab(tab);
+
+  showLoading(`Conjurando ${label}…`);
+
+  try {
+    const text = await fetchMd(rawUrl);
+    renderArticle(text, label, tab);
+  } catch(e) {
+    showError(`Não foi possível carregar "${label}". Página pode não existir ainda.`);
+  }
+
+  closeSidebar();
+}
+
+async function fetchMd(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.text();
+}
+
+/* ════════════════════════════════════════════════════
+   MARKDOWN RENDER
+════════════════════════════════════════════════════ */
+function renderArticle(md, label, tab) {
+  // Configure marked to make internal wiki links clickable
+  const renderer = new marked.Renderer();
+
+  renderer.link = function(href, title, text) {
+    // Internal wiki link?
+    const rawUrl = wikiPageToRaw(href);
+    if (rawUrl) {
+      const linkObj = allLinks.find(l => l.rawUrl === rawUrl) || { label: text, tab: tab };
+      return `<a href="#" onclick="event.preventDefault();loadPage('${encodeURIComponent(rawUrl)}','${escStr(linkObj.label || text)}','${linkObj.tab || tab}',null)" title="${title || ''}">${text}</a>`;
+    }
+    // External
+    return `<a href="${href}" target="_blank" rel="noopener" title="${title || ''}">${text}</a>`;
+  };
+
+  marked.use({ renderer, breaks: true });
+  const html = marked.parse(md);
+
+  const article = document.getElementById('article');
+  const loading = document.getElementById('loading-state');
+
+  loading.style.display = 'none';
+  article.style.display = 'block';
+  article.innerHTML = `
+    <div class="article-meta">
+      <span class="badge">${tab}</span>
+    </div>
+    ${html}
+    <div class="page-ornament">— ✦ —</div>
+  `;
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.title = `${label} — AurionMC Wiki`;
+}
+
+/* ════════════════════════════════════════════════════
+   HOME PAGE
+════════════════════════════════════════════════════ */
+function renderHome() {
+  const grouped = {};
+  allLinks.forEach(l => {
+    if (!grouped[l.tab]) grouped[l.tab] = [];
+    grouped[l.tab].push(l);
+  });
+
+  const cards = Object.entries(grouped).map(([tab, links]) =>
+    links.map(l => `
+      <div class="home-card" onclick="loadPage('${encodeURIComponent(l.rawUrl || '')}','${escStr(l.label)}','${l.tab}',null)">
+        <div class="home-card-label">${tab}</div>
+        <div class="home-card-name">${l.label}</div>
+      </div>`).join('')
+  ).join('');
+
+  const article = document.getElementById('article');
+  document.getElementById('loading-state').style.display = 'none';
+  article.style.display = 'block';
+  article.innerHTML = `
+    <h1>Bem-vindo à Wiki de AurionMC</h1>
+    <blockquote><p>Um servidor de RP/RPG para Bedrock e Java — explore o lore, as raças e os personagens do mundo de Aurion.</p></blockquote>
+    <h2>Explorar</h2>
+    <div class="home-grid">${cards}</div>
+    <div class="page-ornament">— ✦ —</div>
+  `;
+  document.title = 'AurionMC Wiki';
+}
+
+/* ════════════════════════════════════════════════════
+   SEARCH
+════════════════════════════════════════════════════ */
+let searchTimeout;
+document.getElementById('search-box').addEventListener('input', e => {
+  clearTimeout(searchTimeout);
+  const q = e.target.value.trim();
+  if (!q) { renderHome(); return; }
+  searchTimeout = setTimeout(() => doSearch(q), 250);
+});
+
+function doSearch(q) {
+  const ql = q.toLowerCase();
+  const results = allLinks.filter(l => l.label.toLowerCase().includes(ql));
+
+  const article = document.getElementById('article');
+  document.getElementById('loading-state').style.display = 'none';
+  article.style.display = 'block';
+
+  if (!results.length) {
+    article.innerHTML = `<h1>Busca: "${q}"</h1><p style="color:var(--text-dim);font-style:italic">Nenhum resultado encontrado.</p>`;
+    return;
+  }
+
+  article.innerHTML = `
+    <h1>Busca: "${q}"</h1>
+    <div class="search-results">
+      ${results.map(l => `
+        <div class="search-result-item" onclick="loadPage('${encodeURIComponent(l.rawUrl || '')}','${escStr(l.label)}','${l.tab}',null)">
+          <div class="search-result-title">${l.label}</div>
+          <div class="search-result-sub">${l.tab}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* ════════════════════════════════════════════════════
+   STATES
+════════════════════════════════════════════════════ */
+function showLoading(msg) {
+  const art = document.getElementById('article');
+  const ld = document.getElementById('loading-state');
+  art.style.display = 'none';
+  ld.style.display = 'flex';
+  ld.innerHTML = `<div class="state-rune">✦</div><div class="state-msg">${msg || 'Carregando…'}</div>`;
+}
+
+function showError(msg) {
+  const art = document.getElementById('article');
+  const ld = document.getElementById('loading-state');
+  art.style.display = 'none';
+  ld.style.display = 'flex';
+  ld.innerHTML = `<div class="state-rune" style="color:var(--crimson)">✖</div><div class="state-msg">${msg}</div>`;
+}
+
+/* ════════════════════════════════════════════════════
+   MOBILE SIDEBAR
+════════════════════════════════════════════════════ */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+/* ════════════════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════════════════ */
+async function loadFooter() {
+  try {
+    const md = await fetchMd(FOOTER_URL);
+    // Extract plain text from the footer markdown
+    const plain = md.replace(/\*\*/g,'').replace(/\*/g,'').replace(/^#+.*/gm,'').replace(/^>{1,}\s*/gm,'').trim();
+    document.getElementById('sidebar-footer').innerText = plain;
+  } catch(_) {}
+}
+
+/* ════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════ */
+async function init() {
+  showLoading('Invocando o grimório…');
+
+  // Parallel loads
+  const [sidebarMd] = await Promise.all([
+    fetchMd(SIDEBAR_URL).catch(() => '### Main\n- [Página Inicial](https://github.com/gamesistem/AurionMC/wiki/Home)'),
+    loadFooter(),
+  ]);
+
+  const sections = parseSidebar(sidebarMd);
+  buildSidebar(sections);
+  renderHome();
+}
+
+init();
+</script>
+</body>
+</html>
