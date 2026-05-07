@@ -27,6 +27,7 @@
     --text-head:   #e8dfc8;
     --scrollbar-w: 6px;
     --sidebar-w:   280px;
+    --toc-w:       220px;
     --header-h:    64px;
   }
 
@@ -80,7 +81,10 @@
     box-shadow: 0 0 12px rgba(201,162,39,.3), inset 0 0 8px rgba(201,162,39,.08);
     text-shadow: 0 0 8px rgba(201,162,39,.6);
     flex-shrink: 0;
+    cursor: pointer;
+    transition: box-shadow .2s;
   }
+  .logo-rune:hover { box-shadow: 0 0 20px rgba(201,162,39,.5), inset 0 0 12px rgba(201,162,39,.15); }
 
   .logo-text {
     font-family: 'Cinzel', serif;
@@ -89,25 +93,225 @@
     color: var(--text-head);
     letter-spacing: .12em;
     line-height: 1;
+    cursor: pointer;
   }
   .logo-text span { display: block; font-size: .6rem; font-weight: 400; color: var(--gold-dim); letter-spacing: .2em; margin-top: 3px; }
 
+  /* Nav History Buttons */
+  .nav-history {
+    display: flex; gap: 4px;
+  }
+  .nav-btn {
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-dim);
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all .2s;
+  }
+  .nav-btn:hover:not(:disabled) { color: var(--gold); border-color: var(--gold-dim); }
+  .nav-btn:disabled { opacity: .3; cursor: default; }
+
   .header-divider { flex: 1; }
+
+  /* ─── SEARCH WRAPPER ─────────────────────────────────────────────── */
+  .search-wrapper {
+    position: relative;
+  }
 
   #search-box {
     background: rgba(255,255,255,.04);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 7px 14px;
+    padding: 7px 36px 7px 14px;
     color: var(--text-main);
     font-family: 'Crimson Pro', serif;
     font-size: 1rem;
-    width: 220px;
+    width: 240px;
     outline: none;
-    transition: border-color .2s, box-shadow .2s;
+    transition: border-color .2s, box-shadow .2s, width .3s;
   }
   #search-box::placeholder { color: var(--text-dim); font-style: italic; }
-  #search-box:focus { border-color: var(--gold-dim); box-shadow: 0 0 0 3px rgba(201,162,39,.12); }
+  #search-box:focus {
+    border-color: var(--gold-dim);
+    box-shadow: 0 0 0 3px rgba(201,162,39,.12);
+    width: 300px;
+  }
+
+  .search-kbd {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    font-size: .6rem; font-family: 'Cinzel', serif;
+    color: var(--text-dim);
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    pointer-events: none;
+    transition: opacity .2s;
+  }
+  #search-box:focus ~ .search-kbd { opacity: 0; }
+
+  .search-clear {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    background: none; border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 2px;
+    display: none;
+    transition: color .2s;
+  }
+  .search-clear:hover { color: var(--gold); }
+  .search-clear.visible { display: block; }
+
+  /* ─── SEARCH DROPDOWN ────────────────────────────────────────────── */
+  #search-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 440px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 16px 48px rgba(0,0,0,.7), 0 0 0 1px rgba(201,162,39,.08);
+    overflow: hidden;
+    z-index: 500;
+    display: none;
+    animation: dropIn .18s ease;
+  }
+  #search-dropdown.open { display: block; }
+
+  @keyframes dropIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .search-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .search-count {
+    font-family: 'Cinzel', serif;
+    font-size: .6rem; letter-spacing: .1em;
+    color: var(--text-dim);
+  }
+  .search-hint {
+    font-size: .75rem;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .search-section-label {
+    font-family: 'Cinzel', serif;
+    font-size: .55rem; letter-spacing: .15em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    padding: 8px 14px 4px;
+  }
+
+  .search-list {
+    max-height: 380px;
+    overflow-y: auto;
+  }
+
+  .search-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background .15s;
+    border-left: 2px solid transparent;
+  }
+  .search-item:hover,
+  .search-item.focused {
+    background: rgba(201,162,39,.06);
+    border-left-color: var(--gold-dim);
+  }
+  .search-item.focused { background: rgba(201,162,39,.1); border-left-color: var(--gold); }
+
+  .search-item-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: rgba(201,162,39,.08);
+    border: 1px solid rgba(201,162,39,.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .7rem;
+    color: var(--gold-dim);
+    flex-shrink: 0;
+    font-family: 'Cinzel', serif;
+  }
+
+  .search-item-body { flex: 1; min-width: 0; }
+  .search-item-title {
+    font-family: 'Cinzel', serif;
+    font-size: .85rem;
+    color: var(--text-head);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .search-item-title mark {
+    background: rgba(201,162,39,.25);
+    color: var(--gold-light);
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+  .search-item-sub {
+    font-size: .78rem;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .search-item-arrow {
+    color: var(--text-dim);
+    font-size: .8rem;
+    opacity: 0;
+    transition: opacity .15s;
+  }
+  .search-item:hover .search-item-arrow,
+  .search-item.focused .search-item-arrow { opacity: 1; color: var(--gold); }
+
+  .search-empty {
+    padding: 28px 14px;
+    text-align: center;
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: .95rem;
+  }
+
+  .search-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
+  }
+
+  /* Recent searches */
+  .recent-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: background .15s;
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: .9rem;
+  }
+  .recent-item:hover { background: rgba(255,255,255,.03); color: var(--text-main); }
+  .recent-item svg { flex-shrink: 0; opacity: .5; }
+  .recent-clear {
+    font-family: 'Cinzel', serif;
+    font-size: .55rem; letter-spacing: .1em;
+    color: var(--text-dim);
+    background: none; border: none;
+    cursor: pointer;
+    padding: 8px 14px;
+    display: block;
+    width: 100%;
+    text-align: right;
+    transition: color .2s;
+  }
+  .recent-clear:hover { color: var(--gold); }
 
   /* ─── LAYOUT ─────────────────────────────────────────────────────── */
   #layout {
@@ -161,6 +365,30 @@
     border-color: var(--gold);
     box-shadow: 0 0 10px rgba(201,162,39,.3);
   }
+
+  /* Recently visited in sidebar */
+  .recent-pages-section { padding: 0; }
+  .recent-pages-title {
+    font-family: 'Cinzel', serif;
+    font-size: .6rem; letter-spacing: .16em;
+    color: var(--gold-dim);
+    padding: 14px 16px 6px;
+    display: flex; align-items: center; gap: 6px;
+    text-transform: uppercase;
+    opacity: .8;
+  }
+  .recent-pages-list { padding-bottom: 8px; }
+  .recent-page-link {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 16px 5px 22px;
+    color: var(--text-dim);
+    font-size: .85rem;
+    font-style: italic;
+    cursor: pointer;
+    transition: color .15s;
+  }
+  .recent-page-link:hover { color: var(--gold-light); }
+  .recent-page-dot { font-size: .4rem; color: var(--gold-dim); flex-shrink: 0; }
 
   /* Nav sections */
   .nav-section { display: none; }
@@ -218,10 +446,83 @@
   #main {
     margin-left: var(--sidebar-w);
     flex: 1;
-    padding: 48px 56px 80px;
+    padding: 36px 48px 80px;
     min-height: calc(100vh - var(--header-h));
-    max-width: 900px;
+    max-width: calc(900px + var(--toc-w));
+    position: relative;
   }
+
+  /* ─── BREADCRUMB ─────────────────────────────────────────────────── */
+  #breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    font-size: .78rem;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    font-family: 'Cinzel', serif;
+    letter-spacing: .06em;
+    flex-wrap: wrap;
+  }
+  #breadcrumb.hidden { display: none; }
+  .bc-item {
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: color .15s;
+  }
+  .bc-item:hover { color: var(--gold-light); }
+  .bc-sep { color: var(--border); font-size: .7rem; }
+  .bc-current { color: var(--text-main); cursor: default; }
+
+  /* ─── TOC (Table of Contents) ────────────────────────────────────── */
+  #toc-rail {
+    position: fixed;
+    top: var(--header-h);
+    right: 0;
+    width: var(--toc-w);
+    height: calc(100vh - var(--header-h));
+    overflow-y: auto;
+    padding: 24px 16px 32px;
+    border-left: 1px solid var(--border);
+    background: var(--bg-panel);
+    display: none;
+    z-index: 50;
+  }
+  #toc-rail.visible { display: block; }
+
+  .toc-title {
+    font-family: 'Cinzel', serif;
+    font-size: .6rem; letter-spacing: .18em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toc-list { list-style: none; }
+  .toc-item {
+    font-size: .82rem;
+    line-height: 1.4;
+    margin-bottom: 2px;
+  }
+  .toc-link {
+    display: block;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 3px 6px;
+    border-left: 2px solid transparent;
+    border-radius: 0 4px 4px 0;
+    transition: all .15s;
+    cursor: pointer;
+  }
+  .toc-link:hover { color: var(--gold-light); border-left-color: var(--gold-dim); }
+  .toc-link.active { color: var(--gold); border-left-color: var(--gold); }
+  .toc-h3 { padding-left: 14px; font-size: .76rem; }
+
+  /* ─── CONTENT AREA ───────────────────────────────────────────────── */
+  #content-area {
+    max-width: 800px;
+  }
+  #content-area.has-toc { margin-right: calc(var(--toc-w) + 20px); }
 
   /* ─── LOADING / ERROR ─────────────────────────────────────────────── */
   .state-placeholder {
@@ -239,7 +540,6 @@
     opacity: .4;
     animation: pulse 2s ease-in-out infinite;
   }
-
   @keyframes pulse { 0%,100% { opacity: .3; } 50% { opacity: .7; } }
 
   .state-msg {
@@ -279,6 +579,7 @@
     margin: 36px 0 14px;
     padding-bottom: 8px;
     border-bottom: 1px solid rgba(201,162,39,.2);
+    scroll-margin-top: calc(var(--header-h) + 16px);
   }
 
   #article h3 {
@@ -287,6 +588,7 @@
     color: var(--text-head);
     margin: 24px 0 10px;
     letter-spacing: .06em;
+    scroll-margin-top: calc(var(--header-h) + 16px);
   }
 
   #article p { line-height: 1.8; margin-bottom: 16px; font-size: 1.1rem; }
@@ -337,9 +639,27 @@
     margin: 32px 0;
   }
 
-  /* Tags badge */
+  #article table {
+    width: 100%; border-collapse: collapse;
+    margin: 20px 0; font-size: 1rem;
+  }
+  #article th {
+    font-family: 'Cinzel', serif; font-size: .75rem; letter-spacing: .08em;
+    color: var(--gold-dim); text-align: left;
+    border-bottom: 1px solid var(--border);
+    padding: 8px 12px;
+  }
+  #article td {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(42,45,58,.5);
+    line-height: 1.5;
+  }
+  #article tr:hover td { background: rgba(201,162,39,.03); }
+
+  /* Article meta bar */
   .article-meta {
     display: flex; gap: 8px; flex-wrap: wrap;
+    align-items: center;
     margin-bottom: 24px;
   }
   .badge {
@@ -352,34 +672,67 @@
     border-radius: 20px;
     text-transform: uppercase;
   }
+  .meta-edit-link {
+    margin-left: auto;
+    font-size: .78rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-style: italic;
+    opacity: .6;
+    transition: opacity .2s, color .2s;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .meta-edit-link:hover { opacity: 1; color: var(--gold-light); border-bottom: none; }
 
   /* ─── SEARCH RESULTS ─────────────────────────────────────────────── */
-  .search-results { animation: fadeIn .3s ease; }
+  .search-results-page { animation: fadeIn .3s ease; }
+  .search-results-page h1 { font-family: 'Cinzel', serif; }
+
+  .search-result-grid {
+    display: grid; gap: 10px;
+    margin-top: 20px;
+  }
   .search-result-item {
     padding: 14px 18px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    margin-bottom: 10px;
     cursor: pointer;
     transition: all .2s;
     background: var(--bg-card);
+    display: flex; align-items: center; gap: 14px;
   }
   .search-result-item:hover {
     border-color: var(--gold-dim);
     background: rgba(201,162,39,.04);
     transform: translateX(3px);
   }
+  .search-result-icon {
+    width: 36px; height: 36px; flex-shrink: 0;
+    border-radius: 8px;
+    background: rgba(201,162,39,.08);
+    border: 1px solid rgba(201,162,39,.15);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-size: .8rem; color: var(--gold-dim);
+  }
+  .search-result-body { flex: 1; }
   .search-result-title {
     font-family: 'Cinzel', serif;
     font-size: .95rem;
     color: var(--text-head);
-    margin-bottom: 4px;
+    margin-bottom: 3px;
+  }
+  .search-result-title mark {
+    background: rgba(201,162,39,.2);
+    color: var(--gold-light);
+    border-radius: 2px;
   }
   .search-result-sub {
     font-size: .85rem;
     color: var(--text-dim);
     font-style: italic;
   }
+  .search-result-arrow { color: var(--text-dim); font-size: 1.1rem; }
 
   /* ─── HOME GRID ──────────────────────────────────────────────────── */
   .home-grid {
@@ -425,13 +778,21 @@
     font-size: 1.4rem;
   }
 
+  @media (max-width: 1200px) {
+    #toc-rail { display: none !important; }
+    #content-area.has-toc { margin-right: 0; }
+  }
+
   @media (max-width: 768px) {
     #burger { display: flex; }
     #sidebar { transform: translateX(-100%); }
     #sidebar.open { transform: translateX(0); }
-    #main { margin-left: 0; padding: 28px 24px 60px; }
+    #main { margin-left: 0; padding: 24px 20px 60px; }
     #search-box { width: 140px; }
+    #search-box:focus { width: 180px; }
+    #search-dropdown { width: calc(100vw - 32px); right: -8px; }
     #article h1 { font-size: 1.7rem; }
+    .nav-history { display: none; }
   }
 
   /* Overlay for mobile */
@@ -442,6 +803,14 @@
     z-index: 99;
   }
   #overlay.show { display: block; }
+
+  /* Overlay for search close */
+  #search-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    z-index: 400;
+  }
+  #search-overlay.show { display: block; }
 
   /* ─── ORNAMENT ───────────────────────────────────────────────────── */
   .page-ornament {
@@ -459,11 +828,30 @@
 <!-- HEADER -->
 <header>
   <button id="burger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
-  <div class="logo-rune">A</div>
-  <div class="logo-text">AurionMC <span>Enciclopédia &amp; Lore</span></div>
+  <div class="logo-rune" onclick="goHome()" title="Página Inicial">A</div>
+  <div class="logo-text" onclick="goHome()" title="Página Inicial">AurionMC <span>Enciclopédia &amp; Lore</span></div>
+
+  <!-- Nav History -->
+  <div class="nav-history">
+    <button class="nav-btn" id="btn-back" onclick="historyBack()" disabled title="Voltar (Alt+←)">←</button>
+    <button class="nav-btn" id="btn-fwd"  onclick="historyFwd()"  disabled title="Avançar (Alt+→)">→</button>
+  </div>
+
   <div class="header-divider"></div>
-  <input id="search-box" type="text" placeholder="Buscar na wiki…" autocomplete="off" />
+
+  <!-- Search -->
+  <div class="search-wrapper" id="search-wrapper">
+    <input id="search-box" type="text" placeholder="Buscar na wiki…" autocomplete="off"
+           aria-label="Buscar" role="combobox" aria-expanded="false" aria-haspopup="listbox" />
+    <span class="search-kbd">Ctrl K</span>
+    <button class="search-clear" id="search-clear" onclick="clearSearch()" title="Limpar busca">✕</button>
+
+    <div id="search-dropdown" role="listbox"></div>
+  </div>
 </header>
+
+<!-- Search close overlay -->
+<div id="search-overlay" onclick="closeSearch()"></div>
 
 <!-- OVERLAY (mobile) -->
 <div id="overlay" onclick="closeSidebar()"></div>
@@ -474,17 +862,36 @@
   <!-- SIDEBAR -->
   <nav id="sidebar">
     <div class="tab-bar" id="tab-bar"><!-- tabs injected --></div>
+
+    <!-- Recently Visited -->
+    <div class="recent-pages-section" id="recent-pages-section" style="display:none">
+      <div class="recent-pages-title">⟳ Recentes</div>
+      <div class="recent-pages-list" id="recent-pages-list"></div>
+      <div style="height:1px; background:var(--border); margin:4px 16px 0;"></div>
+    </div>
+
     <div id="nav-content"><!-- links injected --></div>
     <div class="sidebar-footer" id="sidebar-footer"></div>
   </nav>
 
+  <!-- TOC Rail -->
+  <aside id="toc-rail">
+    <div class="toc-title">Nesta página</div>
+    <ul class="toc-list" id="toc-list"></ul>
+  </aside>
+
   <!-- MAIN -->
   <main id="main">
-    <div class="state-placeholder" id="loading-state">
-      <div class="state-rune">✦</div>
-      <div class="state-msg">Carregando a Wiki…</div>
+    <!-- Breadcrumb -->
+    <nav id="breadcrumb" class="hidden" aria-label="breadcrumb"></nav>
+
+    <div id="content-area">
+      <div class="state-placeholder" id="loading-state">
+        <div class="state-rune">✦</div>
+        <div class="state-msg">Carregando a Wiki…</div>
+      </div>
+      <div id="article" style="display:none"></div>
     </div>
-    <div id="article" style="display:none"></div>
   </main>
 
 </div>
@@ -493,16 +900,17 @@
 /* ════════════════════════════════════════════════════
    CONFIG
 ════════════════════════════════════════════════════ */
-const SIDEBAR_URL  = 'https://raw.githubusercontent.com/wiki/gamesistem/AurionMC/_Sidebar.md';
-const FOOTER_URL   = 'https://raw.githubusercontent.com/wiki/gamesistem/AurionMC/_Footer.md';
-const HOME_PAGE_URL = 'https://raw.githubusercontent.com/wiki/gamesistem/AurionMC/Home.md';
+const REPO_OWNER    = 'gamesistem';
+const REPO_NAME     = 'AurionMC';
+const SIDEBAR_URL   = `https://raw.githubusercontent.com/wiki/${REPO_OWNER}/${REPO_NAME}/_Sidebar.md`;
+const FOOTER_URL    = `https://raw.githubusercontent.com/wiki/${REPO_OWNER}/${REPO_NAME}/_Footer.md`;
+const HOME_PAGE_URL = `https://raw.githubusercontent.com/wiki/${REPO_OWNER}/${REPO_NAME}/Home.md`;
+const EDIT_BASE     = `https://github.com/${REPO_OWNER}/${REPO_NAME}/wiki/`;
 
-// Convert GitHub wiki page URL → raw githubusercontent URL
 function wikiPageToRaw(href) {
-  // href: https://github.com/gamesistem/REPO/wiki/PAGE-NAME
   try {
     const url = new URL(href);
-    const parts = url.pathname.split('/'); // ['','user','repo','wiki','page']
+    const parts = url.pathname.split('/');
     if (parts[3] === 'wiki') {
       const user = parts[1], repo = parts[2];
       const page = decodeURIComponent(parts[4] || 'Home');
@@ -512,42 +920,47 @@ function wikiPageToRaw(href) {
   return null;
 }
 
+function rawToPageName(rawUrl) {
+  try {
+    const m = rawUrl.match(/\/([^/]+)\.md$/);
+    return m ? decodeURIComponent(m[1]) : null;
+  } catch(_) { return null; }
+}
+
 /* ════════════════════════════════════════════════════
    STATE
 ════════════════════════════════════════════════════ */
-let allLinks   = [];   // {label, href, rawUrl, tab}
+let allLinks   = [];
 let activeTab  = null;
 let activePage = null;
+
+// Page history stack (for back/fwd)
+let pageHistory = [];   // [{rawUrl, label, tab}]
+let historyIdx  = -1;
+let _skipHistory = false;
+
+// Recently visited (max 5)
+let recentPages = [];
+
+// Recent searches (max 6)
+let recentSearches = JSON.parse(sessionStorage.getItem('wiki_recent_searches') || '[]');
 
 /* ════════════════════════════════════════════════════
    SIDEBAR PARSING
 ════════════════════════════════════════════════════ */
 function parseSidebar(md) {
-  const TAB_MAP = {
-    'Main':        'Main',
-    'Personagens': 'Personagens',
-    'Raças':       'Raças',
-    'Objetos':     'Objetos',
-    'Eventos':     'Eventos',
-    'Reinos':      'Reinos',
-    'Classes':     'Classes',
-  };
-
   const lines = md.split('\n');
-  const sections = {}; // tab → [{label, href, rawUrl}]
+  const sections = {};
   let currentTab = 'Main';
 
   for (const line of lines) {
-    // Section heading: ### Main  or  ### Raças:
     const sectionMatch = line.match(/^###\s+(.+)/);
     if (sectionMatch) {
       let title = sectionMatch[1].replace(':', '').trim();
-      currentTab = TAB_MAP[title] || title;
+      currentTab = title;
       if (!sections[currentTab]) sections[currentTab] = [];
       continue;
     }
-
-    // Link item: - [Label](URL)
     const linkMatch = line.match(/^-\s+\[([^\]]+)\]\(([^)]+)\)/);
     if (linkMatch) {
       const label  = linkMatch[1];
@@ -565,26 +978,22 @@ function parseSidebar(md) {
    BUILD SIDEBAR UI
 ════════════════════════════════════════════════════ */
 function buildSidebar(sections) {
-  const tabBar = document.getElementById('tab-bar');
+  const tabBar     = document.getElementById('tab-bar');
   const navContent = document.getElementById('nav-content');
-  const tabs = Object.keys(sections);
-
-  // Default tab
+  const tabs       = Object.keys(sections);
   activeTab = tabs[0] || 'Main';
 
-  // Tab pills
   tabBar.innerHTML = tabs.map(tab =>
     `<button class="tab-pill${tab === activeTab ? ' active' : ''}"
        onclick="switchTab('${tab}')">${tab}</button>`
   ).join('');
 
-  // Nav sections
   navContent.innerHTML = tabs.map(tab => `
     <div class="nav-section${tab === activeTab ? ' visible' : ''}" id="nav-${CSS.escape(tab)}">
       <div class="nav-section-title">${tab}</div>
       ${sections[tab].map(link =>
         `<span class="nav-link" data-raw="${link.rawUrl || ''}" data-label="${link.label}" data-tab="${tab}"
-          onclick="loadPage('${encodeURIComponent(link.rawUrl || '')}', '${escStr(link.label)}', '${tab}', this)"
+          onclick="loadPage('${encodeURIComponent(link.rawUrl || '')}','${escStr(link.label)}','${tab}',this)"
         >${link.label}</span>`
       ).join('')}
     </div>
@@ -597,7 +1006,170 @@ function switchTab(tab) {
   document.querySelectorAll('.nav-section').forEach(s => s.classList.toggle('visible', s.id === `nav-${CSS.escape(tab)}`));
 }
 
-function escStr(s) { return s.replace(/'/g, "\\'"); }
+function escStr(s) { return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+/* ════════════════════════════════════════════════════
+   RECENTLY VISITED
+════════════════════════════════════════════════════ */
+function addToRecent(rawUrl, label, tab) {
+  recentPages = recentPages.filter(p => p.rawUrl !== rawUrl);
+  recentPages.unshift({ rawUrl, label, tab });
+  if (recentPages.length > 5) recentPages.pop();
+  renderRecentPages();
+}
+
+function renderRecentPages() {
+  const section = document.getElementById('recent-pages-section');
+  const list    = document.getElementById('recent-pages-list');
+  if (!recentPages.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  list.innerHTML = recentPages.map(p => `
+    <div class="recent-page-link"
+         onclick="loadPage('${encodeURIComponent(p.rawUrl)}','${escStr(p.label)}','${p.tab}',null)">
+      <span class="recent-page-dot">◆</span>
+      <span>${p.label}</span>
+    </div>
+  `).join('');
+}
+
+/* ════════════════════════════════════════════════════
+   HISTORY NAVIGATION
+════════════════════════════════════════════════════ */
+function pushHistory(rawUrl, label, tab) {
+  if (_skipHistory) return;
+  // Remove any forward history
+  if (historyIdx < pageHistory.length - 1)
+    pageHistory = pageHistory.slice(0, historyIdx + 1);
+  pageHistory.push({ rawUrl, label, tab });
+  historyIdx = pageHistory.length - 1;
+  updateHistoryButtons();
+  // Update browser hash
+  const pageName = rawToPageName(rawUrl);
+  if (pageName && pageName !== 'Home') {
+    history.pushState({ rawUrl, label, tab }, '', `#${encodeURIComponent(pageName)}`);
+  } else {
+    history.pushState({ rawUrl: null }, '', '#');
+  }
+}
+
+function historyBack() {
+  if (historyIdx <= 0) return;
+  historyIdx--;
+  const entry = pageHistory[historyIdx];
+  _skipHistory = true;
+  loadPage(encodeURIComponent(entry.rawUrl), entry.label, entry.tab, null);
+  _skipHistory = false;
+  updateHistoryButtons();
+}
+
+function historyFwd() {
+  if (historyIdx >= pageHistory.length - 1) return;
+  historyIdx++;
+  const entry = pageHistory[historyIdx];
+  _skipHistory = true;
+  loadPage(encodeURIComponent(entry.rawUrl), entry.label, entry.tab, null);
+  _skipHistory = false;
+  updateHistoryButtons();
+}
+
+function updateHistoryButtons() {
+  document.getElementById('btn-back').disabled = historyIdx <= 0;
+  document.getElementById('btn-fwd').disabled  = historyIdx >= pageHistory.length - 1;
+}
+
+// Handle browser back/forward
+window.addEventListener('popstate', e => {
+  if (e.state && e.state.rawUrl) {
+    _skipHistory = true;
+    loadPage(encodeURIComponent(e.state.rawUrl), e.state.label, e.state.tab, null);
+    _skipHistory = false;
+  } else {
+    _skipHistory = true;
+    renderHome();
+    _skipHistory = false;
+  }
+});
+
+// Alt+← / Alt+→
+window.addEventListener('keydown', e => {
+  if (e.altKey && e.key === 'ArrowLeft')  { e.preventDefault(); historyBack(); }
+  if (e.altKey && e.key === 'ArrowRight') { e.preventDefault(); historyFwd();  }
+});
+
+/* ════════════════════════════════════════════════════
+   BREADCRUMB
+════════════════════════════════════════════════════ */
+function setBreadcrumb(tab, label) {
+  const bc = document.getElementById('breadcrumb');
+  if (!label) { bc.classList.add('hidden'); return; }
+  bc.classList.remove('hidden');
+  const parts = [
+    `<span class="bc-item" onclick="goHome()">Início</span>`,
+    `<span class="bc-sep">›</span>`,
+    tab ? `<span class="bc-item" onclick="switchTab('${tab}')">${tab}</span><span class="bc-sep">›</span>` : '',
+    `<span class="bc-current">${label}</span>`,
+  ];
+  bc.innerHTML = parts.join('');
+}
+
+function clearBreadcrumb() {
+  document.getElementById('breadcrumb').classList.add('hidden');
+}
+
+/* ════════════════════════════════════════════════════
+   TABLE OF CONTENTS
+════════════════════════════════════════════════════ */
+function buildTOC() {
+  const article = document.getElementById('article');
+  const headings = Array.from(article.querySelectorAll('h2, h3'));
+  const rail     = document.getElementById('toc-rail');
+  const tocList  = document.getElementById('toc-list');
+  const content  = document.getElementById('content-area');
+
+  if (headings.length < 2) {
+    rail.classList.remove('visible');
+    content.classList.remove('has-toc');
+    return;
+  }
+
+  // Assign IDs to headings
+  headings.forEach((h, i) => {
+    if (!h.id) h.id = `section-${i}`;
+  });
+
+  tocList.innerHTML = headings.map(h => {
+    const isH3 = h.tagName === 'H3';
+    return `<li class="toc-item">
+      <a class="toc-link${isH3 ? ' toc-h3' : ''}"
+         data-target="${h.id}"
+         onclick="tocScroll('${h.id}')">${h.textContent}</a>
+    </li>`;
+  }).join('');
+
+  rail.classList.add('visible');
+  content.classList.add('has-toc');
+
+  // Intersection observer for active TOC link
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const link = tocList.querySelector(`[data-target="${entry.target.id}"]`);
+      if (link) link.classList.toggle('active', entry.isIntersecting);
+    });
+  }, { rootMargin: `-${64+20}px 0px -70% 0px` });
+
+  headings.forEach(h => observer.observe(h));
+}
+
+function tocScroll(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function clearTOC() {
+  document.getElementById('toc-rail').classList.remove('visible');
+  document.getElementById('content-area').classList.remove('has-toc');
+  document.getElementById('toc-list').innerHTML = '';
+}
 
 /* ════════════════════════════════════════════════════
    PAGE LOADER
@@ -606,18 +1178,24 @@ async function loadPage(encodedUrl, label, tab, el) {
   const rawUrl = decodeURIComponent(encodedUrl);
   activePage = rawUrl;
 
-  // Update active link
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
   if (el) el.classList.add('active');
+  else {
+    // Try to find and activate sidebar link
+    const link = document.querySelector(`.nav-link[data-raw="${CSS.escape(rawUrl)}"]`);
+    if (link) { link.classList.add('active'); switchTab(link.dataset.tab); }
+  }
 
-  // Switch to correct tab
   switchTab(tab);
-
   showLoading(`Conjurando ${label}…`);
+  clearTOC();
+  setBreadcrumb(tab, label);
 
   try {
     const text = await fetchMd(rawUrl);
-    renderArticle(text, label, tab);
+    renderArticle(text, label, tab, rawUrl);
+    addToRecent(rawUrl, label, tab);
+    if (!_skipHistory) pushHistory(rawUrl, label, tab);
   } catch(e) {
     showError(`Não foi possível carregar "${label}". Página pode não existir ainda.`);
   }
@@ -634,22 +1212,23 @@ async function fetchMd(url) {
 /* ════════════════════════════════════════════════════
    MARKDOWN RENDER
 ════════════════════════════════════════════════════ */
-function renderArticle(md, label, tab) {
-  // Configure marked to make internal wiki links clickable
+function makeRenderer(tab) {
   const renderer = new marked.Renderer();
-
   renderer.link = function(href, title, text) {
-    // Internal wiki link?
     const rawUrl = wikiPageToRaw(href);
     if (rawUrl) {
-      const linkObj = allLinks.find(l => l.rawUrl === rawUrl) || { label: text, tab: tab };
-      return `<a href="#" onclick="event.preventDefault();loadPage('${encodeURIComponent(rawUrl)}','${escStr(linkObj.label || text)}','${linkObj.tab || tab}',null)" title="${title || ''}">${text}</a>`;
+      const linkObj = allLinks.find(l => l.rawUrl === rawUrl) || { label: text, tab };
+      return `<a href="#${encodeURIComponent(rawToPageName(rawUrl) || '')}"
+        onclick="event.preventDefault();loadPage('${encodeURIComponent(rawUrl)}','${escStr(linkObj.label || text)}','${linkObj.tab || tab}',null)"
+        title="${title || ''}">${text}</a>`;
     }
-    // External
     return `<a href="${href}" target="_blank" rel="noopener" title="${title || ''}">${text}</a>`;
   };
+  return renderer;
+}
 
-  marked.use({ renderer, breaks: true });
+function renderArticle(md, label, tab, rawUrl) {
+  marked.use({ renderer: makeRenderer(tab), breaks: true });
   const html = marked.parse(md);
 
   const article = document.getElementById('article');
@@ -657,87 +1236,321 @@ function renderArticle(md, label, tab) {
 
   loading.style.display = 'none';
   article.style.display = 'block';
+
+  const pageName = rawToPageName(rawUrl) || label;
+  const editUrl  = `${EDIT_BASE}${encodeURIComponent(pageName)}/_edit`;
+
   article.innerHTML = `
     <div class="article-meta">
       <span class="badge">${tab}</span>
+      <a class="meta-edit-link" href="${editUrl}" target="_blank" rel="noopener" title="Editar no GitHub">
+        ✎ Editar
+      </a>
     </div>
     ${html}
     <div class="page-ornament">— ✦ —</div>
   `;
 
-  // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
   document.title = `${label} — AurionMC Wiki`;
+
+  // Build TOC after render
+  setTimeout(buildTOC, 50);
 }
 
 /* ════════════════════════════════════════════════════
-   HOME PAGE (Fetches from Home.md)
+   HOME PAGE
 ════════════════════════════════════════════════════ */
 async function renderHome() {
   showLoading('Carregando a página inicial…');
+  clearTOC();
+  clearBreadcrumb();
+  activePage = null;
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+
   try {
     const homeMd = await fetchMd(HOME_PAGE_URL);
-    // Render the home page content without a tab badge
-    const renderer = new marked.Renderer();
-    renderer.link = function(href, title, text) {
-      const rawUrl = wikiPageToRaw(href);
-      if (rawUrl) {
-        const linkObj = allLinks.find(l => l.rawUrl === rawUrl) || { label: text };
-        return `<a href="#" onclick="event.preventDefault();loadPage('${encodeURIComponent(rawUrl)}','${escStr(linkObj.label || text)}','${linkObj.tab || 'Main'}',null)" title="${title || ''}">${text}</a>`;
-      }
-      return `<a href="${href}" target="_blank" rel="noopener" title="${title || ''}">${text}</a>`;
-    };
-    marked.use({ renderer, breaks: true });
+    marked.use({ renderer: makeRenderer('Main'), breaks: true });
     const html = marked.parse(homeMd);
 
     const article = document.getElementById('article');
-    const loading = document.getElementById('loading-state');
-    loading.style.display = 'none';
+    document.getElementById('loading-state').style.display = 'none';
     article.style.display = 'block';
-    article.innerHTML = `
-      ${html}
-      <div class="page-ornament">— ✦ —</div>
-    `;
+    article.innerHTML = `${html}<div class="page-ornament">— ✦ —</div>`;
     document.title = 'AurionMC Wiki';
+    setTimeout(buildTOC, 50);
   } catch (error) {
-    console.error('Failed to load home page:', error);
-    showError('Não foi possível carregar a página inicial. Verifique sua conexão ou tente novamente mais tarde.');
+    showError('Não foi possível carregar a página inicial.');
   }
 }
 
+function goHome() {
+  clearSearch();
+  if (!_skipHistory) pushHistory(HOME_PAGE_URL, 'Início', 'Main');
+  renderHome();
+}
+
 /* ════════════════════════════════════════════════════
-   SEARCH
+   SEARCH — DROPDOWN
 ════════════════════════════════════════════════════ */
 let searchTimeout;
-document.getElementById('search-box').addEventListener('input', e => {
-  clearTimeout(searchTimeout);
-  const q = e.target.value.trim();
-  if (!q) { renderHome(); return; }
-  searchTimeout = setTimeout(() => doSearch(q), 250);
+let searchFocusIdx = -1;
+
+const searchBox      = document.getElementById('search-box');
+const searchDropdown = document.getElementById('search-dropdown');
+const searchClear    = document.getElementById('search-clear');
+const searchOverlay  = document.getElementById('search-overlay');
+
+// Ctrl+K / "/" shortcut
+window.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    searchBox.focus();
+    searchBox.select();
+    openSearch();
+  }
+  if (e.key === '/' && document.activeElement !== searchBox &&
+      document.activeElement.tagName !== 'INPUT') {
+    e.preventDefault();
+    searchBox.focus();
+    openSearch();
+  }
 });
 
-function doSearch(q) {
+searchBox.addEventListener('focus', () => {
+  openSearch();
+});
+
+searchBox.addEventListener('input', e => {
+  const q = e.target.value;
+  searchClear.classList.toggle('visible', q.length > 0);
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => renderSearchDropdown(q.trim()), 180);
+});
+
+searchBox.addEventListener('keydown', e => {
+  const items = searchDropdown.querySelectorAll('.search-item');
+  if (!items.length) return;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    searchFocusIdx = Math.min(searchFocusIdx + 1, items.length - 1);
+    updateSearchFocus(items);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    searchFocusIdx = Math.max(searchFocusIdx - 1, 0);
+    updateSearchFocus(items);
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (searchFocusIdx >= 0 && items[searchFocusIdx]) {
+      items[searchFocusIdx].click();
+    } else if (searchBox.value.trim()) {
+      showFullSearchResults(searchBox.value.trim());
+    }
+  } else if (e.key === 'Escape') {
+    closeSearch();
+    searchBox.blur();
+  }
+});
+
+function updateSearchFocus(items) {
+  items.forEach((item, i) => item.classList.toggle('focused', i === searchFocusIdx));
+  if (items[searchFocusIdx]) items[searchFocusIdx].scrollIntoView({ block: 'nearest' });
+}
+
+function openSearch() {
+  searchDropdown.classList.add('open');
+  searchOverlay.classList.add('show');
+  searchBox.setAttribute('aria-expanded', 'true');
+  searchFocusIdx = -1;
+  renderSearchDropdown(searchBox.value.trim());
+}
+
+function closeSearch() {
+  searchDropdown.classList.remove('open');
+  searchOverlay.classList.remove('show');
+  searchBox.setAttribute('aria-expanded', 'false');
+  searchFocusIdx = -1;
+}
+
+function clearSearch() {
+  searchBox.value = '';
+  searchClear.classList.remove('visible');
+  closeSearch();
+}
+
+function highlight(text, query) {
+  if (!query) return text;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+}
+
+function renderSearchDropdown(q) {
+  searchFocusIdx = -1;
+  const dropdown = searchDropdown;
+
+  if (!q) {
+    // Show recent searches
+    if (!recentSearches.length && !recentPages.length) {
+      dropdown.innerHTML = `<div class="search-empty">Digite para buscar páginas…</div>`;
+      return;
+    }
+    let html = '';
+    if (recentSearches.length) {
+      html += `<div class="search-section-label">Buscas Recentes</div>`;
+      html += recentSearches.map(s => `
+        <div class="recent-item" onclick="searchBox.value='${escStr(s)}';renderSearchDropdown('${escStr(s)}')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M6 1v5l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/>
+          </svg>
+          ${s}
+        </div>
+      `).join('');
+      html += `<button class="recent-clear" onclick="clearRecentSearches()">Limpar histórico</button>`;
+    }
+    if (recentPages.length) {
+      html += `<div class="search-divider"></div>`;
+      html += `<div class="search-section-label">Visitadas Recentemente</div>`;
+      html += recentPages.map(p => `
+        <div class="search-item" onclick="closeSearch();loadPage('${encodeURIComponent(p.rawUrl)}','${escStr(p.label)}','${p.tab}',null)">
+          <div class="search-item-icon">${p.tab.charAt(0)}</div>
+          <div class="search-item-body">
+            <div class="search-item-title">${p.label}</div>
+            <div class="search-item-sub">${p.tab}</div>
+          </div>
+          <span class="search-item-arrow">›</span>
+        </div>
+      `).join('');
+    }
+    dropdown.innerHTML = html;
+    return;
+  }
+
+  const ql = q.toLowerCase();
+  const results = allLinks.filter(l => l.label.toLowerCase().includes(ql));
+
+  if (!results.length) {
+    dropdown.innerHTML = `
+      <div class="search-header">
+        <span class="search-count">0 resultados para "${q}"</span>
+      </div>
+      <div class="search-empty">Nenhuma página encontrada.<br>
+        <span style="font-size:.8rem">Verifique a ortografia ou tente outro termo.</span>
+      </div>`;
+    return;
+  }
+
+  const shown = results.slice(0, 8);
+  const more  = results.length - shown.length;
+
+  // Group by tab
+  const grouped = {};
+  shown.forEach(l => {
+    if (!grouped[l.tab]) grouped[l.tab] = [];
+    grouped[l.tab].push(l);
+  });
+
+  let html = `
+    <div class="search-header">
+      <span class="search-count">${results.length} resultado${results.length !== 1 ? 's' : ''}</span>
+      <span class="search-hint">↑↓ navegar · Enter abrir</span>
+    </div>
+    <div class="search-list">`;
+
+  Object.entries(grouped).forEach(([tab, links]) => {
+    html += `<div class="search-section-label">${tab}</div>`;
+    links.forEach(l => {
+      html += `
+        <div class="search-item" role="option"
+             onclick="handleSearchSelect('${encodeURIComponent(l.rawUrl||'')}','${escStr(l.label)}','${l.tab}')">
+          <div class="search-item-icon">${tab.charAt(0)}</div>
+          <div class="search-item-body">
+            <div class="search-item-title">${highlight(l.label, q)}</div>
+            <div class="search-item-sub">${l.tab}</div>
+          </div>
+          <span class="search-item-arrow">›</span>
+        </div>`;
+    });
+  });
+
+  if (more > 0) {
+    html += `<div class="search-divider"></div>
+      <div class="recent-item" onclick="showFullSearchResults('${escStr(q)}')">
+        Ver todos os ${results.length} resultados →
+      </div>`;
+  }
+
+  html += `</div>`;
+  dropdown.innerHTML = html;
+}
+
+function handleSearchSelect(encodedUrl, label, tab) {
+  saveRecentSearch(searchBox.value.trim());
+  closeSearch();
+  loadPage(encodedUrl, label, tab, null);
+}
+
+function showFullSearchResults(q) {
+  saveRecentSearch(q);
+  closeSearch();
+
   const ql = q.toLowerCase();
   const results = allLinks.filter(l => l.label.toLowerCase().includes(ql));
 
   const article = document.getElementById('article');
   document.getElementById('loading-state').style.display = 'none';
   article.style.display = 'block';
+  clearTOC();
+  clearBreadcrumb();
 
   if (!results.length) {
-    article.innerHTML = `<h1>Busca: "${q}"</h1><p style="color:var(--text-dim);font-style:italic">Nenhum resultado encontrado.</p>`;
+    article.innerHTML = `
+      <div class="search-results-page">
+        <h1>Busca: "${q}"</h1>
+        <p style="color:var(--text-dim);font-style:italic;margin-top:16px">
+          Nenhum resultado encontrado. Tente outro termo.
+        </p>
+      </div>`;
     return;
   }
 
+  const ql2 = q.toLowerCase();
   article.innerHTML = `
-    <h1>Busca: "${q}"</h1>
-    <div class="search-results">
-      ${results.map(l => `
-        <div class="search-result-item" onclick="loadPage('${encodeURIComponent(l.rawUrl || '')}','${escStr(l.label)}','${l.tab}',null)">
-          <div class="search-result-title">${l.label}</div>
-          <div class="search-result-sub">${l.tab}</div>
-        </div>`).join('')}
+    <div class="search-results-page">
+      <h1>Busca: "${q}"</h1>
+      <p style="color:var(--text-dim);font-size:.9rem;margin-top:8px;margin-bottom:4px">
+        ${results.length} resultado${results.length !== 1 ? 's' : ''} encontrado${results.length !== 1 ? 's' : ''}
+      </p>
+      <div class="search-result-grid">
+        ${results.map(l => `
+          <div class="search-result-item"
+               onclick="loadPage('${encodeURIComponent(l.rawUrl||'')}','${escStr(l.label)}','${l.tab}',null)">
+            <div class="search-result-icon">${l.tab.charAt(0)}</div>
+            <div class="search-result-body">
+              <div class="search-result-title">${highlight(l.label, q)}</div>
+              <div class="search-result-sub">${l.tab}</div>
+            </div>
+            <span class="search-result-arrow">›</span>
+          </div>`).join('')}
+      </div>
     </div>`;
+  document.title = `Busca: ${q} — AurionMC Wiki`;
+}
+
+/* ════════════════════════════════════════════════════
+   RECENT SEARCHES
+════════════════════════════════════════════════════ */
+function saveRecentSearch(q) {
+  if (!q) return;
+  recentSearches = [q, ...recentSearches.filter(s => s !== q)].slice(0, 6);
+  sessionStorage.setItem('wiki_recent_searches', JSON.stringify(recentSearches));
+}
+
+function clearRecentSearches() {
+  recentSearches = [];
+  sessionStorage.removeItem('wiki_recent_searches');
+  renderSearchDropdown('');
 }
 
 /* ════════════════════════════════════════════════════
@@ -745,17 +1558,17 @@ function doSearch(q) {
 ════════════════════════════════════════════════════ */
 function showLoading(msg) {
   const art = document.getElementById('article');
-  const ld = document.getElementById('loading-state');
+  const ld  = document.getElementById('loading-state');
   art.style.display = 'none';
-  ld.style.display = 'flex';
+  ld.style.display  = 'flex';
   ld.innerHTML = `<div class="state-rune">✦</div><div class="state-msg">${msg || 'Carregando…'}</div>`;
 }
 
 function showError(msg) {
   const art = document.getElementById('article');
-  const ld = document.getElementById('loading-state');
+  const ld  = document.getElementById('loading-state');
   art.style.display = 'none';
-  ld.style.display = 'flex';
+  ld.style.display  = 'flex';
   ld.innerHTML = `<div class="state-rune" style="color:var(--crimson)">✖</div><div class="state-msg">${msg}</div>`;
 }
 
@@ -777,10 +1590,32 @@ function closeSidebar() {
 async function loadFooter() {
   try {
     const md = await fetchMd(FOOTER_URL);
-    // Extract plain text from the footer markdown
     const plain = md.replace(/\*\*/g,'').replace(/\*/g,'').replace(/^#+.*/gm,'').replace(/^>{1,}\s*/gm,'').trim();
     document.getElementById('sidebar-footer').innerText = plain;
   } catch(_) {}
+}
+
+/* ════════════════════════════════════════════════════
+   HASH ROUTING
+════════════════════════════════════════════════════ */
+function resolveHashOnLoad() {
+  const hash = decodeURIComponent(window.location.hash.slice(1));
+  if (!hash) return false;
+
+  // Try to find the page in allLinks
+  const match = allLinks.find(l => {
+    const name = rawToPageName(l.rawUrl);
+    return name && name.toLowerCase() === hash.toLowerCase();
+  });
+  if (match) {
+    loadPage(encodeURIComponent(match.rawUrl), match.label, match.tab, null);
+    return true;
+  }
+
+  // Try to load directly from raw URL
+  const rawUrl = `https://raw.githubusercontent.com/wiki/${REPO_OWNER}/${REPO_NAME}/${hash}.md`;
+  loadPage(encodeURIComponent(rawUrl), hash.replace(/-/g, ' '), 'Main', null);
+  return true;
 }
 
 /* ════════════════════════════════════════════════════
@@ -789,7 +1624,6 @@ async function loadFooter() {
 async function init() {
   showLoading('Invocando o grimório…');
 
-  // Parallel loads
   const [sidebarMd] = await Promise.all([
     fetchMd(SIDEBAR_URL).catch(() => '### Main\n- [Página Inicial](https://github.com/gamesistem/AurionMC/wiki/Home)'),
     loadFooter(),
@@ -797,9 +1631,11 @@ async function init() {
 
   const sections = parseSidebar(sidebarMd);
   buildSidebar(sections);
-  
-  // Load the home page content from the wiki
-  await renderHome();
+
+  // Resolve hash or show home
+  if (!resolveHashOnLoad()) {
+    await renderHome();
+  }
 }
 
 init();
