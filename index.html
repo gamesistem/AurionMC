@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#080a0f" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<title>Nocturia Wiki</title>
+<title>Astrion Wiki</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
@@ -786,7 +786,7 @@ header {
 <header>
   <button id="burger" onclick="toggleSidebar()" aria-label="Menu" title="Menu (M)">☰</button>
   <div class="logo-rune" onclick="goHome()" title="Página Inicial">N</div>
-  <div class="logo-text" onclick="goHome()" title="Página Inicial">Nocturia <span>Enciclopédia &amp; Lore</span></div>
+  <div class="logo-text" onclick="goHome()" title="Página Inicial">Astrion <span>Enciclopédia &amp; Lore</span></div>
 
   <div class="nav-history">
     <button class="nav-btn" id="btn-back" onclick="historyBack()" disabled title="Voltar (Alt+←)">←</button>
@@ -880,10 +880,10 @@ header {
 
 <script>
 /* ════════════════════════════════════════════════════
-   CONFIG — Nocturia
+   CONFIG — Astrion
 ════════════════════════════════════════════════════ */
 const REPO_OWNER    = 'gamesistem';
-const REPO_NAME     = 'Nocturia';
+const REPO_NAME     = 'Astrion';
 const SIDEBAR_URL   = `https://raw.githubusercontent.com/wiki/${REPO_OWNER}/${REPO_NAME}/_Sidebar.md`;
 const FOOTER_URL    = `https://raw.githubusercontent.com/wiki/${REPO_OWNER}/${REPO_NAME}/_Footer.md`;
 const HOME_PAGE_URL = `https://raw.githubusercontent.com/wiki/${REPO_OWNER}/${REPO_NAME}/Home.md`;
@@ -1344,7 +1344,7 @@ function renderArticle(md, label, tab, rawUrl) {
   `;
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  document.title = `${label} — Nocturia Wiki`;
+  document.title = `${label} — Astrion Wiki`;
   setTimeout(buildTOC, 50);
 }
 
@@ -1367,7 +1367,7 @@ async function renderHome() {
     document.getElementById('loading-state').style.display = 'none';
     article.style.display = 'block';
     article.innerHTML = `${html}<div class="page-ornament">— ✦ —</div>`;
-    document.title = 'Nocturia Wiki';
+    document.title = 'Astrion Wiki';
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setTimeout(buildTOC, 50);
   } catch(error) {
@@ -1584,7 +1584,7 @@ function showFullSearchResults(q) {
         </div>
       </div>`;
   }
-  document.title = `Busca: ${q} — Nocturia Wiki`;
+  document.title = `Busca: ${q} — Astrion Wiki`;
 }
 
 /* ════════════════════════════════════════════════════
