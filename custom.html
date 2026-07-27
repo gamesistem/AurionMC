@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ItemsAdder Wiki Reader & Guia Rápido</title>
+    <style>
+        :root {
+            --bg-primary: #12151e;
+            --bg-secondary: #1a1e2d;
+            --bg-card: #23283b;
+            --bg-hover: #2e354f;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --accent-light: rgba(99, 102, 241, 0.15);
+            --border: #333a52;
+            --code-bg: #0f172a;
+            --sidebar-width: 300px;
+            --font-size: 16px;
+            --line-height: 1.6;
+            --max-content-width: 900px;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #f1f5f9;
+            --bg-hover: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent: #4f46e5;
+            --accent-hover: #4338ca;
+            --accent-light: rgba(79, 70, 229, 0.1);
+            --border: #e2e8f0;
+            --code-bg: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-size: var(--font-size);
+            line-height: var(--line-height);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styles */
+        aside {
+            width: var(--sidebar-width);
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .brand {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 18px;
+        }
+
+        .brand-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .search-box {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-light);
+        }
+
+        .nav-menu {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 10px;
+        }
+
+        .nav-group {
+            margin-bottom: 20px;
+        }
+
+        .nav-group-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            padding: 0 10px 8px 10px;
+            font-weight: 700;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-bottom: 2px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--bg-hover);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background-color: var(--accent-light);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Main Workspace */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Top Toolbar */
+        header {
+            height: 60px;
+            border-bottom: 1px solid var(--border);
+            background-color: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+        }
+
+        .toolbar-title {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toolbar-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-tool {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-tool:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent);
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Content Area */
+        .content-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .reader-body {
+            width: 100%;
+            max-width: var(--max-content-width);
+        }
+
+        /* Typography & Components */
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+            line-height: 1.2;
+            color: var(--text-main);
+        }
+
+        .meta-subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 35px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin: 25px 0 10px 0;
+        }
+
+        p {
+            margin-bottom: 18px;
+        }
+
+        ul, ol {
+            margin-bottom: 20px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background-color: var(--bg-card);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', Consolas, Monaco, monospace;
+            font-size: 0.9em;
+            color: #ec4899;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 18px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid var(--border);
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: #f8fafc;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .callout {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--accent);
+            background-color: var(--accent-light);
+        }
+
+        .callout.warning {
+            border-left-color: #f59e0b;
+            background-color: rgba(245, 158, 11, 0.1);
+        }
+
+        .callout-title {
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin: 25px 0;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+
+        .card-desc {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        /* Embedded Reader View */
+        .embed-wrapper {
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+        }
+
+        .embed-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #ffffff;
+        }
+
+        .active-view-embed .content-container {
+            display: none;
+        }
+
+        .active-view-embed .embed-wrapper {
+            display: flex;
+        }
+
+        /* Controls Panel Modal */
+        .settings-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-card);
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .control-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .control-btn:hover {
+            background: var(--bg-hover);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            aside {
+                position: absolute;
+                left: -100%;
+                height: 100%;
+                transition: left 0.3s ease;
+            }
+
+            aside.open {
+                left: 0;
+            }
+
+            .mobile-toggle {
+                display: block !important;
+            }
+        }
+
+        .mobile-toggle {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar">
+        <div class="brand">
+            <div class="brand-icon">IA</div>
+            <div>
+                <div class="brand-title">ItemsAdder Reader</div>
+                <div class="brand-subtitle">Leitor Otimizado da Wiki</div>
+            </div>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" placeholder="Buscar tópicos ou termos...">
+        </div>
+
+        <nav class="nav-menu" id="navMenu">
+            <div class="nav-group">
+                <div class="nav-group-title">Visão Geral</div>
+                <a class="nav-item active" onclick="loadSection('intro')">📌 Introdução & Destaques</a>
+                <a class="nav-item" onclick="loadSection('quickstart')">🚀 Primeiros Passos</a>
+                <a class="nav-item" onclick="loadSection('structure')">📁 Estrutura de Pastas</a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Criação de Conteúdo</div>
+                <a class="nav-item" onclick="loadSection('items')">⚔️ Itens Personalizados</a>
+                <a class="nav-item" onclick="loadSection('blocks')">🧊 Blocos e Minérios</a>
+                <a class="nav-item" onclick="loadSection('furniture')">🪑 Móveis & Decoração</a>
+                <a class="nav-item" onclick="loadSection('huds')">📊 HUDs & Emojis</a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Sistemas Avançados</div>
+                <a class="nav-item" onclick="loadSection('recipes')">📜 Receitas Customizadas</a>
+                <a class="nav-item" onclick="loadSection('commands')">⚡ Comandos Rápido</a>
+                <a class="nav-item" onclick="loadSection('faq')">❓ Solução de Problemas</a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Recursos Externos</div>
+                <a class="nav-item" onclick="openOfficialSite()">🌐 Abrir Site Oficial</a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content Workspace -->
+    <main id="mainWorkspace">
+        <header>
+            <div class="toolbar-title">
+                <button class="btn-tool mobile-toggle" onclick="toggleSidebar()">☰ Menu</button>
+                <span id="currentTitle">Otimizador de Leitura ItemsAdder</span>
+            </div>
+
+            <div class="toolbar-controls">
+                <!-- Reader Settings Bar -->
+                <div class="settings-bar">
+                    <div class="control-group">
+                        <span>Fonte:</span>
+                        <button class="control-btn" onclick="changeFontSize(-1)">-</button>
+                        <button class="control-btn" onclick="changeFontSize(1)">+</button>
+                    </div>
+                    <div class="control-group">
+                        <span>Largura:</span>
+                        <button class="control-btn" onclick="toggleWidth()">↔</button>
+                    </div>
+                </div>
+
+                <button class="btn-tool" id="viewModeBtn" onclick="toggleEmbedMode()">
+                    🖥️ Mudar p/ Web Original
+                </button>
+
+                <button class="btn-tool" onclick="toggleTheme()">
+                    🌓 Tema
+                </button>
+
+                <a href="https://wiki.itemsadder.com" target="_blank" class="btn-tool btn-primary" style="text-decoration: none;">
+                    ↗ Wiki Oficial
+                </a>
+            </div>
+        </header>
+
+        <!-- Reader Mode Container -->
+        <div class="content-container" id="contentContainer">
+            <article class="reader-body" id="readerBody">
+                <!-- Content will load dynamically -->
+            </article>
+        </div>
+
+        <!-- Embedded Frame View -->
+        <div class="embed-wrapper" id="embedWrapper">
+            <iframe id="wikiIframe" src="https://wiki.itemsadder.com" title="ItemsAdder Wiki Embed"></iframe>
+        </div>
+    </main>
+
+    <script>
+        // Content Sections Database
+        const sectionsData = {
+            intro: `
+                <h1>Visão Geral & Guia Otimizado</h1>
+                <div class="meta-subtitle">Um modo de leitura limpo, estruturado e rápido para a documentação do ItemsAdder.</div>
+                
+                <div class="callout">
+                    <div class="callout-title">💡 Sobre o ItemsAdder</div>
+                    O ItemsAdder é um dos plugins Spigot mais populares para Minecraft, permitindo adicionar novos itens, blocos 3D, armas, ferramentas, móveis, HUDs, emojis e entidades sem a necessidade de mods no cliente (Vanilla compatible).
+                </div>
+
+                <h2>Atalhos Rápidos de Leitura</h2>
+                <div class="grid-cards">
+                    <div class="card" onclick="loadSection('quickstart')">
+                        <div class="card-title">🚀 Instalação Inicial</div>
+                        <div class="card-desc">Como configurar o plugin pela primeira vez e extrair os arquivos padrão.</div>
+                    </div>
+                    <div class="card" onclick="loadSection('structure')">
+                        <div class="card-title">📁 Pastas & Namespaces</div>
+                        <div class="card-desc">Entenda a estrutura correta de diretórios para organizar seus packs.</div>
+                    </div>
+                    <div class="card" onclick="loadSection('items')">
+                        <div class="card-title">⚔️ Criando Itens YML</div>
+                        <div class="card-desc">Exemplos sintáticos completos para criar espadas, itens consumíveis e durabilidade.</div>
+                    </div>
+                    <div class="card" onclick="loadSection('commands')">
+                        <div class="card-title">⚡ Comandos Úteis</div>
+                        <div class="card-desc">Referência dos comandos principais como /iazip, /iaget e /iareload.</div>
+                    </div>
+                </div>
+
+                <h2>Dicas para Facilitar a Leitura</h2>
+                <ul>
+                    <li>Use os botões <strong>+</strong> e <strong>-</strong> no topo para ajustar o tamanho do texto para seus olhos.</li>
+                    <li>Utilize o botão de <strong>Largura (↔)</strong> para expandir ou estreitar o bloco de leitura.</li>
+                    <li>Mude para o modo <strong>Web Original</strong> no topo se desejar visualizar o site original com interatividade completa.</li>
+                </ul>
+            `,
+            quickstart: `
+                <h1>🚀 Primeiros Passos & Instalando</h1>
+                <div class="meta-subtitle">Passo a passo simples para iniciar o ItemsAdder no seu servidor Minecraft.</div>
+
+                <h2>1. Download e Instalação do Plugin</h2>
+                <ol>
+                    <li>Baixe a versão mais recente do ItemsAdder compatível com a versão do seu servidor (Spigot/Paper).</li>
+                    <li>Coloque o arquivo <code>ItemsAdder.jar</code> na pasta <code>/plugins</code> do seu servidor.</li>
+                    <li>Reinicie o servidor para que as configurações iniciais sejam geradas.</li>
+                </ol>
+
+                <h2>2. Configuração Básica de Resource Pack</h2>
+                <p>O ItemsAdder gera automaticamente o Resource Pack do servidor para que os jogadores vejam as texturas customizadas sem instalar nada manualmente.</p>
+
+                <div class="callout warning">
+                    <div class="callout-title">⚠️ Importante no config.yml</div>
+                    Certifique-se de definir como você hospedará o pacote de recursos em <code>plugins/ItemsAdder/config.yml</code> (Self-host, DropBox, WebServer ou Google Drive).
+                </div>
+
+                <h2>3. Comandos Essenciais para o Início</h2>
+                <pre><code># Gera o pacote de recursos comprimido (.zip)
+/iazip
+
+# Recarrega as configurações e arquivos do plugin
+/iareload
+
+# Abre o menu interativo com todos os itens customizados
+/ia</code></pre>
+            `,
+            structure: `
+                <h1>📁 Estrutura de Pastas e Namespaces</h1>
+                <div class="meta-subtitle">Como organizar seus pacotes de textura de maneira limpa e profissional.</div>
+
+                <p>O ItemsAdder utiliza o conceito de <strong>Namespace</strong> para categorizar itens, som e texturas. Cada pacote é armazenado na pasta de conteúdos:</p>
+
+                <pre><code>plugins/ItemsAdder/contents/
+
+# Método 1: Recomendado & Mais Simples (Auto-detecta Namespace)
+plugins/
+└── ItemsAdder/
+    └── contents/
+        └── meu_servidor/           <-- Seu Namespace
+            ├── configs/
+            │   ├── armas.yml
+            │   └── moveis.yml
+            ├── models/
+            │   └── item/
+            │       └── espada.json
+            └── textures/
+                └── item/
+                    └── espada.png</code></pre>
+
+                <div class="callout">
+                    <div class="callout-title">📌 Dica de Organização</div>
+                    Sempre escolha um nome simples para seu namespace (ex: <code>meu_servidor</code>) utilizando apenas letras minúsculas e sem caracteres especiais.
+                </div>
+            `,
+            items: `
+                <h1>⚔️ Criando Itens Personalizados</h1>
+                <div class="meta-subtitle">Sintaxe YAML limpa para criação de itens no ItemsAdder.</div>
+
+                <p>Abaixo está um exemplo de arquivo YAML simples para adicionar uma nova espada ao seu jogo:</p>
+
+                <pre><code>info:
+  namespace: meu_servidor
+
+items:
+  rubi_sword:
+    display_name: "&cEspada de Rubi"
+    permission: meu_servidor.rubi_sword
+    resource:
+      material: DIAMOND_SWORD
+      generate: true
+      textures:
+        - item/rubi_sword.png
+    durability:
+      max_custom_durability: 2000
+    attribute_modifiers:
+      mainhand:
+        attackDamage: 10
+        attackSpeed: 1.6</code></pre>
+
+                <h2>Atributos Principais Explicação</h2>
+                <ul>
+                    <li><code>display_name</code>: O nome que aparece para o jogador (suporta cores com &).</li>
+                    <li><code>material</code>: O item base do Minecraft usado de fundação.</li>
+                    <li><code>textures</code>: O caminho relativo da imagem PNG da textura.</li>
+                    <li><code>durability</code>: Sistema customizado de durabilidade do ItemsAdder.</li>
+                </ul>
+            `,
+            blocks: `
+                <h1>🧊 Blocos e Minérios Personalizados</h1>
+                <div class="meta-subtitle">Adicione novos blocos 3D e minérios gerados no mundo.</div>
+
+                <p>O ItemsAdder permite criar blocos totalmente customizados sem substituir blocos nativos do jogo.</p>
+
+                <pre><code>info:
+  namespace: meu_servidor
+
+items:
+  minerio_rubi:
+    display_name: "&cMinério de Rubi"
+    resource:
+      material: REAL_WIRE
+      generate: true
+      textures:
+        - block/minerio_rubi.png
+    specific_properties:
+      block:
+        hardness: 3.0
+        blast_resistance: 6.0
+        drops:
+          min_amount: 1
+          max_amount: 2
+          drop_item: meu_servidor:rubi</code></pre>
+            `,
+            furniture: `
+                <h1>🪑 Móveis & Decorações 3D</h1>
+                <div class="meta-subtitle">Como funcionam os modelos de mobília interativos.</div>
+
+                <p>Móveis utilizam modelos 3D Blockbench e podem ter assentos, interações e luzes próprias.</p>
+
+                <div class="callout">
+                    <div class="callout-title">🛠️ Dica de Design</div>
+                    Você pode modelar suas cadeiras e mesas no programa gratuito <strong>Blockbench</strong> e exportá-las como modelos Java Block/Item <code>.json</code>.
+                </div>
+            `,
+            huds: `
+                <h1>📊 HUDs, GUIs e Emojis</h1>
+                <div class="meta-subtitle">Personalize a interface do usuário com elementos visuais incríveis.</div>
+
+                <p>Crie barras de vida extra, mana, sede ou ícones e emojis para serem usados no chat do jogo com a sintaxe <code>:nome_do_emoji:</code>.</p>
+            `,
+            recipes: `
+                <h1>📜 Receitas Customizadas</h1>
+                <div class="meta-subtitle">Receitas na bancada de trabalho, fornalha e bigorna.</div>
+
+                <pre><code>recipes:
+  crafting_table:
+    rubi_sword_recipe:
+      enabled: true
+      pattern:
+        - " R "
+        - " R "
+        - " S "
+      ingredients:
+        R: meu_servidor:rubi
+        S: STICK
+      result:
+        item: meu_servidor:rubi_sword
+        amount: 1</code></pre>
+            `,
+            commands: `
+                <h1>⚡ Comandos Rápido & Permissões</h1>
+                <div class="meta-subtitle">Tabela rápida dos comandos mais frequentes.</div>
+
+                <table style="width:100%; border-collapse: collapse; margin: 20px 0;">
+                    <thead>
+                        <tr style="background: var(--bg-card); text-align: left;">
+                            <th style="padding: 10px; border: 1px solid var(--border);">Comando</th>
+                            <th style="padding: 10px; border: 1px solid var(--border);">Descrição</th>
+                            <th style="padding: 10px; border: 1px solid var(--border);">Permissão</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid var(--border);"><code>/ia</code></td>
+                            <td style="padding: 10px; border: 1px solid var(--border);">Abre o menu visual de itens</td>
+                            <td style="padding: 10px; border: 1px solid var(--border);">ia.user.ia</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid var(--border);"><code>/iazip</code></td>
+                            <td style="padding: 10px; border: 1px solid var(--border);">Compacta e atualiza o Resource Pack</td>
+                            <td style="padding: 10px; border: 1px solid var(--border);">ia.admin.iazip</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid var(--border);"><code>/iareload</code></td>
+                            <td style="padding: 10px; border: 1px solid var(--border);">Recarrega arquivos de configuração</td>
+                            <td style="padding: 10px; border: 1px solid var(--border);">ia.admin.reload</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid var(--border);"><code>/iaget [item]</code></td>
+                            <td style="padding: 10px; border: 1px solid var(--border);">Pega um item customizado diretamente</td>
+                            <td style="padding: 10px; border: 1px solid var(--border);">ia.admin.iaget</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `,
+            faq: `
+                <h1>❓ Solução de Problemas Frequentes</h1>
+                <div class="meta-subtitle">Resoluções para as dúvidas mais comuns.</div>
+
+                <h3> As texturas aparecem em roxo e preto (Missing Texture)?</h3>
+                <p>Verifique se o caminho do arquivo PNG na configuração YML corresponde exatamente ao local do arquivo na pasta <code>textures/</code> e se executou o comando <code>/iazip</code>.</p>
+
+                <h3> Os jogadores não baixam o pacote automaticamente?</h3>
+                <p>Verifique a URL de hospedagem no <code>config.yml</code> e assegure-se que o link seja direto para o download do arquivo ZIP.</p>
+
+                <h3> Conflito de IDs ou blocos com glitch?</h3>
+                <p>Sempre limpe cache ou use a opção de auto-incremento se estiver adicionando muitos blocos novos.</p>
+            `
+        };
+
+        // State variables
+        let currentFontSize = 16;
+        let isMaxWidth = false;
+        let isEmbedView = false;
+
+        // Load section function
+        function loadSection(sectionId) {
+            const body = document.getElementById('readerBody');
+            if (sectionsData[sectionId]) {
+                body.innerHTML = sectionsData[sectionId];
+                
+                // Update active state in sidebar
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                event?.currentTarget?.classList.add('active');
+
+                // Update current title
+                const firstHeading = body.querySelector('h1');
+                if (firstHeading) {
+                    document.getElementById('currentTitle').innerText = firstHeading.innerText;
+                }
+
+                // If in embed view, toggle back
+                if (isEmbedView) {
+                    toggleEmbedMode();
+                }
+
+                // Close sidebar on mobile
+                document.getElementById('sidebar').classList.remove('open');
+                
+                // Scroll to top
+                document.getElementById('contentContainer').scrollTop = 0;
+            }
+        }
+
+        // Toggle Dark/Light Theme
+        function toggleTheme() {
+            const body = document.body;
+            if (body.getAttribute('data-theme') === 'light') {
+                body.removeAttribute('data-theme');
+            } else {
+                body.setAttribute('data-theme', 'light');
+            }
+        }
+
+        // Font size control
+        function changeFontSize(delta) {
+            currentFontSize = Math.min(22, Math.max(13, currentFontSize + delta));
+            document.body.style.setProperty('--font-size', currentFontSize + 'px');
+        }
+
+        // Toggle Content Width
+        function toggleWidth() {
+            isMaxWidth = !isMaxWidth;
+            document.body.style.setProperty('--max-content-width', isMaxWidth ? '100%' : '900px');
+        }
+
+        // Toggle Embed Iframe Mode vs Reader Mode
+        function toggleEmbedMode() {
+            isEmbedView = !isEmbedView;
+            const main = document.getElementById('mainWorkspace');
+            const btn = document.getElementById('viewModeBtn');
+            
+            if (isEmbedView) {
+                main.classList.add('active-view-embed');
+                btn.innerText = '📖 Mudar p/ Modo Leitura';
+            } else {
+                main.classList.remove('active-view-embed');
+                btn.innerText = '🖥️ Mudar p/ Web Original';
+            }
+        }
+
+        // Open Official Wiki
+        function openOfficialSite() {
+            window.open('https://wiki.itemsadder.com', '_blank');
+        }
+
+        // Sidebar Toggle for Mobile
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Quick Search Filter
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('.nav-item');
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                if (text.includes(term)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Initialize default view
+        loadSection('intro');
+    </script>
+</body>
+</html>
