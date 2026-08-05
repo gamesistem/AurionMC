@@ -14,6 +14,11 @@
             --ink: #2c1e16;
             --ink-light: #4a3324;
             --accent: #8b2323;
+            /* Variáveis de fonte: temas de mods podem sobrescrever estas três
+               para trocar a tipografia de todo o jornal de uma vez. */
+            --title-font: 'Pirata One', cursive;
+            --meta-font: 'MedievalSharp', cursive;
+            --body-font: 'Crimson Text', serif;
         }
 
         body {
@@ -21,7 +26,7 @@
             background-color: #120e0b;
             background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
             color: var(--ink);
-            font-family: 'Crimson Text', serif;
+            font-family: var(--body-font);
             overflow-x: hidden;
         }
 
@@ -58,7 +63,7 @@
         }
 
         .newspaper-title {
-            font-family: 'Pirata One', cursive;
+            font-family: var(--title-font);
             font-size: 85px;
             line-height: 0.9;
             margin-bottom: 10px;
@@ -69,7 +74,7 @@
         }
 
         .newspaper-meta {
-            font-family: 'MedievalSharp', cursive;
+            font-family: var(--meta-font);
             display: flex;
             justify-content: space-between;
             border-top: 1px solid var(--ink);
@@ -95,7 +100,7 @@
         }
 
         .article h2 {
-            font-family: 'MedievalSharp', cursive;
+            font-family: var(--meta-font);
             font-size: 32px;
             border-bottom: 2px solid rgba(139, 115, 85, 0.3);
             margin-bottom: 15px;
@@ -208,7 +213,7 @@
         }
 
         .drop-cap::first-letter {
-            font-family: 'Pirata One', cursive;
+            font-family: var(--title-font);
             float: left;
             font-size: 75px;
             line-height: 60px;
@@ -424,10 +429,122 @@
         }
 
         @media print {
-            .glass-panel, #format-toolbar { display: none !important; }
+            .glass-panel, #format-toolbar, .modal-overlay { display: none !important; }
             body { background: none; }
             #newspaper-container { box-shadow: none; margin: 0; }
         }
+
+        /* --- SISTEMA DE MODS --- */
+        .btn-mod {
+            background: linear-gradient(to bottom, #4a2b6e, #301c47);
+            border-color: #1c1129;
+        }
+        .btn-mod:hover { background: linear-gradient(to bottom, #603a8c, #402861); }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 6, 4, 0.82);
+            backdrop-filter: blur(4px);
+            z-index: 500;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal-box {
+            background: #1a1410;
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            border-radius: 12px;
+            width: 520px;
+            max-width: 92vw;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(212,196,161,0.2);
+            font-family: 'MedievalSharp', cursive;
+            color: #d4c4a1;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #d4c4a1;
+            font-size: 20px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 4px 8px;
+        }
+        .modal-close:hover { color: #fff; }
+
+        .modal-body {
+            padding: 16px 18px;
+            overflow-y: auto;
+            color: #e8dcc5;
+            font-family: 'Crimson Text', serif;
+        }
+
+        .mod-list-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border: 1px solid rgba(212,196,161,0.15);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .mod-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            object-fit: cover;
+            background: rgba(0,0,0,0.4);
+            flex-shrink: 0;
+            border: 1px solid rgba(212,196,161,0.2);
+        }
+
+        .mod-info-col { flex: 1; min-width: 0; }
+        .mod-name { font-family: 'MedievalSharp', cursive; font-size: 14px; color: #f0e6d2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mod-meta-line { font-size: 11px; color: #b8a888; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .mod-actions { display: flex; gap: 4px; flex-shrink: 0; }
+        .mod-actions button {
+            width: 26px; height: 26px;
+            border-radius: 5px;
+            border: 1px solid rgba(212,196,161,0.25);
+            background: rgba(255,255,255,0.05);
+            color: #e8dcc5;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .mod-actions button:hover { background: rgba(255,255,255,0.15); }
+        .mod-actions button.disabled-mod { opacity: 0.4; }
+
+        .mod-empty-msg { font-size: 13px; opacity: 0.6; text-align: center; padding: 10px 0; }
+
+        #mod-info-iframe {
+            width: 100%;
+            height: 55vh;
+            border: none;
+            background: #f4e4bc;
+            border-radius: 6px;
+        }
+
+        .mod-tab-btn { background: linear-gradient(to bottom, #3a4a2e, #26301d); border-color: #141d0f; }
+        .mod-tab-btn:hover { background: linear-gradient(to bottom, #4c6039, #344226); }
     </style>
 </head>
 <body class="p-8">
@@ -472,8 +589,16 @@
             <button class="btn" onclick="addDivider('main')">
                 <span>❦</span> Inserir Divisor
             </button>
+            <div id="mod-tab-buttons"></div>
         </div>
-        
+
+        <div class="flex flex-col gap-2 mt-2">
+            <div class="text-[11px] text-[#d4c4a1] uppercase tracking-wider mb-1 opacity-70">Mods da Comunidade</div>
+            <button class="btn btn-mod" onclick="openModManager()">
+                <span>🧩</span> Gerenciar Mods
+            </button>
+        </div>
+
         <div class="flex flex-col gap-2 mt-2">
             <div class="text-[11px] text-[#d4c4a1] uppercase tracking-wider mb-1 opacity-70">Ficheiros</div>
             <button class="btn btn-info" onclick="triggerImport()">
@@ -491,6 +616,39 @@
             </button>
             <div class="text-[#d4c4a1] text-xs text-center mt-1 opacity-60">
                 Selecione textos no papel para formatá-los.
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Gerenciador de Mods -->
+    <div class="modal-overlay" id="mod-manager-overlay" onmousedown="if(event.target===this) closeModManager()">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>🧩 Mods Instalados</span>
+                <button class="modal-close" onclick="closeModManager()">✕</button>
+            </div>
+            <div class="modal-body">
+                <button class="btn btn-mod justify-center mb-3" onclick="triggerModUpload()">
+                    <span>📂</span> Carregar Mod (.mod)
+                </button>
+                <input type="file" id="mod-input" class="hidden" accept=".mod,.zip" onchange="handleModFile(event)">
+                <div id="mod-list"></div>
+                <div class="mod-empty-msg" style="font-size:11px; opacity:0.5; margin-top:10px;">
+                    Mods carregados ficam disponíveis apenas nesta sessão do navegador. Recarregue o(s) mod(s) sempre que reabrir o jornal.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Página do Mod (data.html) -->
+    <div class="modal-overlay" id="mod-info-overlay" onmousedown="if(event.target===this) closeModInfo()">
+        <div class="modal-box" style="width:640px;">
+            <div class="modal-header">
+                <span id="mod-info-title">📜 Sobre o Mod</span>
+                <button class="modal-close" onclick="closeModInfo()">✕</button>
+            </div>
+            <div class="modal-body">
+                <iframe id="mod-info-iframe" sandbox="allow-scripts"></iframe>
             </div>
         </div>
     </div>
@@ -764,6 +922,398 @@
         // Inicializa drag em imagens existentes (se houver no HTML padrão)
         document.querySelectorAll('.user-image').forEach(setupDrag);
 
+        // ==========================================================
+        // --- SISTEMA DE MODS DA COMUNIDADE (.mod) ---
+        // ==========================================================
+        //
+        // Um arquivo .mod é um .zip renomeado com esta estrutura:
+        //
+        //   meu-mod.mod
+        //   ├── ico.png            (ícone do mod, mostrado na lista)
+        //   ├── data.html          (página própria do mod: info/config,
+        //   │                       carregada num iframe isolado)
+        //   ├── meta/
+        //   │   ├── manifest.json  (obrigatório: descreve o mod e suas abas)
+        //   │   └── tabs/
+        //   │       └── qualquer.html  (modelo HTML de cada nova aba/matéria)
+        //   ├── img/
+        //   │   └── qualquer.png   (imagens estáticas do mod, referenciadas
+        //   │                       nos modelos via {{img:nomeDaVariavel}})
+        //   └── add/
+        //       └── qualquer.woff2 (fontes novas que o mod adiciona)
+        //
+        // manifest.json:
+        // {
+        //   "id": "id-unico-do-mod",
+        //   "name": "Nome do Mod",
+        //   "version": "1.0.0",
+        //   "author": "Autor",
+        //   "description": "O que este mod faz.",
+        //   "tabs": [
+        //     {
+        //       "id": "tab-id",
+        //       "label": "Texto do Botão",
+        //       "icon": "🔮",
+        //       "target": "main" | "sidebar" | "both",
+        //       "template": "meta/tabs/arquivo.html",
+        //       "fontFamily": "NomeDaFonteOpcional"
+        //     }
+        //   ],
+        //   "fonts": [
+        //     { "file": "add/arquivo.woff2", "family": "NomeDaFonte", "weight": "400" }
+        //   ]
+        // }
+        //
+        // O modelo (template) de cada aba usa as MESMAS convenções do
+        // jornal: class="editable" contenteditable="true" para texto, e
+        // class="image-placeholder" onclick="triggerUpload(this, event)"
+        // com um <input type="file" ... onchange="handleImage(this)"> para
+        // imagens que o usuário poderá enviar — ou seja, mods reaproveitam
+        // o sistema de upload/zoom/arrasto já existente. Para imagens
+        // estáticas próprias do mod (molduras, selos, texturas), basta usar
+        // {{img:nomeDaVariavel}} no atributo src de uma <img>, e o jornal
+        // resolve isso para o arquivo correspondente dentro de img/.
+
+        let loadedMods = [];
+        let activeThemeModId = null;
+
+        function guessMimeType(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const map = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', svg: 'image/svg+xml' };
+            return map[ext] || 'application/octet-stream';
+        }
+
+        function guessFontMimeType(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const map = { woff2: 'font/woff2', woff: 'font/woff', ttf: 'font/ttf', otf: 'font/otf' };
+            return map[ext] || 'font/woff2';
+        }
+
+        function escapeHtml(str) {
+            const d = document.createElement('div');
+            d.textContent = str == null ? '' : String(str);
+            return d.innerHTML;
+        }
+
+        async function resolveHtmlImageRefs(html, zip) {
+            const matches = [...html.matchAll(/src=["']img\/([^"'>]+)["']/g)];
+            for (const m of matches) {
+                const path = `img/${m[1]}`;
+                const entry = zip.file(path);
+                if (entry) {
+                    const b64 = await entry.async("base64");
+                    const dataUrl = `data:${guessMimeType(path)};base64,${b64}`;
+                    html = html.split(`src="${path}"`).join(`src="${dataUrl}"`);
+                    html = html.split(`src='${path}'`).join(`src="${dataUrl}"`);
+                }
+            }
+            return html;
+        }
+
+        async function parseModZip(file) {
+            const zip = await JSZip.loadAsync(file);
+
+            const manifestFile = zip.file("meta/manifest.json");
+            if (!manifestFile) throw new Error("meta/manifest.json não encontrado dentro do mod.");
+            const manifest = JSON.parse(await manifestFile.async("string"));
+            if (!manifest.id || !manifest.name) throw new Error("O manifest.json precisa ter pelo menos 'id' e 'name'.");
+
+            let iconDataUrl = null;
+            const icoFile = zip.file("ico.png");
+            if (icoFile) {
+                const b64 = await icoFile.async("base64");
+                iconDataUrl = `data:image/png;base64,${b64}`;
+            }
+
+            let dataHtml = null;
+            const dataHtmlFile = zip.file("data.html");
+            if (dataHtmlFile) {
+                dataHtml = await resolveHtmlImageRefs(await dataHtmlFile.async("string"), zip);
+            }
+
+            const imgVarCache = {};
+            async function resolveImgVar(varName) {
+                if (varName in imgVarCache) return imgVarCache[varName];
+                const matches = zip.file(new RegExp("^img/" + varName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + "\\.[a-zA-Z0-9]+$"));
+                if (!matches || !matches.length) { imgVarCache[varName] = ''; return ''; }
+                const entry = matches[0];
+                const b64 = await entry.async("base64");
+                const url = `data:${guessMimeType(entry.name)};base64,${b64}`;
+                imgVarCache[varName] = url;
+                return url;
+            }
+
+            const tabs = [];
+            for (const tabDef of (manifest.tabs || [])) {
+                let templateHtml = '';
+                if (tabDef.template) {
+                    const tplFile = zip.file(tabDef.template);
+                    if (tplFile) templateHtml = await tplFile.async("string");
+                }
+                const varNames = [...new Set([...templateHtml.matchAll(/\{\{img:([a-zA-Z0-9_\-]+)\}\}/g)].map(m => m[1]))];
+                for (const varName of varNames) {
+                    const url = await resolveImgVar(varName);
+                    templateHtml = templateHtml.split(`{{img:${varName}}}`).join(url);
+                }
+                tabs.push({
+                    id: tabDef.id || `tab_${tabs.length}`,
+                    label: tabDef.label || 'Matéria do Mod',
+                    icon: tabDef.icon || '🧩',
+                    target: tabDef.target || 'main',
+                    fontFamily: tabDef.fontFamily || null,
+                    resolvedTemplate: templateHtml
+                });
+            }
+
+            const fonts = [];
+            for (const fontDef of (manifest.fonts || [])) {
+                if (!fontDef.file || !fontDef.family) continue;
+                const fontFile = zip.file(fontDef.file);
+                if (!fontFile) continue;
+                const b64 = await fontFile.async("base64");
+                fonts.push({
+                    family: fontDef.family,
+                    weight: fontDef.weight || '400',
+                    style: fontDef.style || 'normal',
+                    dataUrl: `data:${guessFontMimeType(fontDef.file)};base64,${b64}`
+                });
+            }
+
+            // Tema: opcionalmente, um mod pode reformular a aparência de TODO
+            // o jornal (cores, fontes, texturas de fundo) via manifest.theme:
+            // {
+            //   "label": "Tema Minecraft",
+            //   "variables": { "--parchment": "#c6c6c6", "--title-font": "'MinecraftFont', monospace", ... },
+            //   "containerBackground": "img:varname",  // textura de fundo do pergaminho
+            //   "bodyBackground": "img:varname",        // textura de fundo da página
+            //   "css": "meta/theme.css"                 // CSS livre adicional (opcional)
+            // }
+            let theme = null;
+            if (manifest.theme) {
+                theme = {
+                    label: manifest.theme.label || 'Tema do Mod',
+                    variables: manifest.theme.variables || {},
+                    containerBackgroundUrl: null,
+                    bodyBackgroundUrl: null,
+                    css: ''
+                };
+                if (typeof manifest.theme.containerBackground === 'string' && manifest.theme.containerBackground.startsWith('img:')) {
+                    theme.containerBackgroundUrl = await resolveImgVar(manifest.theme.containerBackground.slice(4));
+                }
+                if (typeof manifest.theme.bodyBackground === 'string' && manifest.theme.bodyBackground.startsWith('img:')) {
+                    theme.bodyBackgroundUrl = await resolveImgVar(manifest.theme.bodyBackground.slice(4));
+                }
+                if (manifest.theme.css) {
+                    const cssFile = zip.file(manifest.theme.css);
+                    if (cssFile) theme.css = await cssFile.async("string");
+                }
+            }
+
+            return {
+                modId: `${manifest.id}__${Date.now()}`,
+                manifestId: manifest.id,
+                name: manifest.name,
+                version: manifest.version || '',
+                author: manifest.author || '',
+                description: manifest.description || '',
+                icon: iconDataUrl,
+                dataHtml: dataHtml,
+                tabs,
+                fonts,
+                theme,
+                enabled: true
+            };
+        }
+
+        function triggerModUpload() { document.getElementById('mod-input').click(); }
+
+        async function handleModFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            try {
+                const mod = await parseModZip(file);
+                loadedMods.push(mod);
+                injectModFonts(mod);
+                renderModsList();
+                renderModTabButtons();
+            } catch (err) {
+                console.error(err);
+                alert("Falha ao carregar o mod: " + err.message);
+            }
+            event.target.value = '';
+        }
+
+        function injectModFonts(mod) {
+            if (!mod.fonts || !mod.fonts.length) return;
+            let css = '';
+            mod.fonts.forEach(f => {
+                css += `@font-face { font-family: "${f.family}"; src: url(${f.dataUrl}); font-weight: ${f.weight}; font-style: ${f.style}; }\n`;
+            });
+            const style = document.createElement('style');
+            style.id = `mod-font-${mod.modId}`;
+            style.textContent = css;
+            document.head.appendChild(style);
+        }
+
+        function removeModFonts(modId) {
+            const style = document.getElementById(`mod-font-${modId}`);
+            if (style) style.remove();
+        }
+
+        function openModManager() {
+            renderModsList();
+            document.getElementById('mod-manager-overlay').classList.add('open');
+        }
+        function closeModManager() {
+            document.getElementById('mod-manager-overlay').classList.remove('open');
+        }
+
+        function renderModsList() {
+            const list = document.getElementById('mod-list');
+            if (!loadedMods.length) {
+                list.innerHTML = '<div class="mod-empty-msg">Nenhum mod carregado ainda.</div>';
+                return;
+            }
+            list.innerHTML = loadedMods.map(mod => `
+                <div class="mod-list-item">
+                    <img class="mod-icon" src="${mod.icon || ''}" onerror="this.style.visibility='hidden'" alt="ícone">
+                    <div class="mod-info-col">
+                        <div class="mod-name">${escapeHtml(mod.name)}</div>
+                        <div class="mod-meta-line">${escapeHtml(mod.author || 'Desconhecido')} · v${escapeHtml(mod.version || '?')}</div>
+                    </div>
+                    <div class="mod-actions">
+                        <button title="Sobre o mod" onclick="showModInfo('${mod.modId}')">ℹ️</button>
+                        ${mod.theme ? `<button title="${activeThemeModId === mod.modId ? 'Remover tema (voltar ao padrão)' : (mod.theme.label || 'Aplicar tema')}" class="${activeThemeModId === mod.modId ? '' : 'disabled-mod'}" onclick="applyModTheme('${mod.modId}')">🎨</button>` : ''}
+                        <button title="${mod.enabled ? 'Desativar' : 'Ativar'}" class="${mod.enabled ? '' : 'disabled-mod'}" onclick="toggleModEnabled('${mod.modId}')">${mod.enabled ? '👁️' : '🚫'}</button>
+                        <button title="Remover" onclick="removeMod('${mod.modId}')">✕</button>
+                    </div>
+                </div>
+                ${mod.theme ? `<div class="mod-meta-line" style="margin: -4px 0 8px 50px; opacity:0.6;">${activeThemeModId === mod.modId ? '✅ Tema aplicado: ' : '🎨 Tema disponível: '}${escapeHtml(mod.theme.label)}</div>` : ''}
+            `).join('');
+        }
+
+        function toggleModEnabled(modId) {
+            const mod = loadedMods.find(m => m.modId === modId);
+            if (!mod) return;
+            mod.enabled = !mod.enabled;
+            if (!mod.enabled && activeThemeModId === modId) revertTheme();
+            renderModsList();
+            renderModTabButtons();
+        }
+
+        function removeMod(modId) {
+            if (!confirm("Remover este mod da sessão? Matérias já criadas com ele permanecem no jornal.")) return;
+            if (activeThemeModId === modId) revertTheme();
+            loadedMods = loadedMods.filter(m => m.modId !== modId);
+            removeModFonts(modId);
+            renderModsList();
+            renderModTabButtons();
+        }
+
+        // --- TEMAS DE MODS (reformulam a aparência de todo o jornal) ---
+        const THEME_VARIABLE_NAMES = ['--parchment', '--ink', '--ink-light', '--accent', '--title-font', '--meta-font', '--body-font'];
+
+        function applyModTheme(modId) {
+            const mod = loadedMods.find(m => m.modId === modId);
+            if (!mod || !mod.theme) return;
+            if (activeThemeModId === modId) { revertTheme(); return; }
+            revertTheme();
+
+            const root = document.documentElement.style;
+            Object.entries(mod.theme.variables || {}).forEach(([k, v]) => {
+                if (THEME_VARIABLE_NAMES.includes(k)) root.setProperty(k, v);
+            });
+
+            const container = document.getElementById('newspaper-container');
+            if (mod.theme.containerBackgroundUrl) {
+                container.style.backgroundImage = `url('${mod.theme.containerBackgroundUrl}')`;
+                container.style.backgroundSize = 'cover';
+                container.style.backgroundRepeat = 'repeat';
+            }
+            if (mod.theme.bodyBackgroundUrl) {
+                document.body.style.backgroundImage = `url('${mod.theme.bodyBackgroundUrl}')`;
+            }
+            if (mod.theme.css) {
+                const style = document.createElement('style');
+                style.id = 'mod-theme-style';
+                style.textContent = mod.theme.css;
+                document.head.appendChild(style);
+            }
+            activeThemeModId = modId;
+            renderModsList();
+        }
+
+        function revertTheme() {
+            const root = document.documentElement.style;
+            THEME_VARIABLE_NAMES.forEach(v => root.removeProperty(v));
+            const container = document.getElementById('newspaper-container');
+            container.style.backgroundImage = '';
+            container.style.backgroundSize = '';
+            container.style.backgroundRepeat = '';
+            document.body.style.backgroundImage = '';
+            const style = document.getElementById('mod-theme-style');
+            if (style) style.remove();
+            activeThemeModId = null;
+            renderModsList();
+        }
+
+        function showModInfo(modId) {
+            const mod = loadedMods.find(m => m.modId === modId);
+            if (!mod) return;
+            document.getElementById('mod-info-title').textContent = `📜 ${mod.name}`;
+            const fallback = `
+                <html><body style="font-family:sans-serif; padding:16px; color:#2c1e16;">
+                    <h2>${escapeHtml(mod.name)}</h2>
+                    <p><b>Autor:</b> ${escapeHtml(mod.author || '—')}</p>
+                    <p><b>Versão:</b> ${escapeHtml(mod.version || '—')}</p>
+                    <p>${escapeHtml(mod.description || 'Este mod não possui uma página data.html.')}</p>
+                </body></html>`;
+            document.getElementById('mod-info-iframe').srcdoc = mod.dataHtml || fallback;
+            document.getElementById('mod-info-overlay').classList.add('open');
+        }
+        function closeModInfo() {
+            document.getElementById('mod-info-overlay').classList.remove('open');
+            document.getElementById('mod-info-iframe').srcdoc = '';
+        }
+
+        function renderModTabButtons() {
+            const container = document.getElementById('mod-tab-buttons');
+            container.innerHTML = '';
+            loadedMods.filter(m => m.enabled).forEach(mod => {
+                mod.tabs.forEach(tab => {
+                    const targets = tab.target === 'both' ? ['main', 'sidebar'] : [tab.target];
+                    targets.forEach(t => {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn mod-tab-btn';
+                        const suffix = tab.target === 'both' ? (t === 'main' ? ' (Principal)' : ' (Lateral)') : '';
+                        btn.innerHTML = `<span>${tab.icon}</span> ${escapeHtml(tab.label)}${suffix}`;
+                        btn.onclick = () => addModArticle(mod.modId, tab.id, t);
+                        container.appendChild(btn);
+                    });
+                });
+            });
+        }
+
+        function addModArticle(modId, tabId, target) {
+            const mod = loadedMods.find(m => m.modId === modId);
+            if (!mod) { alert("Este mod não está mais carregado nesta sessão."); return; }
+            const tab = mod.tabs.find(t => t.id === tabId);
+            if (!tab) return;
+
+            const container = document.getElementById(target === 'sidebar' ? 'sidebar-column' : 'main-column');
+            const article = document.createElement('div');
+            article.className = 'article type-mod-article';
+            article.setAttribute('data-mod-id', mod.manifestId);
+            article.setAttribute('data-tab-id', tab.id);
+            if (tab.fontFamily) article.style.fontFamily = `"${tab.fontFamily}", 'Crimson Text', serif`;
+            article.innerHTML = `
+                <div class="remove-btn" onclick="this.parentElement.remove()" title="Remover">✕</div>
+                ${tab.resolvedTemplate}
+            `;
+            container.appendChild(article);
+            article.querySelectorAll('.user-image').forEach(setupDrag);
+        }
+
         // --- SISTEMA DE EXPORTAÇÃO PRO (.jmodel) ---
         async function exportModel() {
             const zip = new JSZip();
@@ -815,6 +1365,20 @@
                         targetArray.push(articleObj);
                     } else if (el.classList.contains('type-divider')) {
                         targetArray.push({ type: 'divider' });
+                    } else if (el.classList.contains('type-mod-article')) {
+                        // Matérias criadas por mods: salvamos o HTML já resolvido
+                        // (imagens embutidas como base64), então reabrem mesmo
+                        // que o mod não esteja carregado na sessão seguinte.
+                        const clone = el.cloneNode(true);
+                        const rb = clone.querySelector('.remove-btn');
+                        if (rb) rb.remove();
+                        targetArray.push({
+                            type: 'mod-article',
+                            modId: el.getAttribute('data-mod-id') || '',
+                            tabId: el.getAttribute('data-tab-id') || '',
+                            fontFamily: el.style.fontFamily || '',
+                            html: clone.innerHTML
+                        });
                     }
                 });
             }
@@ -921,6 +1485,18 @@
                                 ${isMain ? '❦ ❧ ❦' : '❖ ❖ ❖'}
                             `;
                             container.appendChild(divider);
+                        } else if (item.type === 'mod-article') {
+                            const article = document.createElement('div');
+                            article.className = 'article type-mod-article';
+                            if (item.modId) article.setAttribute('data-mod-id', item.modId);
+                            if (item.tabId) article.setAttribute('data-tab-id', item.tabId);
+                            if (item.fontFamily) article.style.fontFamily = item.fontFamily;
+                            article.innerHTML = `
+                                <div class="remove-btn" onclick="this.parentElement.remove()" title="Remover">✕</div>
+                                ${item.html}
+                            `;
+                            container.appendChild(article);
+                            article.querySelectorAll('.user-image').forEach(setupDrag);
                         }
                     }
                 }
