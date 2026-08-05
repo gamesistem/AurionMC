@@ -224,6 +224,21 @@
             text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
         }
 
+        /* Usada apenas no clone de exportação (ver downloadNewspaper): mesma
+           aparência do ::first-letter acima, mas como elemento real, já que
+           o html2canvas não rasteriza bem pseudo-elemento + float juntos. */
+        .drop-cap-letter {
+            font-family: var(--title-font);
+            float: left;
+            font-size: 75px;
+            line-height: 60px;
+            padding-top: 8px;
+            padding-right: 8px;
+            padding-left: 0;
+            color: var(--ink);
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+        }
+
         .divider-ornament {
             text-align: center;
             font-size: 24px;
@@ -1530,8 +1545,28 @@
                 if(!p.querySelector('.user-image')) p.style.border = 'none';
             });
 
+            // --- Clone "seguro" só para a captura ---
+            // O html2canvas não suporta bem text-align: justify (o espaçamento
+            // entre palavras sai irregular) nem ::first-letter flutuante (a
+            // letra capitular do drop-cap "quebra" para uma linha sozinha).
+            // Em vez de arriscar isso no jornal de verdade, fotografamos uma
+            // cópia fora da tela com o texto alinhado à esquerda e a letra
+            // capitular como um elemento normal.
+            const clone = container.cloneNode(true);
+            clone.querySelectorAll('p.editable').forEach(el => { el.style.textAlign = 'left'; });
+            clone.querySelectorAll('.drop-cap').forEach(p => {
+                p.classList.remove('drop-cap');
+                extractDropCapLetter(p);
+            });
+
+            clone.style.position = 'fixed';
+            clone.style.top = '0';
+            clone.style.left = '-99999px';
+            clone.style.margin = '0';
+            document.body.appendChild(clone);
+
             try {
-                const canvas = await html2canvas(container, {
+                const canvas = await html2canvas(clone, {
                     scale: 2,
                     useCORS: true,
                     backgroundColor: '#120e0b' // Mantém o fundo da mesa para uma borda bonita se houver overflow
@@ -1543,13 +1578,45 @@
                 link.click();
             } catch (err) {
                 console.error("Erro ao pintar quadro:", err);
+                alert("Falha ao gerar a imagem do jornal.");
             } finally {
+                document.body.removeChild(clone);
                 btns.forEach(b => b.style.display = '');
                 imgControls.forEach(c => c.style.display = '');
                 emptyPlaceholders.forEach(p => {
                     if(!p.querySelector('.user-image')) p.style.border = '';
                 });
             }
+        }
+
+        // Substitui o ::first-letter flutuante por um <span class="drop-cap-letter">
+        // real, preservando qualquer negrito/itálico ao redor: percorre os nós de
+        // texto do parágrafo, acha o primeiro caractere não-espaço e o isola.
+        function extractDropCapLetter(paragraph) {
+            const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT, {
+                acceptNode: node => node.textContent.trim().length > 0 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP
+            });
+            const node = walker.nextNode();
+            if (!node) return;
+
+            const text = node.textContent;
+            let i = 0;
+            while (i < text.length && /\s/.test(text[i])) i++;
+            if (i >= text.length) return;
+
+            const firstChar = text[i];
+            const before = text.slice(0, i);
+            const after = text.slice(i + 1);
+            const parent = node.parentNode;
+
+            const span = document.createElement('span');
+            span.className = 'drop-cap-letter';
+            span.textContent = firstChar;
+
+            if (before) parent.insertBefore(document.createTextNode(before), node);
+            parent.insertBefore(span, node);
+            parent.insertBefore(document.createTextNode(after), node);
+            parent.removeChild(node);
         }
     </script>
 </body>
