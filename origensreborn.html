@@ -4032,14 +4032,36 @@ on origins reborn ability trigger:
             renderPowers();
         }
 
+        // Mantém os poderes selecionados mesmo quando a lista é filtrada ou redesenhada.
+        const selectedBuilderPowers = new Set();
+
+        function syncBuilderSelections() {
+            document.querySelectorAll('.builder-power-checkbox').forEach(cb => {
+                if (cb.checked) selectedBuilderPowers.add(cb.value);
+                else selectedBuilderPowers.delete(cb.value);
+            });
+        }
+
+        function onBuilderPowerChange(checkbox) {
+            if (checkbox.checked) selectedBuilderPowers.add(checkbox.value);
+            else selectedBuilderPowers.delete(checkbox.value);
+            updateJsonPreview();
+        }
+
         function populateBuilderSelect(filterText = '') {
             const container = document.getElementById('builder-powers-select');
-            const filtered = powersData.filter(p => p.name.toLowerCase().includes(filterText) || p.jsonKey.toLowerCase().includes(filterText));
+            const query = filterText.toLowerCase().trim();
+            syncBuilderSelections();
+
+            const filtered = powersData.filter(p =>
+                p.name.toLowerCase().includes(query) ||
+                p.jsonKey.toLowerCase().includes(query)
+            );
 
             container.innerHTML = filtered.map(p => `
                 <label class="flex items-center justify-between p-2 rounded-lg bg-slate-950/60 hover:bg-slate-800/60 cursor-pointer border border-slate-800/80 transition text-xs">
                     <div class="flex items-center gap-2 truncate pr-2">
-                        <input type="checkbox" value="${p.jsonKey}" onchange="updateJsonPreview()" class="builder-power-checkbox rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-0">
+                        <input type="checkbox" value="${p.jsonKey}" ${selectedBuilderPowers.has(p.jsonKey) ? 'checked' : ''} onchange="onBuilderPowerChange(this)" class="builder-power-checkbox rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-0">
                         <span class="text-slate-200 font-medium truncate">${p.name}</span>
                     </div>
                     <span class="text-[10px] font-mono text-slate-500 truncate">${p.plugin}</span>
@@ -4050,6 +4072,7 @@ on origins reborn ability trigger:
         function filterBuilderPowers() {
             const query = document.getElementById('builder-search').value.toLowerCase().trim();
             populateBuilderSelect(query);
+            updateJsonPreview();
         }
 
         function addCustomPowerKey() {
@@ -4103,8 +4126,9 @@ on origins reborn ability trigger:
             const icon = document.getElementById('builder-icon').value.trim();
             const impact = parseInt(document.getElementById('builder-impact').value) || 1;
 
-            const selectedCheckboxes = document.querySelectorAll('.builder-power-checkbox:checked');
-            const powersList = Array.from(selectedCheckboxes).map(cb => cb.value);
+            // Usa o estado persistente para não perder poderes que ficaram ocultos pelo filtro.
+            syncBuilderSelections();
+            const powersList = Array.from(selectedBuilderPowers);
 
             document.getElementById('builder-filepath-preview').innerText = `plugins/Origins-Reborn/origins/${id}.json`;
 
