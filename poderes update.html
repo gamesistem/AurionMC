@@ -1,0 +1,4165 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiki Completa de Poderes & Addons - Origins-Reborn</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            900: '#14532d',
+                        },
+                        darkbg: '#0f172a',
+                        cardbg: '#1e293b',
+                        codebg: '#090d16',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glow-green:hover {
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.25);
+        }
+    </style>
+</head>
+<body class="bg-darkbg text-slate-200 font-sans min-h-screen flex flex-col">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+        <i class="fa-solid fa-circle-check text-xl"></i>
+        <span id="toast-message" class="font-medium text-sm">Copiado para a área de transferência!</span>
+    </div>
+
+    <!-- Header / Navigation -->
+    <header class="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/90 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-emerald-500/20">
+                    <i class="fa-solid fa-cube"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white leading-none flex items-center gap-2">
+                        Origins-Reborn <span class="bg-emerald-500/20 text-emerald-400 text-xs px-2 py-0.5 rounded-full border border-emerald-500/30">Wiki + Addons</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 mt-0.5">Base de dados completa: Core + todos os poderes do Buscador + Addons & Skript</p>
+                </div>
+            </div>
+
+            <!-- Tab Navigation Buttons -->
+            <nav class="hidden md:flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/50">
+                <button onclick="switchTab('powers')" id="tab-btn-powers" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-emerald-500 text-slate-950 font-semibold shadow">
+                    <i class="fa-solid fa-bolt mr-1.5"></i> Todos os Poderes
+                </button>
+                <button onclick="switchTab('json-builder')" id="tab-btn-json-builder" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-700/50">
+                    <i class="fa-solid fa-code mr-1.5"></i> Criador de Origin (.json)
+                </button>
+                <button onclick="switchTab('triggers')" id="tab-btn-triggers" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-700/50">
+                    <i class="fa-solid fa-sliders mr-1.5"></i> Triggers & Conditions
+                </button>
+                <button onclick="switchTab('addons')" id="tab-btn-addons" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-700/50">
+                    <i class="fa-solid fa-puzzle-piece mr-1.5"></i> Addons & Skript
+                </button>
+            </nav>
+
+            <a href="https://starshooter.gitbook.io/origins-reborn/configuration" target="_blank" rel="noopener noreferrer" class="hidden lg:flex items-center gap-2 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3 py-2 rounded-lg border border-slate-700 transition">
+                <i class="fa-solid fa-book text-emerald-400"></i> GitBook Oficial
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
+        </div>
+        
+        <!-- Mobile Navigation bar -->
+        <div class="md:hidden flex items-center justify-around bg-slate-900 border-t border-slate-800 py-2 text-xs">
+            <button onclick="switchTab('powers')" class="text-emerald-400 font-medium flex flex-col items-center gap-1">
+                <i class="fa-solid fa-bolt text-sm"></i> Poderes
+            </button>
+            <button onclick="switchTab('json-builder')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center gap-1">
+                <i class="fa-solid fa-code text-sm"></i> JSON Generator
+            </button>
+            <button onclick="switchTab('triggers')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center gap-1">
+                <i class="fa-solid fa-sliders text-sm"></i> Triggers
+            </button>
+            <button onclick="switchTab('addons')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center gap-1">
+                <i class="fa-solid fa-puzzle-piece text-sm"></i> Addons
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ================= TAB 1: POWERS LIST ================= -->
+        <section id="tab-powers" class="space-y-6">
+            <!-- Search & Filter Controls -->
+            <div class="glass-panel p-5 rounded-2xl space-y-4">
+                <div class="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
+                    <!-- Search input -->
+                    <div class="relative flex-1">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="power-search" oninput="filterPowers()" placeholder="Pesquisar por nome ou ID em JSON (ex: sonic_boom, transmute_copper, throw_ender_pearl)..." class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-11 pr-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition">
+                    </div>
+
+                    <!-- Type & Plugin filter dropdowns -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <!-- Addon Plugin Filter -->
+                        <select id="plugin-filter" onchange="filterPowers()" class="bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50">
+                            <option value="all">📦 Todos os Plugins / Addons</option>
+                            <option value="Origins-Reborn">💚 Core (Origins-Reborn)</option>
+                            <option value="Origins-Monsters">🧟 Addon: Origins-Monsters</option>
+                            <option value="Origins-Magic">🔮 Addon: Origins-Magic</option>
+                            <option value="Origins-Mobs">👻 Addon: Origins-Mobs</option>
+                            <option value="Origins-Fantasy">🧝 Addon: Origins-Fantasy</option>
+                            <option value="Origins-Classes">🗡️ Addon: Origins-Classes</option>
+                            <option value="Skript">📜 Skript / Custom</option>
+                        </select>
+
+                        <select id="type-filter" onchange="filterPowers()" class="bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50">
+                            <option value="all">⚡ Todos os Tipos</option>
+                            <option value="active">⚡ Ativável (Trigger)</option>
+                            <option value="passive">🛡️ Passivo / Buff</option>
+                            <option value="debuff">⚠️ Restrição / Debuff</option>
+                            <option value="transformation">🔄 Transformação</option>
+                            <option value="cosmetic">🎨 Cosmético</option>
+                        </select>
+
+                        <select id="impact-filter" onchange="filterPowers()" class="bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50">
+                            <option value="all">🎯 Todos os Impactos</option>
+                            <option value="positive">🟢 Positivo</option>
+                            <option value="neutral">🟡 Neutro</option>
+                            <option value="negative">🔴 Negativo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Origin Badges filter -->
+                <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800" id="origin-filter-container">
+                    <!-- Dynamic origin pills injected here -->
+                </div>
+            </div>
+
+            <!-- Total count bar -->
+            <div class="flex items-center justify-between text-xs text-slate-400 px-1">
+                <span>Exibindo <strong id="visible-count" class="text-emerald-400 font-semibold">0</strong> poderes</span>
+                <span class="text-slate-500"><i class="fa-solid fa-hand-pointer text-emerald-400 mr-1"></i> Clique na chave JSON do card para copiar instantaneamente</span>
+            </div>
+
+            <!-- Powers Grid -->
+            <div id="powers-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Power Cards injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- ================= TAB 2: JSON ORIGIN BUILDER ================= -->
+        <section id="tab-json-builder" class="hidden space-y-6">
+            <div class="glass-panel p-6 rounded-2xl">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i> Gerador de Arquivo `.json` de Origem Customizada
+                    </h2>
+                    <p class="text-sm text-slate-400 mt-1">
+                        Combine habilidades do plugin base, dos addons (<code class="text-amber-400 font-mono">originmonsters:</code>, <code class="text-purple-400 font-mono">originmagic:</code>, etc.) ou chaves Skript personalizadas.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Form Controls -->
+                    <div class="lg:col-span-5 space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">ID do Ficheiro (nome do .json)</label>
+                            <input type="text" id="builder-id" value="minha_origem_custom" oninput="updateJsonPreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 font-mono focus:border-emerald-500 focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Nome de Exibição (Display Name)</label>
+                            <input type="text" id="builder-name" value="Mago Sombrio" oninput="updateJsonPreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Descrição Curta</label>
+                            <textarea id="builder-desc" rows="2" oninput="updateJsonPreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">Mestre das sombras capaz de se tornar invisível no escuro e utilizar telepatia.</textarea>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Ícone (Item do Minecraft)</label>
+                                <input type="text" id="builder-icon" value="minecraft:wither_rose" oninput="updateJsonPreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm font-mono text-slate-100 focus:border-emerald-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Impacto (Dificuldade)</label>
+                                <select id="builder-impact" onchange="updateJsonPreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
+                                    <option value="1">1 (Fácil / Baixo)</option>
+                                    <option value="2" selected>2 (Médio)</option>
+                                    <option value="3">3 (Difícil / Alto)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Manual Custom Key Addition -->
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                            <label class="block text-xs font-semibold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fa-solid fa-plus-circle"></i> Adicionar Poder Custom / Addon Não Listado
+                            </label>
+                            <div class="flex gap-2">
+                                <input type="text" id="custom-power-key-input" placeholder="ex: skript:meu_super_pulo" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-100 font-mono focus:border-amber-400 focus:outline-none">
+                                <button onclick="addCustomPowerKey()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold transition">
+                                    Adicionar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Power selection list -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Selecione os Poderes da Origem:</label>
+                                <input type="text" id="builder-search" oninput="filterBuilderPowers()" placeholder="Filtrar lista..." class="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1 text-xs text-slate-200">
+                            </div>
+                            <div id="builder-powers-select" class="max-h-60 overflow-y-auto space-y-1.5 p-3 bg-slate-900 rounded-xl border border-slate-800">
+                                <!-- Checkboxes injected here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JSON Output Box -->
+                    <div class="lg:col-span-7 flex flex-col">
+                        <div class="flex items-center justify-between bg-slate-900 border-t border-x border-slate-800 px-4 py-2.5 rounded-t-xl">
+                            <span class="text-xs font-mono text-slate-400 flex items-center gap-2 truncate pr-2">
+                                <i class="fa-solid fa-file-code text-emerald-400"></i>
+                                <span id="builder-filepath-preview">plugins/Origins-Reborn/origins/minha_origem_custom.json</span>
+                            </span>
+                            <button onclick="copyGeneratedJson()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 px-3 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 shadow flex-shrink-0">
+                                <i class="fa-solid fa-copy"></i> Copiar JSON
+                            </button>
+                        </div>
+                        <pre id="json-preview-code" class="flex-1 bg-codebg border border-slate-800 p-4 rounded-b-xl font-mono text-xs text-emerald-300 overflow-x-auto select-all leading-relaxed min-h-[300px]"></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 3: TRIGGERS & CONDITIONS ================= -->
+        <section id="tab-triggers" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Trigger Types Reference -->
+                <div class="glass-panel p-6 rounded-2xl space-y-4">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-amber-400"></i> Gatilhos (`trigger`)
+                    </h2>
+                    <p class="text-xs text-slate-400">
+                        Usados em <code class="text-emerald-400 font-mono bg-slate-900 px-1.5 py-0.5 rounded">ability-config.yml</code> para definir qual ação do jogador aciona uma habilidade ativável.
+                    </p>
+
+                    <div class="space-y-2.5">
+                        <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex justify-between items-start">
+                            <div>
+                                <span class="font-mono text-xs font-bold text-amber-400">LEFT_CLICK</span>
+                                <p class="text-xs text-slate-300 mt-0.5">Clique esquerdo com a mão (Ataque/Golpe no ar ou objeto).</p>
+                            </div>
+                            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">Padrão Enderian</span>
+                        </div>
+
+                        <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex justify-between items-start">
+                            <div>
+                                <span class="font-mono text-xs font-bold text-amber-400">RIGHT_CLICK</span>
+                                <p class="text-xs text-slate-300 mt-0.5">Clique direito com a mão (Interagir).</p>
+                            </div>
+                            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">Comum</span>
+                        </div>
+
+                        <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex justify-between items-start">
+                            <div>
+                                <span class="font-mono text-xs font-bold text-amber-400">OFFHAND_SWAP</span>
+                                <p class="text-xs text-slate-300 mt-0.5">Troca de item para a mão secundária (Tecla padrão: <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-200">F</kbd>).</p>
+                            </div>
+                            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">Prático</span>
+                        </div>
+
+                        <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex justify-between items-start">
+                            <div>
+                                <span class="font-mono text-xs font-bold text-amber-400">JUMP</span>
+                                <p class="text-xs text-slate-300 mt-0.5">Ao dar um pulo (Tecla Espaço).</p>
+                            </div>
+                            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">Movimento</span>
+                        </div>
+
+                        <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex justify-between items-start">
+                            <div>
+                                <span class="font-mono text-xs font-bold text-amber-400">SNEAK_ON / SNEAK_OFF / SNEAK_TOGGLE</span>
+                                <p class="text-xs text-slate-300 mt-0.5">Quando começa a agachar, solta o agachar, ou alterna (Tecla Shift).</p>
+                            </div>
+                            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">Padrão Elytrian</span>
+                        </div>
+
+                        <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex justify-between items-start">
+                            <div>
+                                <span class="font-mono text-xs font-bold text-amber-400">SPRINT_ON / SPRINT_OFF / SPRINT_TOGGLE</span>
+                                <p class="text-xs text-slate-300 mt-0.5">Ao iniciar ou parar de correr.</p>
+                            </div>
+                            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">Mobilidade</span>
+                        </div>
+
+                        <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex justify-between items-start">
+                            <div>
+                                <span class="font-mono text-xs font-bold text-amber-400">RIGHT_CLICK_CHESTPLATE</span>
+                                <p class="text-xs text-slate-300 mt-0.5">Clique direito no slot da peitoral no inventário.</p>
+                            </div>
+                            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">Padrão Shulk</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trigger Conditions Reference -->
+                <div class="glass-panel p-6 rounded-2xl space-y-4">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-filter text-sky-400"></i> Condições (`conditions`)
+                    </h2>
+                    <p class="text-xs text-slate-400">
+                        Restrições para garantir que o poder só ative sob circunstâncias específicas.
+                    </p>
+
+                    <div class="space-y-2.5">
+                        <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800">
+                            <span class="font-mono text-xs font-bold text-sky-400">EMPTY_HAND</span>
+                            <p class="text-xs text-slate-300 mt-0.5">A mão principal do jogador precisa estar sem nenhum item.</p>
+                        </div>
+
+                        <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800">
+                            <span class="font-mono text-xs font-bold text-sky-400">NO_BLOCK</span>
+                            <p class="text-xs text-slate-300 mt-0.5">O clique não pode ter sido feito mirado diretamente num bloco interativo.</p>
+                        </div>
+
+                        <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800">
+                            <span class="font-mono text-xs font-bold text-sky-400">GLIDING</span>
+                            <p class="text-xs text-slate-300 mt-0.5">O jogador precisa estar ativamente voando/planando.</p>
+                        </div>
+
+                        <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800">
+                            <span class="font-mono text-xs font-bold text-sky-400">CROUCHING</span>
+                            <p class="text-xs text-slate-300 mt-0.5">O jogador precisa estar agachado (agachando).</p>
+                        </div>
+
+                        <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800">
+                            <span class="font-mono text-xs font-bold text-sky-400">HOLDING_SWORD</span>
+                            <p class="text-xs text-slate-300 mt-0.5">O jogador precisa estar segurando uma espada.</p>
+                        </div>
+                    </div>
+
+                    <!-- Config YAML Example Box -->
+                    <div class="pt-2">
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Exemplo em `ability-config.yml`:</label>
+                        <pre class="bg-codebg border border-slate-800 p-3.5 rounded-xl text-xs font-mono text-slate-300 overflow-x-auto">
+<span class="text-amber-400">originmonsters</span>:
+  <span class="text-emerald-400">sonic-boom</span>:
+    <span class="text-sky-300">cooldown</span>: 20
+    <span class="text-sky-300">trigger</span>: LEFT_CLICK
+    <span class="text-sky-300">conditions</span>:
+      - EMPTY_HAND
+      - NO_BLOCK</pre>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= TAB 4: ADDONS & SKRIPT ================= -->
+        <section id="tab-addons" class="hidden space-y-6">
+            <div class="glass-panel p-6 rounded-2xl space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-puzzle-piece text-purple-400"></i> Plugins Addons Suportados & Skript
+                    </h2>
+                    <p class="text-sm text-slate-400 mt-1">
+                        O Origins-Reborn possui integração nativa com múltiplos addons de PaperMC e permite criar poderes sem programar Java via Skript.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="w-8 h-8 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-dragon"></i>
+                            </div>
+                            <span class="text-[10px] bg-red-500/20 text-red-300 border border-red-500/30 px-2 py-0.5 rounded-full">Origins-Monsters</span>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">Monstros & Metamorfose</h3>
+                        <p class="text-xs text-slate-400">Origens como Warden, Creeper, Zombie, Stray, Drowned e Husk com transformações biomas.</p>
+                        <code class="block text-[11px] font-mono text-red-300 bg-slate-950 p-1.5 rounded mt-2">originmonsters:sonic_boom</code>
+                    </div>
+
+                    <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-wand-sparkles"></i>
+                            </div>
+                            <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full">Origins-Magic</span>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">Magia & Transmutação</h3>
+                        <p class="text-xs text-slate-400">Alquimista, Necromante, Telecinético, Healer, Shadowmancer e Hipnotizador.</p>
+                        <code class="block text-[11px] font-mono text-cyan-300 bg-slate-950 p-1.5 rounded mt-2">originmagic:transmute_copper</code>
+                    </div>
+
+                    <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-ghost"></i>
+                            </div>
+                            <span class="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full">Origins-Mobs</span>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">Transformação de Mobs</h3>
+                        <p class="text-xs text-slate-400">Habilidades e traços baseados nos Mobs clássicos do Minecraft (Slime, Spider, Creeper).</p>
+                        <code class="block text-[11px] font-mono text-purple-300 bg-slate-950 p-1.5 rounded mt-2">originmobs:slime_bounce</code>
+                    </div>
+
+                    <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-hat-wizard"></i>
+                            </div>
+                            <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full">Origins-Fantasy</span>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">Raças Fantásticas RPG</h3>
+                        <p class="text-xs text-slate-400">Gigantes, Elfos, Anões, Orcs e Merfolks com passivas de mineração e arco.</p>
+                        <code class="block text-[11px] font-mono text-indigo-300 bg-slate-950 p-1.5 rounded mt-2">originfantasy:giant_size</code>
+                    </div>
+
+                    <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-shield-cat"></i>
+                            </div>
+                            <span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full">Origins-Classes</span>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">Profissões & Classes</h3>
+                        <p class="text-xs text-slate-400">Comerciante, Minerador, Ferreiro, Guerreiro e Clérigo com buffs utilitários.</p>
+                        <code class="block text-[11px] font-mono text-amber-300 bg-slate-950 p-1.5 rounded mt-2">originclasses:merchant_discount</code>
+                    </div>
+
+                    <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-scroll"></i>
+                            </div>
+                            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full">Skript Integration</span>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">Scripts Personalizados</h3>
+                        <p class="text-xs text-slate-400">Registre poderes diretamente com sintaxe simples do plugin Skript do Paper.</p>
+                        <code class="block text-[11px] font-mono text-emerald-300 bg-slate-950 p-1.5 rounded mt-2">skript:meu_poder_custom</code>
+                    </div>
+                </div>
+
+                <!-- Skript custom power guide -->
+                <div class="p-5 bg-slate-900/90 border border-slate-800 rounded-xl space-y-3">
+                    <h3 class="text-md font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-scroll text-amber-400"></i> Exemplo de Criação com Skript
+                    </h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Ao rodar o Skript no Paper, o Origins-Reborn se registra como addon automaticamente. Você só precisa definir a habilidade no Skript e colocar no JSON da sua Origem!
+                    </p>
+                    <pre class="bg-codebg border border-slate-800 p-4 rounded-xl text-xs font-mono text-slate-300 overflow-x-auto">
+<span class="text-slate-500"># 1. Registre o poder no carregamento do Skript:</span>
+on load:
+    register an ability with key <span class="text-emerald-300">"skript:super_pulo"</span> and title <span class="text-emerald-300">"Super Pulo Celestial"</span> and description <span class="text-emerald-300">"Te lança para o alto ao ativar."</span>
+
+<span class="text-slate-500"># 2. Escute quando o jogador ativa o poder:</span>
+on origins reborn ability trigger:
+    if event-string is <span class="text-emerald-300">"super_pulo"</span>:
+        push player upwards at speed 2.5
+        send <span class="text-emerald-300">"&aVocê ativou o Super Pulo!"</span> to player</pre>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p>Origins-Reborn Wiki Customizada • Base de Dados do Plugin Base e Addons</p>
+            <p class="flex items-center gap-2">
+                <span>Clique em qualquer chave JSON para copiar rapidamente</span>
+                <i class="fa-solid fa-bolt text-emerald-500"></i>
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Data & Logic -->
+    <script>
+        // Expanded Database of Core + Addons (Origins-Monsters, Origins-Magic, Origins-Mobs, Origins-Fantasy, Origins-Classes, Skript)
+        const powersData = [
+            // ==================== CORE ORIGINS-REBORN ====================
+            {
+                id: "throw_ender_pearl",
+                jsonKey: "originsreborn:throw_ender_pearl",
+                plugin: "Origins-Reborn",
+                origin: "enderian",
+                originName: "Enderian",
+                name: "Arremessar Pérola do Fim",
+                type: "active",
+                impact: "positive",
+                trigger: "LEFT_CLICK",
+                conditions: ["EMPTY_HAND", "NO_BLOCK"],
+                cooldown: "30s",
+                description: "Permite arremessar uma pérola do fim sem consumir item no inventário ao clicar com a mão vazia."
+            },
+            {
+                id: "water_vulnerability",
+                jsonKey: "originsreborn:water_vulnerability",
+                plugin: "Origins-Reborn",
+                origin: "enderian",
+                originName: "Enderian",
+                name: "Hidrofobia (Dano na Água)",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["Em contato com Água/Chuva"],
+                cooldown: "N/A",
+                description: "Toma dano continuamente enquanto estiver em contato com água ou chuva."
+            },
+            {
+                id: "pumpkin_hate",
+                jsonKey: "originsreborn:pumpkin_hate",
+                plugin: "Origins-Reborn",
+                origin: "enderian",
+                originName: "Enderian",
+                name: "Aversão a Abóboras",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Não consegue ver jogadores usando abóbora na cabeça. Comer torta de abóbora causa envenenamento e náusea."
+            },
+            {
+                id: "extra_reach",
+                jsonKey: "originsreborn:extra_reach",
+                plugin: "Origins-Reborn",
+                origin: "enderian",
+                originName: "Enderian",
+                name: "Alcance Extra",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Aumenta o alcance natural do jogador para atacar e quebrar blocos a maior distância."
+            },
+            {
+                id: "gift_of_the_wings",
+                jsonKey: "originsreborn:gift_of_the_wings",
+                plugin: "Origins-Reborn",
+                origin: "elytrian",
+                originName: "Elytrian",
+                name: "Asas Nativas (Planar)",
+                type: "passive",
+                impact: "positive",
+                trigger: "JUMP (no ar)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Possui asas de Elytra nativas ativas mesmo sem ter o item peitoral equipado."
+            },
+            {
+                id: "aerial_launch",
+                jsonKey: "originsreborn:aerial_launch",
+                plugin: "Origins-Reborn",
+                origin: "elytrian",
+                originName: "Elytrian",
+                name: "Lançamento Aéreo",
+                type: "active",
+                impact: "positive",
+                trigger: "SNEAK_ON",
+                conditions: ["GLIDING"],
+                cooldown: "15s",
+                description: "Projeta o jogador para cima com grande velocidade enquanto estiver planando no ar."
+            },
+            {
+                id: "claustrophobia",
+                jsonKey: "originsreborn:claustrophobia",
+                plugin: "Origins-Reborn",
+                origin: "elytrian",
+                originName: "Elytrian",
+                name: "Claustrofobia",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["Bloco teto baixo"],
+                cooldown: "N/A",
+                description: "Ganha lentidão e fraqueza quando estiver sob um teto baixo ou em locais muito fechados."
+            },
+            {
+                id: "fire_immunity",
+                jsonKey: "originsreborn:fire_immunity",
+                plugin: "Origins-Reborn",
+                origin: "blazeborn",
+                originName: "Blazeborn",
+                name: "Imunidade Total ao Fogo",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Imunidade completa contra dano de fogo, lava, queimadura e magma."
+            },
+            {
+                id: "hotblooded",
+                jsonKey: "originsreborn:hotblooded",
+                plugin: "Origins-Reborn",
+                origin: "blazeborn",
+                originName: "Blazeborn",
+                name: "Ataque Flamejante",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["Em chamas"],
+                cooldown: "N/A",
+                description: "Causa dano extra de ataque quando o próprio corpo do jogador está pegando fogo."
+            },
+            {
+                id: "wall_climbing",
+                jsonKey: "originsreborn:wall_climbing",
+                plugin: "Origins-Reborn",
+                origin: "arachnid",
+                originName: "Arachnid",
+                name: "Escalar Paredes",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Mover na parede)",
+                conditions: ["Encostado em bloco sólido"],
+                cooldown: "N/A",
+                description: "Permite escalar qualquer parede vertical sem precisar de escadas."
+            },
+            {
+                id: "webbing",
+                jsonKey: "originsreborn:webbing",
+                plugin: "Origins-Reborn",
+                origin: "arachnid",
+                originName: "Arachnid",
+                name: "Prender em Teias",
+                type: "active",
+                impact: "positive",
+                trigger: "LEFT_CLICK",
+                conditions: ["HOLDING_SWORD", "NO_BLOCK"],
+                cooldown: "10s",
+                description: "Gera teias ao redor do alvo para prendê-lo temporariamente ao atacar."
+            },
+            {
+                id: "fall_immunity",
+                jsonKey: "originsreborn:fall_immunity",
+                plugin: "Origins-Reborn",
+                origin: "feline",
+                originName: "Feline",
+                name: "Aterrissagem Suave (Sem Queda)",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Livre de todo e qualquer dano de queda no jogo."
+            },
+            {
+                id: "shulker_inventory",
+                jsonKey: "originsreborn:shulker_inventory",
+                plugin: "Origins-Reborn",
+                origin: "shulk",
+                originName: "Shulk",
+                name: "Inventário Shulker",
+                type: "active",
+                impact: "positive",
+                trigger: "RIGHT_CLICK_CHESTPLATE",
+                conditions: ["N/A"],
+                cooldown: "0s",
+                description: "Acessa um inventário secundário de 9 slots que mantém os itens mesmo após a morte."
+            },
+            {
+                id: "water_breathing",
+                jsonKey: "originsreborn:water_breathing",
+                plugin: "Origins-Reborn",
+                origin: "merling",
+                originName: "Merling",
+                name: "Respiração Aquática",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["Debaixo d'água"],
+                cooldown: "N/A",
+                description: "Respira ilimitadamente sob a água, porém afoga quando fica muito tempo fora da água."
+            },
+            {
+                id: "phantom_form",
+                jsonKey: "originsreborn:phantom_form",
+                plugin: "Origins-Reborn",
+                origin: "phantom",
+                originName: "Phantom",
+                name: "Modo Fantasma (Phasing)",
+                type: "active",
+                impact: "positive",
+                trigger: "LEFT_CLICK",
+                conditions: ["EMPTY_HAND", "NO_BLOCK"],
+                cooldown: "5s",
+                description: "Ativa/Desativa a forma fantasma, ficando invisível e atravessando blocos sólidos."
+            },
+
+            // ==================== ADDON: ORIGINS-MONSTERS ====================
+            {
+                id: "sonic_boom",
+                jsonKey: "originmonsters:sonic_boom",
+                plugin: "Origins-Monsters",
+                origin: "warden",
+                originName: "Warden",
+                name: "Explosão Sônica (Sonic Boom)",
+                type: "active",
+                impact: "positive",
+                trigger: "LEFT_CLICK",
+                conditions: ["EMPTY_HAND"],
+                cooldown: "20s",
+                description: "Dispara o feixe sônico do Warden que atravessa paredes e causa grande dano a distância."
+            },
+            {
+                id: "warden_sense",
+                jsonKey: "originmonsters:warden_sense",
+                plugin: "Origins-Monsters",
+                origin: "warden",
+                originName: "Warden",
+                name: "Percepção de Vibrações",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Sente criaturas e entidades próximas destacando-as com brilho radiante (glowing)."
+            },
+            {
+                id: "monsters_explode",
+                jsonKey: "originmonsters:explode",
+                plugin: "Origins-Monsters",
+                origin: "creeper",
+                originName: "Creeper",
+                name: "Autodestruição Creeper",
+                type: "active",
+                impact: "neutral",
+                trigger: "SNEAK_TOGGLE (Double tap)",
+                conditions: ["N/A"],
+                cooldown: "10s",
+                description: "Causa uma explosão de Creeper ao redor do jogador sacrificando parte da vida."
+            },
+            {
+                id: "channeling_riptide",
+                jsonKey: "originmonsters:channeling_riptide",
+                plugin: "Origins-Monsters",
+                origin: "drowned",
+                originName: "Drowned",
+                name: "Canalização de Correnteza",
+                type: "active",
+                impact: "positive",
+                trigger: "LEFT_CLICK",
+                conditions: ["Com ou sem Tridente"],
+                cooldown: "60s",
+                description: "Ativa efeito de Riptide no ar sem chuva e Channeling de raios durante 20 segundos."
+            },
+            {
+                id: "zombify_villagers",
+                jsonKey: "originmonsters:zombify_villagers",
+                plugin: "Origins-Monsters",
+                origin: "zombie",
+                originName: "Zombie",
+                name: "Infeção de Villagers",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Ao matar)",
+                conditions: ["Matar Villager"],
+                cooldown: "N/A",
+                description: "Villagers mortos pelo jogador são transformados diretamente em Zombie Villagers."
+            },
+            {
+                id: "infinite_arrows",
+                jsonKey: "originmonsters:infinite_arrows",
+                plugin: "Origins-Monsters",
+                origin: "skeleton",
+                originName: "Skeleton",
+                name: "Flechas Infinitas",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Usar Arco)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Pode atirar com arco e besta sem consumir flechas do inventário e com pontaria perfeita."
+            },
+            {
+                id: "stray_slowness",
+                jsonKey: "originmonsters:stray_slowness",
+                plugin: "Origins-Monsters",
+                origin: "stray",
+                originName: "Stray",
+                name: "Flechas Congelantes",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Atingir flecha)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Suas flechas aplicam lentidão profunda aos alvos. imune a dano de neve fofa."
+            },
+
+            // ==================== ADDON: ORIGINS-MAGIC ====================
+            {
+                id: "transmute_copper",
+                jsonKey: "originmagic:transmute_copper",
+                plugin: "Origins-Magic",
+                origin: "alchemist",
+                originName: "Alchemist",
+                name: "Transmuta Cobre em Ouro",
+                type: "active",
+                impact: "positive",
+                trigger: "RIGHT_CLICK",
+                conditions: ["EMPTY_HAND", "Mirando em Cobre"],
+                cooldown: "5s",
+                description: "Transforma blocos de cobre em blocos de ouro com um simples toque de mão vazia."
+            },
+            {
+                id: "inventory_telekinesis",
+                jsonKey: "originmagic:inventory_telekinesis",
+                plugin: "Origins-Magic",
+                origin: "telekinetic",
+                originName: "Telekinetic",
+                name: "Telecinese de Drops",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Drops de minérios e mobs quebrados vão diretamente para o seu inventário à distância."
+            },
+            {
+                id: "resurrect_players",
+                jsonKey: "originmagic:resurrect_players",
+                plugin: "Origins-Magic",
+                origin: "necromancer",
+                originName: "Necromancer",
+                name: "Ressuscitar Jogador",
+                type: "active",
+                impact: "positive",
+                trigger: "LEFT_CLICK (Golpe no ar)",
+                conditions: ["EMPTY_HAND"],
+                cooldown: "60s",
+                description: "Ressuscita jogadores mortos próximos que ainda não deram respawn trazendo-os no local."
+            },
+            {
+                id: "hypnotize_monster",
+                jsonKey: "originmagic:hypnotize_monster",
+                plugin: "Origins-Magic",
+                origin: "hypnotist",
+                originName: "Hypnotist",
+                name: "Hipnotizar Monstro / Jogador",
+                type: "active",
+                impact: "positive",
+                trigger: "RIGHT_CLICK",
+                conditions: ["N/A"],
+                cooldown: "15s",
+                description: "Faz um monstro atacar seu último alvo ou causa 30s de Náusea em um jogador inimigo."
+            },
+            {
+                id: "absorb_health",
+                jsonKey: "originmagic:absorb_health",
+                plugin: "Origins-Magic",
+                origin: "warlock",
+                originName: "Warlock",
+                name: "Drenar Vida do Alvo",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Ao matar)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Absorve a vida das vítimas acumulando até 30 corações extras temporários."
+            },
+            {
+                id: "shadow_stealth",
+                jsonKey: "originmagic:shadow_stealth",
+                plugin: "Origins-Magic",
+                origin: "shadowmancer",
+                originName: "Shadowmancer",
+                name: "Invisibilidade nas Sombras",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Estar no escuro)",
+                conditions: ["Nível de luz baixo"],
+                cooldown: "N/A",
+                description: "Fica completamente invisível e intangível no escuro, mas pega fogo com luz de tochas/sol."
+            },
+
+            // ==================== ADDON: ORIGINS-MOBS ====================
+            {
+                id: "mobs_explode",
+                jsonKey: "originmobs:explode",
+                plugin: "Origins-Mobs",
+                origin: "creeper_mob",
+                originName: "Creeper Mob",
+                name: "Explosão Creeper Tradicional",
+                type: "active",
+                impact: "neutral",
+                trigger: "LEFT_CLICK",
+                conditions: ["EMPTY_HAND"],
+                cooldown: "15s",
+                description: "Detona uma explosão de raio moderado no local sem destruir todos os seus itens."
+            },
+            {
+                id: "slime_bounce",
+                jsonKey: "originmobs:slime_bounce",
+                plugin: "Origins-Mobs",
+                origin: "slime_mob",
+                originName: "Slime",
+                name: "Quicar feito Slime",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Ao cair)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Quica ao cair em superfícies duras anulando dano de queda e impulsionando salto."
+            },
+
+            // ==================== ADDON: ORIGINS-FANTASY ====================
+            {
+                id: "giant_size",
+                jsonKey: "originfantasy:giant_size",
+                plugin: "Origins-Fantasy",
+                origin: "giant",
+                originName: "Giant",
+                name: "Tamanho Gigantesco",
+                type: "passive",
+                impact: "neutral",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Aumenta a escala do modelo do jogador, concedendo +100% de vida e mais força de ataque."
+            },
+            {
+                id: "dwarf_mine",
+                jsonKey: "originfantasy:dwarf_mining",
+                plugin: "Origins-Fantasy",
+                origin: "dwarf",
+                originName: "Dwarf",
+                name: "Mineração Anã",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Abaixo de Y 50)",
+                conditions: ["Em cavernas fundas"],
+                cooldown: "N/A",
+                description: "Ganha Pressa de Mineração (Haste II) e visão noturna permanente quando estiver abaixo de Y=50."
+            },
+            {
+                id: "elf_archery",
+                jsonKey: "originfantasy:elf_archery",
+                plugin: "Origins-Fantasy",
+                origin: "elf",
+                originName: "Elf",
+                name: "Maestria Élfica com Arcos",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Atirar flecha)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Flechas disparadas por Elfos viajam 50% mais rápido e causam dano crítico adicional."
+            },
+
+            // ==================== ADDON: ORIGINS-CLASSES ====================
+            {
+                id: "merchant_discount",
+                jsonKey: "originclasses:merchant_discount",
+                plugin: "Origins-Classes",
+                origin: "merchant",
+                originName: "Merchant",
+                name: "Desconto com Villagers",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Abrir trocas)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Obtém os menores preços possíveis e descontos permanentes em trocas com Villagers."
+            },
+            {
+                id: "miner_vein",
+                jsonKey: "originclasses:miner_vein",
+                plugin: "Origins-Classes",
+                origin: "miner",
+                originName: "Miner",
+                name: "Mineração em Veio (Vein Miner)",
+                type: "active",
+                impact: "positive",
+                trigger: "SNEAK_ON",
+                conditions: ["Segurando Picareta"],
+                cooldown: "10s",
+                description: "Quebra todo o veio de minério conectado ao minar um único bloco de minério."
+            },
+
+            // ==================== SKRIPT / CUSTOM EXAMPLE ====================
+            {
+                id: "skript_custom_power",
+                jsonKey: "skript:my_custom_ability",
+                plugin: "Skript",
+                origin: "custom",
+                originName: "Skript Custom",
+                name: "Habilidade Customizada via Skript",
+                type: "active",
+                impact: "positive",
+                trigger: "LEFT_CLICK",
+                conditions: ["EMPTY_HAND"],
+                cooldown: "Configurável",
+                description: "Qualquer habilidade registrada no arquivo .sk usando o evento 'on origins reborn ability trigger'."
+            },
+            {
+                id: "aerial_combatant",
+                jsonKey: "originsreborn:aerial_combatant",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Aerial Combatant",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Muito mais dano enquanto voa com asas de élitro."
+            },
+            {
+                id: "aqua_affinity",
+                jsonKey: "originsreborn:aqua_affinity",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Aqua Affinity",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Quebra blocos debaixo d'água normalmente."
+            },
+            {
+                id: "burning_wrath",
+                jsonKey: "originsreborn:burning_wrath",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Burning Wrath",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Dano adicional com ataques enquanto em chamas."
+            },
+            {
+                id: "like_water",
+                jsonKey: "originsreborn:like_water",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Like Water",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Não afunda embaixo d'água a menos que queira."
+            },
+            {
+                id: "master_of_webs",
+                jsonKey: "originsreborn:master_of_webs",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Master Of Webs",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Move-se em teias, escala-as, prende inimigos e cria teias de fios."
+            },
+            {
+                id: "natural_armor",
+                jsonKey: "originsreborn:natural_armor",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Natural Armor",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Pele oferece proteção natural sem armadura."
+            },
+            {
+                id: "scare_creepers",
+                jsonKey: "originsreborn:scare_creepers",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Scare Creepers",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Creepers só explodem se forem atacados primeiro."
+            },
+            {
+                id: "sprint_jump",
+                jsonKey: "originsreborn:sprint_jump",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Sprint Jump",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Salta mais alto ao saltar correndo."
+            },
+            {
+                id: "strong_arms",
+                jsonKey: "originsreborn:strong_arms",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Strong Arms",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Quebra pedras naturais sem picareta."
+            },
+            {
+                id: "swim_speed",
+                jsonKey: "originsreborn:swim_speed",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Swim Speed",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Velocidade subaquática aumentada."
+            },
+            {
+                id: "tailwind",
+                jsonKey: "originsreborn:tailwind",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Tailwind",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Um pouco mais rápido a pé."
+            },
+            {
+                id: "velvet_paws",
+                jsonKey: "originsreborn:velvet_paws",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Velvet Paws",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Passos não causam vibrações detectáveis."
+            },
+            {
+                id: "air_from_potions",
+                jsonKey: "originsreborn:air_from_potions",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Air From Potions",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Ganha ar a partir de poções."
+            },
+            {
+                id: "conduit_power_on_land",
+                jsonKey: "originsreborn:conduit_power_on_land",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Conduit Power On Land",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Obtém energia de condutos mesmo em terra firme."
+            },
+            {
+                id: "lay_eggs",
+                jsonKey: "originsreborn:lay_eggs",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Lay Eggs",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Ao acordar, bota um ovo."
+            },
+            {
+                id: "better_aim",
+                jsonKey: "originmonsters:better_aim",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Better Aim",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mira mais precisa que humanos."
+            },
+            {
+                id: "better_gold_armour",
+                jsonKey: "originmonsters:better_gold_armour",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Better Gold Armour",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Armadura de ouro indestrutível e tão forte quanto diamante."
+            },
+            {
+                id: "better_gold_weapons",
+                jsonKey: "originmonsters:better_gold_weapons",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Better Gold Weapons",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Armas de ouro indestrutíveis e muito mais fortes."
+            },
+            {
+                id: "creeper_ally",
+                jsonKey: "originmonsters:creeper_ally",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Creeper Ally",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Creepers não atacam."
+            },
+            {
+                id: "double_damage",
+                jsonKey: "originmonsters:double_damage",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Double Damage",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Causa o dobro do dano de um jogador normal."
+            },
+            {
+                id: "double_health",
+                jsonKey: "originmonsters:double_health",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Double Health",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Dobro da saúde humana."
+            },
+            {
+                id: "guardian_ally",
+                jsonKey: "originmonsters:guardian_ally",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Guardian Ally",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Guardiões não atacam."
+            },
+            {
+                id: "piglin_ally",
+                jsonKey: "originmonsters:piglin_ally",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Piglin Ally",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Piglins não atacam."
+            },
+            {
+                id: "sense_movement",
+                jsonKey: "originmonsters:sense_movement",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Sense Movement",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Vê contornos de criaturas próximas através de blocos."
+            },
+            {
+                id: "super_bartering",
+                jsonKey: "originmonsters:super_bartering",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Super Bartering",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Obtém 2 a 5× mais itens ao barganhar."
+            },
+            {
+                id: "swim_speed",
+                jsonKey: "originmonsters:swim_speed",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Swim Speed",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Velocidade subaquática aumentada."
+            },
+            {
+                id: "trident_expert",
+                jsonKey: "originmonsters:trident_expert",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Trident Expert",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "+2 dano com tridente; canalização e correnteza sem requisitos."
+            },
+            {
+                id: "undead_ally",
+                jsonKey: "originmonsters:undead_ally",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Undead Ally",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mobs mortos-vivos não atacam."
+            },
+            {
+                id: "water_combatant",
+                jsonKey: "originmonsters:water_combatant",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Water Combatant",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mais dano quando está na água."
+            },
+            {
+                id: "water_vision",
+                jsonKey: "originmonsters:water_vision",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Water Vision",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Visão perfeita embaixo d'água."
+            },
+            {
+                id: "wither_immunity",
+                jsonKey: "originmonsters:wither_immunity",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Wither Immunity",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Imune ao efeito Murchar."
+            },
+            {
+                id: "freeze_immune",
+                jsonKey: "originmonsters:freeze_immune",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Freeze Immune",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Imune a danos por congelamento."
+            },
+            {
+                id: "zombified_piglin_allies",
+                jsonKey: "originmonsters:zombified_piglin_allies",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Zombified Piglin Allies",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Piglins Zumbificados próximos defendem você."
+            },
+            {
+                id: "alpha_wolf",
+                jsonKey: "originmobs:alpha_wolf",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Alpha Wolf",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Lobos domados ficam mais fortes."
+            },
+            {
+                id: "better_berries",
+                jsonKey: "originmobs:better_berries",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Better Berries",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Bagas têm efeitos mais benéficos."
+            },
+            {
+                id: "better_potions",
+                jsonKey: "originmobs:better_potions",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Better Potions",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Poções duram mais depois de ingeridas."
+            },
+            {
+                id: "bouncy",
+                jsonKey: "originmobs:bouncy",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Bouncy",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Todos os blocos funcionam como blocos de gosma."
+            },
+            {
+                id: "careful_gatherer",
+                jsonKey: "originmobs:careful_gatherer",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Careful Gatherer",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Arbustos de bagas doces não causam dano."
+            },
+            {
+                id: "guardian_ally",
+                jsonKey: "originmobs:guardian_ally",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Guardian Ally",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Guardiões não atacam."
+            },
+            {
+                id: "item_collector",
+                jsonKey: "originmobs:item_collector",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Item Collector",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Raio de coleta de itens maior."
+            },
+            {
+                id: "lava_walk",
+                jsonKey: "originmobs:lava_walk",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Lava Walk",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Anda sobre lava; mais rápido na lava."
+            },
+            {
+                id: "lower_totem_chance",
+                jsonKey: "originmobs:lower_totem_chance",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Lower Totem Chance",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Totens têm 10% de chance de não quebrar ao serem usados."
+            },
+            {
+                id: "pillager_aligned",
+                jsonKey: "originmobs:pillager_aligned",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Pillager Aligned",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Saqueadores são aliados; aldeões desgostam."
+            },
+            {
+                id: "prismarine_skin",
+                jsonKey: "originmobs:prismarine_skin",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Prismarine Skin",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Pele de prismarina fornece armadura natural."
+            },
+            {
+                id: "queen_bee",
+                jsonKey: "originmobs:queen_bee",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Queen Bee",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Abelhas não atacam ao coletar mel."
+            },
+            {
+                id: "stinger",
+                jsonKey: "originmobs:stinger",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Stinger",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Envenena o alvo ao socar."
+            },
+            {
+                id: "stronger_snowballs",
+                jsonKey: "originmobs:stronger_snowballs",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Stronger Snowballs",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Bolas de neve causam 1 ponto de dano."
+            },
+            {
+                id: "trident_expert",
+                jsonKey: "originmobs:trident_expert",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Trident Expert",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "+2 dano com tridente; canalização e correnteza sem requisitos."
+            },
+            {
+                id: "water_combatant",
+                jsonKey: "originmobs:water_combatant",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Water Combatant",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mais dano quando está na água."
+            },
+            {
+                id: "illager",
+                jsonKey: "originmobs:illager",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Illager",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Não é atacado por saqueadores."
+            },
+            {
+                id: "mining_fatigue_immune",
+                jsonKey: "originmobs:mining_fatigue_immune",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Mining Fatigue Immune",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Imune à Fadiga de Mineração."
+            },
+            {
+                id: "water_vision",
+                jsonKey: "originmobs:water_vision",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Water Vision",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Visão clara debaixo d'água."
+            },
+            {
+                id: "allay_master",
+                jsonKey: "originfantasy:allay_master",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Allay Master",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Cria alianças com Allays sem tocar música."
+            },
+            {
+                id: "arrow_effect_booster",
+                jsonKey: "originfantasy:arrow_effect_booster",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Arrow Effect Booster",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Potencializa efeitos de poções aplicadas a flechas."
+            },
+            {
+                id: "chime",
+                jsonKey: "originfantasy:chime",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Chime",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Absorve som de fragmentos de ametista para regenerar saúde."
+            },
+            {
+                id: "double_health",
+                jsonKey: "originfantasy:double_health",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Double Health",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mais saúde por ser maior que humanos."
+            },
+            {
+                id: "end_crystal_healing",
+                jsonKey: "originfantasy:end_crystal_healing",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "End Crystal Healing",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Regenera saúde a partir de Cristais do Fim próximos."
+            },
+            {
+                id: "fortune_increaser",
+                jsonKey: "originfantasy:fortune_increaser",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Fortune Increaser",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Rendimento muito maior de minérios ao minerar."
+            },
+            {
+                id: "increased_arrow_damage",
+                jsonKey: "originfantasy:increased_arrow_damage",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Increased Arrow Damage",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Flechas causam o dobro de dano."
+            },
+            {
+                id: "increased_arrow_speed",
+                jsonKey: "originfantasy:increased_arrow_speed",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Increased Arrow Speed",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Flechas 3× mais rápidas."
+            },
+            {
+                id: "increased_speed",
+                jsonKey: "originfantasy:increased_speed",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Increased Speed",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Muito mais rápido que um cavalo normal."
+            },
+            {
+                id: "infinite_haste",
+                jsonKey: "originfantasy:infinite_haste",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Infinite Haste",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mineração muito mais rápida que humanos."
+            },
+            {
+                id: "leeching",
+                jsonKey: "originfantasy:leeching",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Leeching",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Ao matar, absorve parte da vida da vítima."
+            },
+            {
+                id: "magic_resistance",
+                jsonKey: "originfantasy:magic_resistance",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Magic Resistance",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Imune a venenos e efeitos nocivos de poções."
+            },
+            {
+                id: "natural_armor",
+                jsonKey: "originfantasy:natural_armor",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Natural Armor",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Corpo forte oferece defesa natural."
+            },
+            {
+                id: "perfect_shot",
+                jsonKey: "originfantasy:perfect_shot",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Perfect Shot",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Flechas disparadas perfeitamente retas."
+            },
+            {
+                id: "strong_skin",
+                jsonKey: "originfantasy:strong_skin",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Strong Skin",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Flechas causam muito menos dano."
+            },
+            {
+                id: "stronger",
+                jsonKey: "originfantasy:stronger",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Stronger",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Ataques físicos causam muito mais dano."
+            },
+            {
+                id: "super_jump",
+                jsonKey: "originfantasy:super_jump",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Super Jump",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Salta muito mais alto que um cavalo."
+            },
+            {
+                id: "undead_ally",
+                jsonKey: "originfantasy:undead_ally",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Undead Ally",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Criaturas mortas-vivas não atacam."
+            },
+            {
+                id: "kill_boost",
+                jsonKey: "originmagic:kill_boost",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Kill Boost",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Ao matar, absorve saúde da criatura, podendo ganhar até 30 corações extras."
+            },
+            {
+                id: "dark_strength",
+                jsonKey: "originmagic:dark_strength",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Dark Strength",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Quase dobro de dano no escuro; nenhum dano no nível de luz 15."
+            },
+            {
+                id: "increased_reach",
+                jsonKey: "originmagic:increased_reach",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Increased Reach",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Alcança blocos, itens e entidades muito mais distantes."
+            },
+            {
+                id: "no_magic",
+                jsonKey: "originmagic:no_magic",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "No Magic",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Repele poções e encantamentos comuns."
+            },
+            {
+                id: "potion_master",
+                jsonKey: "originmagic:potion_master",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Potion Master",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Poções bebidas e arremessadas são muito mais fortes."
+            },
+            {
+                id: "silent",
+                jsonKey: "originmagic:silent",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Silent",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Não é detectado por Sensores Sculk ao mover ou comer."
+            },
+            {
+                id: "spare_life",
+                jsonKey: "originmagic:spare_life",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Spare Life",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Sobrevive à morte uma vez a cada 10 minutos."
+            },
+            {
+                id: "telekinesis",
+                jsonKey: "originmagic:telekinesis",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Telekinesis",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Itens de blocos e entidades vão direto ao inventário."
+            },
+            {
+                id: "undead_ally",
+                jsonKey: "originmagic:undead_ally",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Undead Ally",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Criaturas mortas-vivas não atacam."
+            },
+            {
+                id: "undead_commander",
+                jsonKey: "originmagic:undead_commander",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Undead Commander",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mortos-vivos próximos atacam junto com você."
+            },
+            {
+                id: "burn_in_daylight",
+                jsonKey: "originsreborn:burn_in_daylight",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Burn In Daylight",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Queima à luz do dia se não estiver invisível."
+            },
+            {
+                id: "carnivore",
+                jsonKey: "originsreborn:carnivore",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Carnivore",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Só pode comer carne; vegetais proibidos."
+            },
+            {
+                id: "fragile",
+                jsonKey: "originsreborn:fragile",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Fragile",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "3 corações a menos que humanos."
+            },
+            {
+                id: "fresh_air",
+                jsonKey: "originsreborn:fresh_air",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Fresh Air",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Cama precisa estar acima de 86 blocos de altitude."
+            },
+            {
+                id: "light_armor",
+                jsonKey: "originsreborn:light_armor",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Light Armor",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Não pode usar armadura mais pesada que cota de malha."
+            },
+            {
+                id: "more_exhaustion",
+                jsonKey: "originsreborn:more_exhaustion",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "More Exhaustion",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Cansa muito mais rápido; precisa comer mais."
+            },
+            {
+                id: "more_kinetic_damage",
+                jsonKey: "originsreborn:more_kinetic_damage",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "More Kinetic Damage",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Sofre mais dano ao cair e colidir com blocos."
+            },
+            {
+                id: "nine_lives",
+                jsonKey: "originsreborn:nine_lives",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Nine Lives",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "1 coração a menos que humanos."
+            },
+            {
+                id: "no_shield",
+                jsonKey: "originsreborn:no_shield",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "No Shield",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Não pode segurar um escudo na vertical."
+            },
+            {
+                id: "vegetarian",
+                jsonKey: "originsreborn:vegetarian",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Vegetarian",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Não consegue digerir nenhum tipo de carne."
+            },
+            {
+                id: "weak_arms",
+                jsonKey: "originsreborn:weak_arms",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Weak Arms",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Sem poção de força, só minera pedra com ≤2 blocos adjacentes."
+            },
+            {
+                id: "damage_from_potions",
+                jsonKey: "originsreborn:damage_from_potions",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Damage From Potions",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Sofre dano de poções."
+            },
+            {
+                id: "damage_from_snowballs",
+                jsonKey: "originsreborn:damage_from_snowballs",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Damage From Snowballs",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Sofre dano de bolas de neve."
+            },
+            {
+                id: "aquatic",
+                jsonKey: "originsreborn:aquatic",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Aquatic",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Dano aumentado ao ser Empalado."
+            },
+            {
+                id: "arthropod",
+                jsonKey: "originsreborn:arthropod",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Arthropod",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Dano aumentado e lentidão pela Maldição dos Artrópodes."
+            },
+            {
+                id: "blindness",
+                jsonKey: "originmonsters:blindness",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Blindness",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Não enxerga além de alguns quarteirões."
+            },
+            {
+                id: "burn_in_day",
+                jsonKey: "originmonsters:burn_in_day",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Burn In Day",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Queima à luz do dia."
+            },
+            {
+                id: "cold_slowness",
+                jsonKey: "originmonsters:cold_slowness",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Cold Slowness",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mais lento em biomas frios."
+            },
+            {
+                id: "double_fire_damage",
+                jsonKey: "originmonsters:double_fire_damage",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Double Fire Damage",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Sofre dobro de dano por fogo."
+            },
+            {
+                id: "fear_cats",
+                jsonKey: "originmonsters:fear_cats",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Fear Cats",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Náuseas e fraqueza perto de gatos."
+            },
+            {
+                id: "half_max_saturation",
+                jsonKey: "originmonsters:half_max_saturation",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Half Max Saturation",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Retém apenas metade da saturação."
+            },
+            {
+                id: "heat_slowness",
+                jsonKey: "originmonsters:heat_slowness",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Heat Slowness",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mais lento em biomas quentes."
+            },
+            {
+                id: "land_slowness",
+                jsonKey: "originmonsters:land_slowness",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Land Slowness",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Move-se muito mais devagar em terra firme."
+            },
+            {
+                id: "scare_villagers",
+                jsonKey: "originmonsters:scare_villagers",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Scare Villagers",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Aldeões têm medo e se recusam a negociar."
+            },
+            {
+                id: "skeleton_body",
+                jsonKey: "originmonsters:skeleton_body",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Skeleton Body",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Menos saúde que humanos."
+            },
+            {
+                id: "slowness",
+                jsonKey: "originmonsters:slowness",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Slowness",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Move-se mais lento que humanos."
+            },
+            {
+                id: "zombie_hunger",
+                jsonKey: "originmonsters:zombie_hunger",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Zombie Hunger",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Esgota-se muito mais rápido."
+            },
+            {
+                id: "undead",
+                jsonKey: "originmonsters:undead",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Undead",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Sofre mais dano de Golpe Divino."
+            },
+            {
+                id: "melting",
+                jsonKey: "originmobs:melting",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Melting",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Derrete em biomas quentes, perdendo saúde e velocidade."
+            },
+            {
+                id: "surface_weakness",
+                jsonKey: "originmobs:surface_weakness",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Surface Weakness",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Enfraquecido em terra firme."
+            },
+            {
+                id: "small_bug",
+                jsonKey: "originmobs:small_bug",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Small Bug",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "2 corações a menos que humanos."
+            },
+            {
+                id: "small_fox",
+                jsonKey: "originmobs:small_fox",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Small Fox",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "2 corações a menos que humanos."
+            },
+            {
+                id: "small_weak",
+                jsonKey: "originmobs:small_weak",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Small Weak",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Quase não causa dano com menos de 2 corações."
+            },
+            {
+                id: "zombie_hunger",
+                jsonKey: "originmobs:zombie_hunger",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Zombie Hunger",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Esgota-se muito mais rápido."
+            },
+            {
+                id: "wolf_body",
+                jsonKey: "originmobs:wolf_body",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Wolf Body",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "2 corações a menos que humanos."
+            },
+            {
+                id: "surface_slowness",
+                jsonKey: "originmobs:surface_slowness",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Surface Slowness",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Caminha mais devagar."
+            },
+            {
+                id: "undead",
+                jsonKey: "originmobs:undead",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Undead",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Queima à luz do dia; mais dano de Golpe Divino."
+            },
+            {
+                id: "daylight_sensitive",
+                jsonKey: "originfantasy:daylight_sensitive",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Daylight Sensitive",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Pega fogo à luz do dia."
+            },
+            {
+                id: "heavy_blow",
+                jsonKey: "originfantasy:heavy_blow",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Heavy Blow",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Ataques mais fortes, porém com tempo de recarga maior."
+            },
+            {
+                id: "ocean_wish",
+                jsonKey: "originfantasy:ocean_wish",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Ocean Wish",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Muito mais fraco fora da água."
+            },
+            {
+                id: "poor_shot",
+                jsonKey: "originfantasy:poor_shot",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Poor Shot",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mãos grandes tornam flechas lentas e imprecisas."
+            },
+            {
+                id: "water_sensitive",
+                jsonKey: "originfantasy:water_sensitive",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Water Sensitive",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Água causa dano ao longo do tempo."
+            },
+            {
+                id: "burn_in_light",
+                jsonKey: "originmagic:burn_in_light",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Burn In Light",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Pega fogo em qualquer presença de luz."
+            },
+            {
+                id: "cursed_strikes",
+                jsonKey: "originmagic:cursed_strikes",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Cursed Strikes",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Sofre efeito negativo por 15 seg ao atingir algo."
+            },
+            {
+                id: "unskilled_warrior",
+                jsonKey: "originmagic:unskilled_warrior",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Unskilled Warrior",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Causa apenas 0,75× de dano em combate corpo a corpo."
+            },
+            {
+                id: "weak_in_water",
+                jsonKey: "originmagic:weak_in_water",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Weak In Water",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Na água, fica com apenas 3 corações."
+            },
+            {
+                id: "double_fire_damage",
+                jsonKey: "originmagic:double_fire_damage",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Double Fire Damage",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Sofre dobro de dano por fogo."
+            },
+            {
+                id: "no_fire_resistance",
+                jsonKey: "originmagic:no_fire_resistance",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "No Fire Resistance",
+                type: "debuff",
+                impact: "negative",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Não pode usar poções de resistência ao fogo."
+            },
+            {
+                id: "launch_into_air",
+                jsonKey: "originsreborn:launch_into_air",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Launch Into Air",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "A cada 30 seg, lança cerca de 20 blocos no ar."
+            },
+            {
+                id: "elytra",
+                jsonKey: "originsreborn:elytra",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Elytra",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Pressione pulo duas vezes para planar com asas Elytra embutidas."
+            },
+            {
+                id: "phantomize",
+                jsonKey: "originsreborn:phantomize",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Phantomize",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Botão esquerdo no ar com mão vazia entra em Forma Fantasma."
+            },
+            {
+                id: "explosive",
+                jsonKey: "originmonsters:explosive",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Explosive",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Sacrifica saúde para criar explosão a cada 15 segundos."
+            },
+            {
+                id: "elder_magic",
+                jsonKey: "originmobs:elder_magic",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Elder Magic",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Lança feitiço em jogadores próximos para diminuir velocidade de mineração."
+            },
+            {
+                id: "bee_wings",
+                jsonKey: "originmobs:bee_wings",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Bee Wings",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Usa asas de abelha para descer mais lentamente."
+            },
+            {
+                id: "split",
+                jsonKey: "originmobs:split",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Split",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Transforma pontos de comida em gosma para defesa."
+            },
+            {
+                id: "wolf_howl",
+                jsonKey: "originmobs:wolf_howl",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Wolf Howl",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Botão esquerdo sem segurar nada uiva, dando força a lobos próximos."
+            },
+            {
+                id: "summon_fangs",
+                jsonKey: "originmobs:summon_fangs",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Summon Fangs",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Invoca presas."
+            },
+            {
+                id: "warped_fungus_eater",
+                jsonKey: "originmobs:warped_fungus_eater",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Warped Fungus Eater",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Come fungos deformados para recuperar fome + leve aumento de velocidade."
+            },
+            {
+                id: "potion_action",
+                jsonKey: "originmobs:potion_action",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Potion Action",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Recebe efeito de poção aleatório baseado na situação atual."
+            },
+            {
+                id: "bow_burst",
+                jsonKey: "originfantasy:bow_burst",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Bow Burst",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Conjura feitiço em flecha para disparar 3 de uma vez (recarga 7 seg)."
+            },
+            {
+                id: "breath_storer",
+                jsonKey: "originfantasy:breath_storer",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Breath Storer",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Botão direito com garrafa vazia armazena Sopro do Dragão."
+            },
+            {
+                id: "dragon_fireball",
+                jsonKey: "originfantasy:dragon_fireball",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Dragon Fireball",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Botão direito com espada lança bola de fogo de dragão (recarga 30 seg)."
+            },
+            {
+                id: "vampiric_transformation",
+                jsonKey: "originfantasy:vampiric_transformation",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Vampiric Transformation",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Transforma outros jogadores em vampiros ao matá-los."
+            },
+            {
+                id: "control_monsters",
+                jsonKey: "originmagic:control_monsters",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Control Monsters",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Botão direito em monstro hipnotiza-o para atacar seu último alvo."
+            },
+            {
+                id: "gold_converter",
+                jsonKey: "originmagic:gold_converter",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Gold Converter",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Botão direito em bloco de cobre transforma em ouro e vice-versa."
+            },
+            {
+                id: "interactions_give_nausea",
+                jsonKey: "originmagic:interactions_give_nausea",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Interactions Give Nausea",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Botão direito em jogador causa náuseas por 30 seg nele."
+            },
+            {
+                id: "interact_regeneration",
+                jsonKey: "originmagic:interact_regeneration",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Interact Regeneration",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Botão direito em objeto concede Regeneração II por 10 seg."
+            },
+            {
+                id: "bring_back_dead",
+                jsonKey: "originmagic:bring_back_dead",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Bring Back Dead",
+                type: "active",
+                impact: "positive",
+                trigger: "N/A (Ativável)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Soco faz jogadores mortos próximos voltarem ao local onde morreram."
+            },
+            {
+                id: "cat_vision",
+                jsonKey: "originsreborn:cat_vision",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Cat Vision",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Enxerga no escuro quando não está na água."
+            },
+            {
+                id: "slow_falling",
+                jsonKey: "originsreborn:slow_falling",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Slow Falling",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Cai suavemente como uma pena, a menos que se esgueire."
+            },
+            {
+                id: "water_vision",
+                jsonKey: "originsreborn:water_vision",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Water Vision",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Visão perfeita debaixo d'água."
+            },
+            {
+                id: "invisibility",
+                jsonKey: "originsreborn:invisibility",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Invisibility",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Fica invisível enquanto estiver em forma fantasma."
+            },
+            {
+                id: "phasing",
+                jsonKey: "originsreborn:phasing",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Phasing",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Atravessa materiais sólidos (exceto obsidiana) na forma fantasma."
+            },
+            {
+                id: "hunger_over_time",
+                jsonKey: "originsreborn:hunger_over_time",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Hunger Over Time",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Sente fome enquanto estiver na forma fantasma."
+            },
+            {
+                id: "land_night_vision",
+                jsonKey: "originmonsters:land_night_vision",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Land Night Vision",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Visão noturna em terra firme."
+            },
+            {
+                id: "slowness_arrows",
+                jsonKey: "originmonsters:slowness_arrows",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Slowness Arrows",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Todas as flechas disparadas aplicam efeito de lentidão."
+            },
+            {
+                id: "flower_power",
+                jsonKey: "originmobs:flower_power",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Flower Power",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Perto de várias flores, ganha regeneração."
+            },
+            {
+                id: "frigid_strength",
+                jsonKey: "originmobs:frigid_strength",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Frigid Strength",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Causa mais dano em áreas frias."
+            },
+            {
+                id: "full_moon",
+                jsonKey: "originmobs:full_moon",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Full Moon",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Na lua cheia, fica mais rápido, forte e saudável."
+            },
+            {
+                id: "timid_creature",
+                jsonKey: "originmobs:timid_creature",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Timid Creature",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Velocidade aumenta perto de mais de 3 jogadores."
+            },
+            {
+                id: "wolf_pack",
+                jsonKey: "originmobs:wolf_pack",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Wolf Pack",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Perto de 4+ lobos, ganha velocidade e dano."
+            },
+            {
+                id: "wolf_pack_attack",
+                jsonKey: "originmobs:wolf_pack_attack",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Wolf Pack Attack",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mais dano quando perto de lobos."
+            },
+            {
+                id: "full_moon_attack",
+                jsonKey: "originmobs:full_moon_attack",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Full Moon Attack",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Dano de ataque aumentado em noites de lua cheia."
+            },
+            {
+                id: "full_moon_health",
+                jsonKey: "originmobs:full_moon_health",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Full Moon Health",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Saúde máxima aumentada na lua cheia."
+            },
+            {
+                id: "small_weak_knockback",
+                jsonKey: "originmobs:small_weak_knockback",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Small Weak Knockback",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mais repulsão quando tem menos de 2 corações."
+            },
+            {
+                id: "elder_spikes",
+                jsonKey: "originmobs:elder_spikes",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Elder Spikes",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Espinhos com chance de causar dano a atacantes."
+            },
+            {
+                id: "guardian_spikes",
+                jsonKey: "originmobs:guardian_spikes",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Guardian Spikes",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Espinhos com chance de causar dano a atacantes."
+            },
+            {
+                id: "overheat",
+                jsonKey: "originmobs:overheat",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Overheat",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Barra de temperatura sobe em biomas quentes e esfria em outros."
+            },
+            {
+                id: "bardic_intuition",
+                jsonKey: "originfantasy:bardic_intuition",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Bardic Intuition",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Creepers podem dropar disco de música mesmo sem esqueleto."
+            },
+            {
+                id: "elegy",
+                jsonKey: "originfantasy:elegy",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Elegy",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Fica mais forte quando tem menos de 3 corações."
+            },
+            {
+                id: "end_boost",
+                jsonKey: "originfantasy:end_boost",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "End Boost",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mais saúde e força no End."
+            },
+            {
+                id: "infinite_night_vision",
+                jsonKey: "originfantasy:infinite_night_vision",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Infinite Night Vision",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Enxerga no escuro por evolução."
+            },
+            {
+                id: "moon_strength",
+                jsonKey: "originfantasy:moon_strength",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Moon Strength",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mais forte em noites de lua cheia."
+            },
+            {
+                id: "note_block_power",
+                jsonKey: "originfantasy:note_block_power",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Note Block Power",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Ganha força e velocidade quando Bloco de Notas próximo é tocado."
+            },
+            {
+                id: "ocean_wish",
+                jsonKey: "originfantasy:ocean_wish",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Ocean Wish",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Muito mais fraco fora da água."
+            },
+            {
+                id: "oceans_grace",
+                jsonKey: "originfantasy:oceans_grace",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Oceans Grace",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Saúde e dano extras quando na água ou na chuva."
+            },
+            {
+                id: "invisible_in_darkness",
+                jsonKey: "originmagic:invisible_in_darkness",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Invisible In Darkness",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Em lugares muito escuros, entra em Forma Sombria, invisível e inatacável."
+            },
+            {
+                id: "invisible_when_still",
+                jsonKey: "originmagic:invisible_when_still",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Invisible When Still",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Fica invisível quando completamente parado."
+            },
+            {
+                id: "regeneration_when_still",
+                jsonKey: "originmagic:regeneration_when_still",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Regeneration When Still",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Regenera saúde ao ficar parado."
+            },
+            {
+                id: "spirit_strength",
+                jsonKey: "originmagic:spirit_strength",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Spirit Strength",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Mais forte no Nether, mais fraco fora dele."
+            },
+            {
+                id: "dark_aura",
+                jsonKey: "originmagic:dark_aura",
+                plugin: "Origins-Magic",
+                origin: "magic",
+                originName: "Magic",
+                name: "Dark Aura",
+                type: "passive",
+                impact: "positive",
+                trigger: "N/A (Passivo)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Aldeões têm medo."
+            },
+            {
+                id: "drowned_transform_into_zombie",
+                jsonKey: "originmonsters:drowned_transform_into_zombie",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Drowned Transform Into Zombie",
+                type: "transformation",
+                impact: "neutral",
+                trigger: "N/A (Transformação)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Transforma-se em zumbi em local quente por tempo prolongado."
+            },
+            {
+                id: "husk_transform_into_zombie",
+                jsonKey: "originmonsters:husk_transform_into_zombie",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Husk Transform Into Zombie",
+                type: "transformation",
+                impact: "neutral",
+                trigger: "N/A (Transformação)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Transforma-se em zumbi ao ficar muito tempo na água."
+            },
+            {
+                id: "transform_into_husk_and_drowned",
+                jsonKey: "originmonsters:transform_into_husk_and_drowned",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Transform Into Husk And Drowned",
+                type: "transformation",
+                impact: "neutral",
+                trigger: "N/A (Transformação)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Vira Casco no deserto e Afogado na água."
+            },
+            {
+                id: "transform_into_piglin",
+                jsonKey: "originmonsters:transform_into_piglin",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Transform Into Piglin",
+                type: "transformation",
+                impact: "neutral",
+                trigger: "N/A (Transformação)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Come maçã dourada sob poção de fraqueza para virar Piglin."
+            },
+            {
+                id: "transform_into_skeleton",
+                jsonKey: "originmonsters:transform_into_skeleton",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Transform Into Skeleton",
+                type: "transformation",
+                impact: "neutral",
+                trigger: "N/A (Transformação)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Vira esqueleto em área quente por tempo prolongado."
+            },
+            {
+                id: "transform_into_stray",
+                jsonKey: "originmonsters:transform_into_stray",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Transform Into Stray",
+                type: "transformation",
+                impact: "neutral",
+                trigger: "N/A (Transformação)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Vira Vira-Lata no frio por tempo prolongado."
+            },
+            {
+                id: "transform_into_zombified_piglin",
+                jsonKey: "originmonsters:transform_into_zombified_piglin",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Transform Into Zombified Piglin",
+                type: "transformation",
+                impact: "neutral",
+                trigger: "N/A (Transformação)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Vira Piglin Zumbificado fora do Nether por tempo prolongado."
+            },
+            {
+                id: "vampiric_transformation",
+                jsonKey: "originfantasy:vampiric_transformation",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Vampiric Transformation",
+                type: "transformation",
+                impact: "neutral",
+                trigger: "N/A (Transformação)",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Transforma outros jogadores em vampiros ao matá-los."
+            },
+            {
+                id: "grayscale",
+                jsonKey: "originsreborn:grayscale",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Grayscale",
+                type: "cosmetic",
+                impact: "neutral",
+                trigger: "N/A",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Aparência sem cor (requer SkinsRestorer)."
+            },
+            {
+                id: "ender_particles",
+                jsonKey: "originsreborn:ender_particles",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Ender Particles",
+                type: "cosmetic",
+                impact: "neutral",
+                trigger: "N/A",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Emite partículas roxas do Ender."
+            },
+            {
+                id: "flame_particles",
+                jsonKey: "originsreborn:flame_particles",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Flame Particles",
+                type: "cosmetic",
+                impact: "neutral",
+                trigger: "N/A",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Emite partículas de fogo."
+            },
+            {
+                id: "phantomize_overlay",
+                jsonKey: "originsreborn:phantomize_overlay",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Phantomize Overlay",
+                type: "cosmetic",
+                impact: "neutral",
+                trigger: "N/A",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Sobreposição vermelha ao estar em modo fantasma."
+            },
+            {
+                id: "nether_spawn",
+                jsonKey: "originsreborn:nether_spawn",
+                plugin: "Origins-Reborn",
+                origin: "origins",
+                originName: "Origins",
+                name: "Nether Spawn",
+                type: "cosmetic",
+                impact: "neutral",
+                trigger: "N/A",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Ponto de renascimento natural no Nether."
+            },
+            {
+                id: "zombie_touch",
+                jsonKey: "originmonsters:zombie_touch",
+                plugin: "Origins-Monsters",
+                origin: "monster",
+                originName: "Monster",
+                name: "Zombie Touch",
+                type: "cosmetic",
+                impact: "neutral",
+                trigger: "N/A",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Transforma aldeões em zumbis em vez de matá-los."
+            },
+            {
+                id: "snow_trail",
+                jsonKey: "originmobs:snow_trail",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Snow Trail",
+                type: "cosmetic",
+                impact: "neutral",
+                trigger: "N/A",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Deixa um rastro de neve ao caminhar."
+            },
+            {
+                id: "rideable_creature",
+                jsonKey: "originmobs:rideable_creature",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Rideable Creature",
+                type: "cosmetic",
+                impact: "neutral",
+                trigger: "N/A",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Outros jogadores podem te montar."
+            },
+            {
+                id: "sly",
+                jsonKey: "originmobs:sly",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Sly",
+                type: "cosmetic",
+                impact: "neutral",
+                trigger: "N/A",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Move-se mais rápido (comportamental)."
+            },
+            {
+                id: "witch_particles",
+                jsonKey: "originmobs:witch_particles",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Witch Particles",
+                type: "cosmetic",
+                impact: "neutral",
+                trigger: "N/A",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Emite partículas de bruxa."
+            },
+            {
+                id: "becomes_elder_guardian",
+                jsonKey: "originmobs:becomes_elder_guardian",
+                plugin: "Origins-Mobs",
+                origin: "mobs",
+                originName: "Mobs",
+                name: "Becomes Elder Guardian",
+                type: "cosmetic",
+                impact: "neutral",
+                trigger: "N/A",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Ganha a origem Guardião Ancião ao matar um Guardião Ancião."
+            },
+            {
+                id: "large_body",
+                jsonKey: "originfantasy:large_body",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Large Body",
+                type: "cosmetic",
+                impact: "neutral",
+                trigger: "N/A",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Três quarteirões de altura."
+            },
+            {
+                id: "small_body",
+                jsonKey: "originfantasy:small_body",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Small Body",
+                type: "cosmetic",
+                impact: "neutral",
+                trigger: "N/A",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Apenas um quarteirão de altura."
+            },
+            {
+                id: "permanent_horse",
+                jsonKey: "originfantasy:permanent_horse",
+                plugin: "Origins-Fantasy",
+                origin: "fantasy",
+                originName: "Fantasy",
+                name: "Permanent Horse",
+                type: "cosmetic",
+                impact: "neutral",
+                trigger: "N/A",
+                conditions: ["N/A"],
+                cooldown: "N/A",
+                description: "Metade cavalo, metade humano."
+            }
+        ];
+
+        let selectedOriginFilter = 'all';
+
+        function initWiki() {
+            renderOriginFilters();
+            renderPowers();
+            populateBuilderSelect();
+            updateJsonPreview();
+        }
+
+        // Render Filter Pills
+        function renderOriginFilters() {
+            const container = document.getElementById('origin-filter-container');
+            const origins = [
+                { id: 'all', name: 'Todas as Raças', icon: 'fa-cubes' },
+                { id: 'enderian', name: 'Enderian', icon: 'fa-eye' },
+                { id: 'elytrian', name: 'Elytrian', icon: 'fa-feather-pointed' },
+                { id: 'blazeborn', name: 'Blazeborn', icon: 'fa-fire' },
+                { id: 'arachnid', name: 'Arachnid', icon: 'fa-spider' },
+                { id: 'warden', name: 'Warden (Monsters)', icon: 'fa-skull' },
+                { id: 'alchemist', name: 'Alchemist (Magic)', icon: 'fa-flask' },
+                { id: 'giant', name: 'Giant (Fantasy)', icon: 'fa-child-reaching' },
+                { id: 'miner', name: 'Miner (Classes)', icon: 'fa-pickaxe' },
+                { id: 'custom', name: 'Skript Custom', icon: 'fa-scroll' },
+                { id: 'origins', name: 'Origins (Base)', icon: 'fa-cube' },
+                { id: 'monster', name: 'Monster', icon: 'fa-skull' },
+                { id: 'mobs', name: 'Mobs', icon: 'fa-paw' },
+                { id: 'fantasy', name: 'Fantasy', icon: 'fa-wand-magic-sparkles' },
+                { id: 'magic', name: 'Magic', icon: 'fa-hat-wizard' }
+            ];
+
+            container.innerHTML = origins.map(o => `
+                <button onclick="setOriginFilter('${o.id}')" id="pill-origin-${o.id}" class="pill-btn px-3 py-1 rounded-lg text-xs font-medium border transition flex items-center gap-1.5 ${o.id === 'all' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-slate-200'}">
+                    <i class="fa-solid ${o.icon} text-[10px]"></i> ${o.name}
+                </button>
+            `).join('');
+        }
+
+        function setOriginFilter(originId) {
+            selectedOriginFilter = originId;
+            document.querySelectorAll('.pill-btn').forEach(btn => {
+                btn.className = 'pill-btn px-3 py-1 rounded-lg text-xs font-medium border transition flex items-center gap-1.5 bg-slate-900/80 text-slate-400 border-slate-800 hover:text-slate-200';
+            });
+            const activeBtn = document.getElementById(`pill-origin-${originId}`);
+            if (activeBtn) {
+                activeBtn.className = 'pill-btn px-3 py-1 rounded-lg text-xs font-medium border transition flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+            }
+            filterPowers();
+        }
+
+        function renderPowers() {
+            const grid = document.getElementById('powers-grid');
+            const searchVal = document.getElementById('power-search').value.toLowerCase().trim();
+            const pluginVal = document.getElementById('plugin-filter').value;
+            const typeVal = document.getElementById('type-filter').value;
+            const impactVal = document.getElementById('impact-filter').value;
+
+            const filtered = powersData.filter(p => {
+                const matchesOrigin = selectedOriginFilter === 'all' || p.origin === selectedOriginFilter;
+                const haystack = [
+                    p.name, p.id, p.jsonKey, p.description, p.plugin, p.originName,
+                    p.type, p.trigger, p.cooldown, ...(p.conditions || [])
+                ].join(' ').toLowerCase();
+                const matchesSearch = !searchVal || haystack.includes(searchVal);
+                const matchesPlugin = pluginVal === 'all' || p.plugin === pluginVal;
+                const matchesType = typeVal === 'all' || p.type === typeVal;
+                const matchesImpact = impactVal === 'all' || p.impact === impactVal;
+
+                return matchesOrigin && matchesSearch && matchesPlugin && matchesType && matchesImpact;
+            });
+
+            document.getElementById('visible-count').innerText = filtered.length;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-500">
+                        <i class="fa-solid fa-magnifying-glass text-3xl mb-2 text-slate-600"></i>
+                        <p class="text-sm">Nenhum poder encontrado com os filtros selecionados.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(p => {
+                const impactBadge = p.impact === 'positive' 
+                    ? '<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] px-2 py-0.5 rounded-full font-medium">🟢 Positivo</span>'
+                    : p.impact === 'negative'
+                    ? '<span class="bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] px-2 py-0.5 rounded-full font-medium">🔴 Negativo</span>'
+                    : '<span class="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] px-2 py-0.5 rounded-full font-medium">🟡 Neutro</span>';
+
+                const pluginBadgeColor = p.plugin === 'Origins-Reborn' ? 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10'
+                    : p.plugin === 'Origins-Monsters' ? 'text-red-400 border-red-500/30 bg-red-500/10'
+                    : p.plugin === 'Origins-Magic' ? 'text-cyan-400 border-cyan-500/30 bg-cyan-500/10'
+                    : p.plugin === 'Origins-Fantasy' ? 'text-indigo-400 border-indigo-500/30 bg-indigo-500/10'
+                    : p.plugin === 'Origins-Mobs' ? 'text-purple-400 border-purple-500/30 bg-purple-500/10'
+                    : p.plugin === 'Origins-Classes' ? 'text-amber-400 border-amber-500/30 bg-amber-500/10'
+                    : p.plugin === 'Skript' ? 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10'
+                    : 'text-slate-400 border-slate-500/30 bg-slate-500/10';
+
+                return `
+                    <div class="glass-panel rounded-2xl p-5 flex flex-col justify-between hover:border-slate-700 transition group glow-green">
+                        <div class="space-y-3">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                        <span class="px-1.5 py-0.5 rounded border ${pluginBadgeColor}">${p.plugin}</span>
+                                        <span class="text-slate-400">• ${p.originName}</span>
+                                    </span>
+                                    <h3 class="text-base font-bold text-white group-hover:text-emerald-300 transition mt-1">${p.name}</h3>
+                                </div>
+                                ${impactBadge}
+                            </div>
+
+                            <p class="text-xs text-slate-300 leading-relaxed">${p.description}</p>
+
+                            <!-- JSON Key Copy Box -->
+                            <div onclick="copyText('${p.jsonKey}')" title="Clique para copiar esta chave em JSON" class="cursor-pointer bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-emerald-500/50 p-2.5 rounded-xl transition flex items-center justify-between group/code">
+                                <code class="text-xs font-mono text-emerald-400 font-medium truncate">${p.jsonKey}</code>
+                                <i class="fa-regular fa-copy text-slate-500 group-hover/code:text-emerald-400 text-xs ml-2"></i>
+                            </div>
+                        </div>
+
+                        <!-- Technical Specs -->
+                        <div class="mt-4 pt-3 border-t border-slate-800/80 grid grid-cols-2 gap-2 text-[11px] text-slate-400">
+                            <div>
+                                <span class="text-slate-500 block">Gatilho (Trigger):</span>
+                                <strong class="text-slate-200 font-mono">${p.trigger}</strong>
+                            </div>
+                            <div>
+                                <span class="text-slate-500 block">Cooldown:</span>
+                                <strong class="text-slate-200 font-mono">${p.cooldown}</strong>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterPowers() {
+            renderPowers();
+        }
+
+        function populateBuilderSelect(filterText = '') {
+            const container = document.getElementById('builder-powers-select');
+            const filtered = powersData.filter(p => p.name.toLowerCase().includes(filterText) || p.jsonKey.toLowerCase().includes(filterText));
+
+            container.innerHTML = filtered.map(p => `
+                <label class="flex items-center justify-between p-2 rounded-lg bg-slate-950/60 hover:bg-slate-800/60 cursor-pointer border border-slate-800/80 transition text-xs">
+                    <div class="flex items-center gap-2 truncate pr-2">
+                        <input type="checkbox" value="${p.jsonKey}" onchange="updateJsonPreview()" class="builder-power-checkbox rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-0">
+                        <span class="text-slate-200 font-medium truncate">${p.name}</span>
+                    </div>
+                    <span class="text-[10px] font-mono text-slate-500 truncate">${p.plugin}</span>
+                </label>
+            `).join('');
+        }
+
+        function filterBuilderPowers() {
+            const query = document.getElementById('builder-search').value.toLowerCase().trim();
+            populateBuilderSelect(query);
+        }
+
+        function addCustomPowerKey() {
+            const input = document.getElementById('custom-power-key-input');
+            const key = input.value.trim();
+            if (!key || !key.includes(':')) {
+                showToast("Sintaxe inválida! Use namespace:nome (ex: skript:meu_poder)");
+                return;
+            }
+
+            // Check if already in array
+            const exists = powersData.find(p => p.jsonKey === key);
+            if (!exists) {
+                powersData.unshift({
+                    id: key.replace(':', '_'),
+                    jsonKey: key,
+                    plugin: key.split(':')[0],
+                    origin: "custom",
+                    originName: "Custom",
+                    name: key,
+                    type: "active",
+                    impact: "positive",
+                    trigger: "Custom",
+                    conditions: ["N/A"],
+                    cooldown: "N/A",
+                    description: "Poder customizado adicionado manualmente."
+                });
+            }
+
+            input.value = '';
+            populateBuilderSelect();
+            renderPowers();
+            
+            // Auto check the added power
+            setTimeout(() => {
+                const checkboxes = document.querySelectorAll('.builder-power-checkbox');
+                checkboxes.forEach(cb => {
+                    if (cb.value === key) cb.checked = true;
+                });
+                updateJsonPreview();
+            }, 100);
+
+            showToast(`Chave '${key}' adicionada ao Gerador!`);
+        }
+
+        function updateJsonPreview() {
+            const id = document.getElementById('builder-id').value.trim() || "origem_custom";
+            const name = document.getElementById('builder-name').value.trim();
+            const desc = document.getElementById('builder-desc').value.trim();
+            const icon = document.getElementById('builder-icon').value.trim();
+            const impact = parseInt(document.getElementById('builder-impact').value) || 1;
+
+            const selectedCheckboxes = document.querySelectorAll('.builder-power-checkbox:checked');
+            const powersList = Array.from(selectedCheckboxes).map(cb => cb.value);
+
+            document.getElementById('builder-filepath-preview').innerText = `plugins/Origins-Reborn/origins/${id}.json`;
+
+            const jsonObject = {
+                "name": name,
+                "description": desc,
+                "icon": icon,
+                "impact": impact,
+                "powers": powersList
+            };
+
+            document.getElementById('json-preview-code').innerText = JSON.stringify(jsonObject, null, 4);
+        }
+
+        function copyGeneratedJson() {
+            const code = document.getElementById('json-preview-code').innerText;
+            copyText(code, "Ficheiro JSON de Origem copiado!");
+        }
+
+        // TAB SWITCHING
+        function switchTab(tabId) {
+            ['powers', 'json-builder', 'triggers', 'addons'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (btn) {
+                    btn.className = "px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-700/50";
+                }
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold transition-all bg-emerald-500 text-slate-950 shadow";
+            }
+        }
+
+        // UTILITIES
+        function copyText(text, msg = "Copiado para a área de transferência!") {
+            const temp = document.createElement('textarea');
+            temp.value = text;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+
+            showToast(msg);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        // On Load Initializer
+        window.onload = function() {
+            initWiki();
+        };
+    </script>
+</body>
+</html>
