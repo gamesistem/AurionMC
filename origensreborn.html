@@ -213,8 +213,14 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Descrição Curta</label>
-                            <textarea id="builder-desc" rows="2" oninput="updateJsonPreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">Mestre das sombras capaz de se tornar invisível no escuro e utilizar telepatia.</textarea>
+                            <div class="flex items-center justify-between mb-1">
+                                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Descrição</label>
+                                <span class="text-[10px] text-slate-500">Aceita múltiplas linhas • Enter para quebrar linha</span>
+                            </div>
+                            <textarea id="builder-desc" rows="5" oninput="updateJsonPreview()" placeholder="Digite a descrição da origem...
+Você pode usar várias linhas aqui.
+As quebras serão preservadas no JSON como \n." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 placeholder-slate-600 focus:border-emerald-500 focus:outline-none resize-y leading-relaxed">Mestre das sombras capaz de se tornar invisível no escuro e utilizar telepatia.</textarea>
+                            <p class="text-[10px] text-slate-500 mt-1.5">💡 Você pode colar textos com várias linhas. O JSON gerado continua válido e preserva cada quebra de linha.</p>
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
@@ -4092,7 +4098,8 @@ on origins reborn ability trigger:
         function updateJsonPreview() {
             const id = document.getElementById('builder-id').value.trim() || "origem_custom";
             const name = document.getElementById('builder-name').value.trim();
-            const desc = document.getElementById('builder-desc').value.trim();
+            // Preserva quebras de linha (\n) e normaliza CRLF/CR para LF antes de gerar o JSON.
+            const desc = document.getElementById('builder-desc').value.replace(/\r\n?/g, '\n').trim();
             const icon = document.getElementById('builder-icon').value.trim();
             const impact = parseInt(document.getElementById('builder-impact').value) || 1;
 
