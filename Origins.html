@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Origin Forge — Gerador de Custom Origins</title>
+<style>
+  :root{
+    --bg: #14181a;
+    --panel: #1d2320;
+    --panel-2: #232a26;
+    --line: #384038;
+    --line-soft: #2b332e;
+    --text: #e9e7dc;
+    --text-dim: #94a094;
+    --emerald: #5fb878;
+    --emerald-dim: #3d7d52;
+    --gold: #d9a441;
+    --redstone: #c1554a;
+    --lapis: #4f7ecb;
+    --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --body: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,0.035) 1px, transparent 0) 0 0/22px 22px,
+      var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.5;
+    min-height:100vh;
+  }
+  a{color:var(--emerald);}
+
+  /* header */
+  header{
+    border-bottom:2px solid var(--line);
+    padding:28px 32px 24px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:24px;
+    flex-wrap:wrap;
+    background:linear-gradient(180deg, rgba(95,184,120,0.06), transparent);
+  }
+  .brand{display:flex; align-items:center; gap:14px;}
+  .brand-mark{
+    width:40px;height:40px;
+    background:var(--emerald);
+    position:relative;
+    flex:none;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+  .brand-mark::after{
+    content:"";
+    position:absolute; inset:9px;
+    background:var(--bg);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+  h1{
+    font-family:var(--mono);
+    font-size:22px;
+    letter-spacing:0.01em;
+    margin:0;
+    font-weight:600;
+  }
+  header p{margin:4px 0 0; color:var(--text-dim); font-size:13.5px;}
+  header .src{font-size:12.5px; color:var(--text-dim); text-align:right;}
+  header .src a{text-decoration:none; border-bottom:1px dotted var(--emerald-dim);}
+
+  /* layout */
+  main{
+    display:grid;
+    grid-template-columns: minmax(0,1.15fr) minmax(0,0.85fr);
+    gap:0;
+  }
+  @media (max-width: 980px){
+    main{grid-template-columns:1fr;}
+  }
+  .col{padding:28px 32px;}
+  .col-form{border-right:2px solid var(--line);}
+  .col-preview{
+    background:var(--panel);
+    position:sticky; top:0; align-self:start;
+    max-height:100vh; overflow-y:auto;
+  }
+
+  section.block{margin-bottom:30px;}
+  .block-title{
+    font-family:var(--mono);
+    font-size:12px;
+    text-transform:lowercase;
+    letter-spacing:.04em;
+    color:var(--gold);
+    display:flex; align-items:center; gap:8px;
+    margin-bottom:14px;
+  }
+  .block-title::before{content:"§"; color:var(--emerald-dim);}
+  .block-title .req{color:var(--redstone); font-size:11px;}
+
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;
+    font-size:13px;
+    color:var(--text);
+    margin-bottom:6px;
+    font-weight:500;
+  }
+  .field .hint{color:var(--text-dim); font-size:12px; margin-top:5px; line-height:1.4;}
+  .row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;}
+  @media (max-width:640px){.row,.row3{grid-template-columns:1fr;}}
+
+  input[type=text], input[type=number], textarea, select{
+    width:100%;
+    background:var(--panel-2);
+    border:2px solid var(--line);
+    color:var(--text);
+    padding:9px 11px;
+    font-family:var(--body);
+    font-size:14px;
+    border-radius:2px;
+    outline:none;
+    transition:border-color .12s ease;
+  }
+  textarea{resize:vertical; min-height:64px; font-family:var(--body);}
+  input:focus, textarea:focus, select:focus{border-color:var(--emerald);}
+  input.err, textarea.err{border-color:var(--redstone);}
+  select{appearance:none; background-image:linear-gradient(45deg, transparent 50%, var(--text-dim) 50%), linear-gradient(135deg, var(--text-dim) 50%, transparent 50%); background-position: calc(100% - 18px) center, calc(100% - 13px) center; background-size:5px 5px, 5px 5px; background-repeat:no-repeat;}
+
+  /* powers picker */
+  .powers-selected{
+    display:flex; flex-wrap:wrap; gap:6px;
+    margin-bottom:10px;
+    min-height:30px;
+  }
+  .power-tag{
+    font-family:var(--mono);
+    font-size:11.5px;
+    background:rgba(95,184,120,0.12);
+    border:1px solid var(--emerald-dim);
+    color:var(--emerald);
+    padding:4px 6px 4px 9px;
+    border-radius:2px;
+    display:flex; align-items:center; gap:7px;
+  }
+  .power-tag button{
+    background:none; border:none; color:var(--emerald); cursor:pointer;
+    font-size:13px; line-height:1; padding:0; opacity:.7;
+  }
+  .power-tag button:hover{opacity:1; color:var(--redstone);}
+  .power-tag.custom{border-color:var(--lapis); color:#8fb4e8; background:rgba(79,126,203,0.12);}
+  .power-tag.custom button{color:#8fb4e8;}
+
+  .power-search{position:relative;}
+  .power-add-custom{display:flex; gap:8px; margin-top:8px;}
+  .power-add-custom input{flex:1;}
+  .btn-small{
+    font-family:var(--mono); font-size:12px; white-space:nowrap;
+    background:var(--panel-2); border:2px solid var(--line); color:var(--text);
+    padding:8px 12px; cursor:pointer; border-radius:2px;
+  }
+  .btn-small:hover{border-color:var(--lapis);}
+
+  .powers-panel{
+    border:2px solid var(--line);
+    background:var(--panel-2);
+    max-height:280px;
+    overflow-y:auto;
+    margin-top:8px;
+  }
+  .powers-group{border-bottom:1px solid var(--line-soft);}
+  .powers-group:last-child{border-bottom:none;}
+  .powers-group-title{
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--text-dim);
+    background:var(--panel);
+    padding:7px 12px;
+    position:sticky; top:0;
+    text-transform:lowercase;
+    letter-spacing:.03em;
+  }
+  .power-option{
+    display:flex; gap:9px; align-items:flex-start;
+    padding:7px 12px;
+    cursor:pointer;
+    font-size:12.5px;
+    border-top:1px solid rgba(255,255,255,0.02);
+  }
+  .power-option:hover{background:rgba(95,184,120,0.06);}
+  .power-option input{margin-top:2.5px; accent-color:var(--emerald); flex:none;}
+  .power-option .k{font-family:var(--mono); color:var(--text); display:block;}
+  .power-option .d{color:var(--text-dim); font-size:11.5px; display:block; margin-top:1px;}
+  .power-option.hidden{display:none;}
+
+  /* icon block */
+  .icon-preview-row{display:flex; gap:14px; align-items:center;}
+  .icon-swatch{
+    width:52px;height:52px; flex:none;
+    background:var(--panel-2); border:2px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px;
+  }
+
+  /* toggle style radios for unchoosable */
+  .segmented{display:flex; border:2px solid var(--line); border-radius:2px; overflow:hidden;}
+  .segmented label{
+    flex:1; text-align:center; padding:9px 6px; font-size:12.5px; cursor:pointer;
+    font-family:var(--mono); color:var(--text-dim);
+    border-right:1px solid var(--line);
+  }
+  .segmented label:last-child{border-right:none;}
+  .segmented input{display:none;}
+  .segmented input:checked + span{color:var(--bg);}
+  .segmented label:has(input:checked){background:var(--emerald); color:var(--bg);}
+  .segmented label:has(input:checked) span{color:var(--bg);}
+
+  /* actions */
+  .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:26px;}
+  .btn{
+    font-family:var(--mono); font-size:13.5px;
+    padding:12px 18px; border-radius:2px; cursor:pointer; border:2px solid transparent;
+  }
+  .btn-primary{background:var(--emerald); color:#0e1410; border-color:var(--emerald); font-weight:600;}
+  .btn-primary:hover{background:#6fc687;}
+  .btn-ghost{background:transparent; border-color:var(--line); color:var(--text);}
+  .btn-ghost:hover{border-color:var(--text-dim);}
+  .btn-danger{background:transparent; border-color:var(--redstone); color:var(--redstone);}
+  .btn-danger:hover{background:rgba(193,85,74,0.1);}
+
+  /* json preview */
+  .json-box{
+    background:#0f1311;
+    border:2px solid var(--line);
+    padding:16px;
+    font-family:var(--mono);
+    font-size:12.5px;
+    white-space:pre-wrap;
+    word-break:break-word;
+    max-height:340px;
+    overflow-y:auto;
+    color:#c9e6cf;
+  }
+  .json-box .k{color:#8fb4e8;}
+  .json-box .s{color:#e0b569;}
+  .json-box .n{color:#c9899b;}
+  .filename-row{
+    display:flex; align-items:center; gap:10px; margin:14px 0 8px;
+    font-family:var(--mono); font-size:12.5px; color:var(--text-dim);
+  }
+  .filename-row input{flex:1;}
+
+  /* saved list */
+  .saved-list{margin-top:10px; display:flex; flex-direction:column; gap:8px;}
+  .saved-item{
+    border:2px solid var(--line);
+    background:var(--panel-2);
+    padding:10px 12px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .saved-item .sw{
+    width:30px;height:30px; flex:none;
+    background:var(--bg); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; font-size:14px;
+  }
+  .saved-item .meta{flex:1; min-width:0;}
+  .saved-item .meta .nm{font-size:13.5px; font-weight:600;}
+  .saved-item .meta .fx{font-family:var(--mono); font-size:11px; color:var(--text-dim);}
+  .saved-item .ops{display:flex; gap:6px;}
+  .saved-item .ops button{
+    background:none; border:1px solid var(--line); color:var(--text-dim);
+    font-size:11px; font-family:var(--mono); padding:5px 8px; cursor:pointer; border-radius:2px;
+  }
+  .saved-item .ops button:hover{border-color:var(--emerald); color:var(--emerald);}
+  .saved-item .ops button.del:hover{border-color:var(--redstone); color:var(--redstone);}
+  .empty-note{color:var(--text-dim); font-size:12.5px; font-style:italic; padding:8px 0;}
+
+  .toast{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--emerald); color:#0e1410; font-family:var(--mono); font-size:13px;
+    padding:11px 18px; border-radius:2px; opacity:0; pointer-events:none;
+    transition:opacity .18s ease, transform .18s ease;
+    z-index:50;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  footer{
+    border-top:2px solid var(--line);
+    padding:18px 32px 30px;
+    color:var(--text-dim); font-size:12px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div>
+      <h1>Origin Forge</h1>
+      <p>Monte e exporte os .json de custom origins para o Origins-Reborn</p>
+    </div>
+  </div>
+  <div class="src">
+    Estrutura baseada na doc oficial<br>
+    <a href="https://starshooter.gitbook.io/origins-reborn/custom-origins" target="_blank" rel="noopener">gitbook: custom-origins</a>
+  </div>
+</header>
+
+<main>
+  <div class="col col-form">
+
+    <section class="block">
+      <div class="block-title">identidade</div>
+      <div class="field">
+        <label for="f-name">Nome do arquivo (e do origin, se "name" não for definido)</label>
+        <input type="text" id="f-name" placeholder="ex: arachnid" value="">
+        <div class="hint">Vira o nome do arquivo .json. Sem espaços de preferência (será usado também como sugestão de "name").</div>
+      </div>
+      <div class="field">
+        <label for="f-displayname">"name" — nome exibido na GUI <span style="color:var(--text-dim); font-weight:400;">(opcional)</span></label>
+        <input type="text" id="f-displayname" placeholder="ex: Arachnid">
+      </div>
+      <div class="field">
+        <label for="f-description">"description" <span style="color:var(--redstone);">*obrigatório</span></label>
+        <textarea id="f-description" placeholder="Texto exibido abaixo do nome do origin na GUI."></textarea>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="block-title">posição na gui <span class="req">*obrigatório</span></div>
+      <div class="row">
+        <div class="field">
+          <label for="f-order">"order"</label>
+          <input type="number" id="f-order" value="1" step="1">
+          <div class="hint">Posição relativa entre origins de mesmo impacto.</div>
+        </div>
+        <div class="field">
+          <label for="f-impact">"impact"</label>
+          <input type="number" id="f-impact" value="1" step="1" min="0" max="3">
+          <div class="hint">Define os semáforos no topo direito da GUI (0–3 é o comum).</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="block-title">ícone <span class="req">*obrigatório</span></div>
+      <div class="icon-preview-row" style="margin-bottom:12px;">
+        <div class="icon-swatch" id="icon-swatch">🍎</div>
+        <div style="flex:1;" class="row">
+          <div class="field" style="margin-bottom:0;">
+            <label for="f-icon-item">"item"</label>
+            <input type="text" id="f-icon-item" value="minecraft:apple" list="mc-items">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="f-icon-cmd">"custom_model_data" <span style="color:var(--text-dim); font-weight:400;">(opcional)</span></label>
+            <input type="number" id="f-icon-cmd" placeholder="ex: 1">
+          </div>
+        </div>
+      </div>
+      <datalist id="mc-items">
+        <option value="minecraft:apple"><option value="minecraft:egg"><option value="minecraft:feather">
+        <option value="minecraft:bone"><option value="minecraft:spider_eye"><option value="minecraft:blaze_powder">
+        <option value="minecraft:phantom_membrane"><option value="minecraft:zombie_head"><option value="minecraft:wither_skeleton_skull">
+        <option value="minecraft:trident"><option value="minecraft:heart_of_the_sea"><option value="minecraft:nautilus_shell">
+        <option value="minecraft:golden_apple"><option value="minecraft:ender_pearl"><option value="minecraft:ghast_tear">
+        <option value="minecraft:rabbit_foot"><option value="minecraft:slime_ball"><option value="minecraft:magma_cream">
+        <option value="minecraft:honeycomb"><option value="minecraft:sweet_berries"><option value="minecraft:fox_food">
+      </datalist>
+    </section>
+
+    <section class="block">
+      <div class="block-title">powers <span class="req">*obrigatório — pelo menos 1</span></div>
+      <div class="powers-selected" id="powers-selected"></div>
+
+      <div class="power-search">
+        <input type="text" id="power-search" placeholder="Buscar power por nome ou descrição...">
+        <div class="powers-panel" id="powers-panel"></div>
+      </div>
+
+      <div class="power-add-custom">
+        <input type="text" id="power-custom" placeholder="power customizado, ex: meuaddon:minha_habilidade">
+        <button class="btn-small" id="add-custom-power">+ adicionar</button>
+      </div>
+      <div class="hint">Powers de addons (Origins-Monsters, Mobs, Fantasy, Magic) exigem o respectivo plugin instalado no servidor.</div>
+    </section>
+
+    <section class="block">
+      <div class="block-title">configurações opcionais</div>
+      <div class="row">
+        <div class="field">
+          <label for="f-max">"max" — limite de jogadores</label>
+          <input type="number" id="f-max" placeholder="sem limite" min="0">
+        </div>
+        <div class="field">
+          <label for="f-layer">"layer"</label>
+          <input type="text" id="f-layer" value="origin">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="f-cost">"cost" — custo em Vault</label>
+          <input type="number" id="f-cost" placeholder="padrão do config.yml" min="0">
+        </div>
+        <div class="field">
+          <label for="f-permission">"permission"</label>
+          <input type="text" id="f-permission" placeholder="ex: custom.origin.use">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="f-priority">"priority"</label>
+          <input type="number" id="f-priority" placeholder="0" step="1">
+          <div class="hint">Só necessário para sobrescrever origins de mesmo nome de outros plugins.</div>
+        </div>
+        <div class="field">
+          <label>"unchoosable"</label>
+          <div class="segmented" id="unchoosable-seg">
+            <label><input type="radio" name="unchoosable" value="false" checked><span>false</span></label>
+            <label><input type="radio" name="unchoosable" value="true"><span>true</span></label>
+            <label><input type="radio" name="unchoosable" value="random"><span>random</span></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="save-origin">💾 salvar este origin na lista</button>
+      <button class="btn btn-ghost" id="reset-form">limpar formulário</button>
+    </div>
+  </div>
+
+  <div class="col col-preview">
+    <section class="block">
+      <div class="block-title">preview do json</div>
+      <div class="json-box" id="json-preview"></div>
+      <div class="filename-row">
+        <span>arquivo:</span>
+        <input type="text" id="preview-filename" value="origin.json" readonly>
+      </div>
+      <div class="actions" style="margin-top:12px;">
+        <button class="btn btn-ghost" id="download-current">⬇ baixar este .json</button>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="block-title">origins salvos (<span id="saved-count">0</span>)</div>
+      <div class="saved-list" id="saved-list"></div>
+      <div class="empty-note" id="empty-note">Nenhum origin salvo ainda. Preencha o formulário e clique em "salvar este origin na lista".</div>
+      <div class="actions">
+        <button class="btn btn-primary" id="download-all">⬇ baixar todos (.zip)</button>
+        <button class="btn btn-danger" id="clear-all">apagar todos</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  Origin Forge é uma ferramenta não oficial para gerar arquivos .json compatíveis com o plugin Origins-Reborn. Os arquivos gerados devem ser colocados em <code>~/plugins/Origins-Reborn/origins/</code> no seu servidor. Nenhum dado é enviado a servidores externos — tudo roda no seu navegador.
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+(function(){
+
+  // ---------- powers database ----------
+  const POWERS = {
+    "Origins-Reborn": [
+      ["origins:aerial_combatant","Mais dano durante voo com Elytra."],
+      ["origins:aqua_affinity","Quebra blocos embaixo d'água como em terra."],
+      ["origins:burn_in_daylight","Pega fogo na luz do dia se não estiver invisível."],
+      ["origins:burning_wrath","Mais dano em ataques enquanto está em chamas."],
+      ["origins:carnivore","Só pode comer carne."],
+      ["origins:cat_vision","Enxerga um pouco no escuro fora d'água."],
+      ["origins:claustrophobia","Fica mais fraco e lento em tetos baixos."],
+      ["origins:climbing","Pode escalar qualquer parede."],
+      ["origins:elytra","Tem asas de elytra sem precisar equipar."],
+      ["origins:extra_reach","Alcance maior para blocos e entidades."],
+      ["origins:fall_immunity","Nunca recebe dano de queda."],
+      ["origins:fire_immunity","Imune a todo tipo de dano de fogo."],
+      ["origins:fragile","3 corações a menos de vida."],
+      ["origins:fresh_air","Precisa dormir em altitude ≥86 para respirar bem."],
+      ["origins:grayscale","Aparência desbotada (requer SkinsRestorer)."],
+      ["origins:hotblooded","Imune a veneno e fome (corpo quente)."],
+      ["origins:hunger_over_time","Fica com fome ao ficar fantasmizado."],
+      ["origins:invisibility","Fica invisível enquanto fantasmizado."],
+      ["origins:launch_into_air","A cada 30s pode se lançar ~20 blocos para o ar."],
+      ["origins:lay_eggs","Põe um ovo ao acordar de manhã."],
+      ["origins:light_armor","Não pode usar armaduras pesadas."],
+      ["origins:like_water","Não afunda embaixo d'água a menos que queira."],
+      ["origins:master_of_webs","Navega perfeitamente em teias, prende inimigos nelas."],
+      ["origins:more_exhaustion","Exaustão mais rápida, precisa comer mais."],
+      ["origins:more_kinetic_damage","Mais dano de queda e colisão em voo."],
+      ["origins:natural_armor","Proteção natural mesmo sem armadura."],
+      ["origins:nether_spawn","Spawna no Nether."],
+      ["origins:nine_lives","1 coração a menos de vida."],
+      ["origins:phasing","Atravessa blocos sólidos (exceto obsidiana) fantasmizado."],
+      ["origins:pumpkin_hate","Não enxerga jogadores usando abóbora esculpida."],
+      ["origins:scare_creepers","Creepers só explodem se atacados primeiro."],
+      ["origins:shulker_inventory","9 slots extras de inventário que sobrevivem à morte."],
+      ["origins:slow_falling","Cai suavemente como uma pena (a menos que agache)."],
+      ["origins:sprint_jump","Pula mais alto correndo."],
+      ["origins:strong_arms","Quebra pedra sem picareta."],
+      ["origins:swim_speed","Velocidade de natação aumentada."],
+      ["origins:tailwind","Um pouco mais rápido a pé."],
+      ["origins:throw_ender_pearl","Pode teleportar sem dano com ender pearl."],
+      ["origins:no_shield","Não consegue segurar escudo."],
+      ["origins:vegetarian","Não digere carne."],
+      ["origins:velvet_paws","Passos não causam vibração (Sculk Sensors)."],
+      ["origins:water_breathing","Respira embaixo d'água, mas não em terra."],
+      ["origins:water_vision","Visão perfeita embaixo d'água."],
+      ["origins:water_vulnerability","Recebe dano contínuo em contato com água."],
+      ["origins:weak_arms","Só quebra pedra com no máx. 2 blocos adjacentes sem força."],
+      ["origins:air_from_potions","* Ganha ar de poções."],
+      ["origins:aquatic","* Mais dano de Impaling."],
+      ["origins:arthropod","* Mais dano e lentidão de Bane of Arthropods."],
+      ["origins:conduit_power_on_land","* Recebe Conduit Power mesmo em terra."],
+      ["origins:damage_from_potions","* Recebe dano de poções."],
+      ["origins:damage_from_snowballs","* Recebe dano de bolas de neve."],
+      ["origins:ender_particles","* Emite partículas roxas de ender."],
+      ["origins:flame_particles","* Emite partículas de fogo."],
+      ["origins:phantomize","* Pode entrar em Phantom Form clicando no ar."],
+      ["origins:phantomize_overlay","* Overlay vermelho quando fantasmizado."]
+    ],
+    "Origins-Monsters": [
+      ["monsterorigins:apply_hunger_effect","Aplica Fome em quem atacar."],
+      ["monsterorigins:apply_wither_effect","Aplica Wither em quem atacar."],
+      ["monsterorigins:better_aim","Mira mais precisa que humanos."],
+      ["monsterorigins:better_gold_armour","Armadura de ouro fica indestrutível e forte como diamante."],
+      ["monsterorigins:better_gold_weapons","Armas de ouro ficam indestrutíveis e muito mais fortes."],
+      ["monsterorigins:blindness","Enxerga só a curta distância (exceto com night vision)."],
+      ["monsterorigins:burn_in_day","Pega fogo na luz do dia."],
+      ["monsterorigins:cold_slowness","Fica lento em biomas frios."],
+      ["monsterorigins:creeper_ally","Creepers não atacam você."],
+      ["monsterorigins:double_damage","Causa o dobro de dano."],
+      ["monsterorigins:double_fire_damage","Recebe o dobro de dano de fogo."],
+      ["monsterorigins:double_health","O dobro de vida de um humano."],
+      ["monsterorigins:explosive","Pode sacrificar vida para causar uma explosão a cada 15s."],
+      ["monsterorigins:fear_cats","Fica com náusea e fraqueza perto de gatos."],
+      ["monsterorigins:guardian_ally","Guardiões não atacam você."],
+      ["monsterorigins:half_max_saturation","Metade da saturação máxima de um humano."],
+      ["monsterorigins:heat_slowness","Fica lento em biomas quentes."],
+      ["monsterorigins:infinite_arrows","Flechas atiradas não se gastam."],
+      ["monsterorigins:land_night_vision","Enxerga no escuro em terra."],
+      ["monsterorigins:land_slowness","Muito mais lento em terra."],
+      ["monsterorigins:piglin_ally","Piglins não atacam a menos que atacado primeiro."],
+      ["monsterorigins:scare_villagers","Aldeões têm medo e não negociam com você."],
+      ["monsterorigins:sense_movement","Vê o contorno de mobs próximos através de blocos."],
+      ["monsterorigins:skeleton_body","Menos vida que humanos (corpo de esqueleto)."],
+      ["monsterorigins:slowness","Se move mais devagar (corpo morto-vivo)."],
+      ["monsterorigins:slowness_arrows","Flechas atiradas causam lentidão."],
+      ["monsterorigins:sonic_boom","A cada 30s pode lançar um sonic boom."],
+      ["monsterorigins:super_bartering","Barganha 2 a 5x mais itens de valor."],
+      ["monsterorigins:swim_speed","Velocidade de natação aumentada."],
+      ["monsterorigins:trident_expert","Mestre em tridente: +2 dano, channeling sem trovão, riptide sem água."],
+      ["monsterorigins:undead_ally","Mobs mortos-vivos não atacam a menos que provocados."],
+      ["monsterorigins:water_combatant","Mais dano na água."],
+      ["monsterorigins:water_vision","Visão perfeita embaixo d'água."],
+      ["monsterorigins:zombie_hunger","Exausta mais rápido (fome de carne)."],
+      ["monsterorigins:zombie_touch","Zumbifica aldeões em vez de matá-los."],
+      ["monsterorigins:zombified_piglin_allies","Zombified Piglins próximos defendem você."],
+      ["monsterorigins:drowned_transform_into_zombie","Vira Zombie se ficar quente por muito tempo."],
+      ["monsterorigins:husk_transform_into_zombie","Vira Zombie se ficar na água por muito tempo."],
+      ["monsterorigins:transform_into_husk_and_drowned","Vira Husk no deserto ou Drowned na água."],
+      ["monsterorigins:transform_into_piglin","Vira Piglin ao comer maçã dourada sob fraqueza."],
+      ["monsterorigins:transform_into_skeleton","Vira Skeleton se ficar quente por muito tempo."],
+      ["monsterorigins:transform_into_stray","Vira Stray se ficar no frio por muito tempo."],
+      ["monsterorigins:transform_into_zombified_piglin","Vira Zombified Piglin fora do Nether por muito tempo."],
+      ["monsterorigins:metamorphosis_temperature","* Tem um valor de 'temperatura' para metamorfose."],
+      ["monsterorigins:freeze_immune","* Imune a dano de congelamento."],
+      ["monsterorigins:undead","* Mais dano de Smite."],
+      ["monsterorigins:water_breathing","* Respiração infinita embaixo d'água."],
+      ["monsterorigins:wither_immunity","* Imune ao efeito wither."]
+    ],
+    "Origins-Mobs": [
+      ["moborigins:alpha_wolf","Lobos domados ficam mais fortes."],
+      ["moborigins:bee_wings","Desce devagar usando asinhas de abelha."],
+      ["moborigins:better_berries","Frutinhas são extra deliciosas."],
+      ["moborigins:better_potions","Poções duram mais tempo."],
+      ["moborigins:bouncy","Todos os blocos agem como slime block."],
+      ["moborigins:careful_gatherer","Arbustos de frutinhas não machucam você."],
+      ["moborigins:elder_magic","Reduz velocidade de mineração de jogadores próximos."],
+      ["moborigins:elder_spikes","Espinhos que podem ferir atacantes."],
+      ["moborigins:flower_power","Regenera perto de várias flores."],
+      ["moborigins:frigid_strength","Mais dano em áreas frias."],
+      ["moborigins:full_moon","Mais rápido, forte e saudável em lua cheia."],
+      ["moborigins:guardian_ally","Guardiões não atacam você."],
+      ["moborigins:guardian_spikes","Espinhos que podem ferir atacantes."],
+      ["moborigins:item_collector","Raio de coleta de itens maior."],
+      ["moborigins:lava_walk","Anda sobre lava, mais rápido nela e mais lento em terra."],
+      ["moborigins:lower_totem_chance","10% de chance do totem não quebrar ao usar."],
+      ["moborigins:melting","Derrete em biomas quentes, perdendo vida e velocidade."],
+      ["moborigins:overheat","Barra de temperatura que enche no calor e esfria fora dele."],
+      ["moborigins:pillager_aligned","Aldeões não gostam, pillagers gostam de você."],
+      ["moborigins:potion_action","Ganha um efeito de poção aleatório conforme a situação."],
+      ["moborigins:prismarine_skin","Pele de prismarine dá armadura natural."],
+      ["moborigins:queen_bee","Abelhas não atacam ao coletar mel."],
+      ["moborigins:rideable_creature","Outros jogadores podem montar em você."],
+      ["moborigins:sly","Mais rápido."],
+      ["moborigins:small_bug","2 corações a menos de vida."],
+      ["moborigins:small_fox","2 corações a menos de vida."],
+      ["moborigins:small_weak","Quase sem dano abaixo de 2 corações, mas mais knockback."],
+      ["moborigins:snow_trail","Deixa um rastro de neve."],
+      ["moborigins:split","Transforma pontos de fome em um pequeno slime defensor."],
+      ["moborigins:stinger","Envenena ao acertar com o punho."],
+      ["moborigins:stronger_snowballs","Bolas de neve causam 1 de dano."],
+      ["moborigins:summon_fangs","Pode invocar presas (fangs)."],
+      ["moborigins:surface_weakness","Fica enfraquecido em terra."],
+      ["moborigins:timid_creature","Fica mais rápido perto de +3 jogadores."],
+      ["moborigins:trident_expert","Mestre em tridente: +2 dano, channeling sem trovão, riptide sem água."],
+      ["moborigins:undead","Morto-vivo: pega fogo no dia e recebe mais dano de smite."],
+      ["moborigins:warped_fungus_eater","Come fungo distorcido para recuperar fome e velocidade."],
+      ["moborigins:water_combatant","Mais dano na água."],
+      ["moborigins:wolf_body","2 corações a menos de vida."],
+      ["moborigins:wolf_howl","Uiva para dar velocidade e força a lobos próximos."],
+      ["moborigins:wolf_pack","Ganha velocidade e dano perto de 4+ lobos."],
+      ["moborigins:zombie_hunger","Exausta mais rápido (fome de carne)."],
+      ["moborigins:becomes_elder_guardian","* Vira Elder Guardian ao matar um."],
+      ["moborigins:full_moon_attack","* Mais dano de ataque em lua cheia."],
+      ["moborigins:full_moon_health","* Mais vida máxima em lua cheia."],
+      ["moborigins:illager","* Illagers não atacam você."],
+      ["moborigins:melting_speed","* Velocidade reduzida ao derreter."],
+      ["moborigins:mining_fatigue_immune","* Imune à Fadiga de Mineração."],
+      ["moborigins:small_weak_knockback","* Mais knockback abaixo de 2 corações."],
+      ["moborigins:surface_slowness","* Mais lento ao andar."],
+      ["moborigins:temperature","* Tem um valor de temperatura para outras habilidades."],
+      ["moborigins:water_breathing","* Respira para sempre embaixo d'água."],
+      ["moborigins:water_vision","* Vê claramente embaixo d'água."],
+      ["moborigins:witch_particles","* Emite partículas de bruxa."],
+      ["moborigins:wolf_pack_attack","* Mais dano perto de lobos."]
+    ],
+    "Origins-Fantasy": [
+      ["fantasyorigins:allay_master","Reproduz allays sem precisar tocar música."],
+      ["fantasyorigins:arrow_effect_booster","Potencializa efeitos de poção em flechas."],
+      ["fantasyorigins:bardic_intuition","Creepers podem soltar disco de música sem esqueleto."],
+      ["fantasyorigins:bow_burst","Lança 3 flechas de uma vez, desabilita o arco por 7s."],
+      ["fantasyorigins:breath_storer","Armazena Dragon's Breath com garrafa vazia."],
+      ["fantasyorigins:chime","Absorve o som de fragmentos de ametista para curar."],
+      ["fantasyorigins:daylight_sensitive","Pega fogo com a luz do dia."],
+      ["fantasyorigins:double_health","Mais vida por ser maior que humanos."],
+      ["fantasyorigins:dragon_fireball","Lança bola de fogo de dragão (cooldown 30s)."],
+      ["fantasyorigins:elegy","Fica mais forte abaixo de 3 corações."],
+      ["fantasyorigins:end_boost","Mais vida e força no End."],
+      ["fantasyorigins:end_crystal_healing","Regenera perto de End Crystals."],
+      ["fantasyorigins:fortune_increaser","Maior rendimento ao minerar minérios."],
+      ["fantasyorigins:heavy_blow","Ataques mais fortes, mas cooldown maior."],
+      ["fantasyorigins:increased_arrow_damage","Flechas causam o dobro de dano."],
+      ["fantasyorigins:increased_arrow_speed","Flechas 3x mais rápidas."],
+      ["fantasyorigins:increased_speed","Muito mais rápido que um cavalo normal."],
+      ["fantasyorigins:infinite_haste","Muito mais rápido para minerar."],
+      ["fantasyorigins:infinite_night_vision","Enxerga no escuro."],
+      ["fantasyorigins:large_body","Três blocos de altura."],
+      ["fantasyorigins:leeching","Rouba vida ao matar mobs ou jogadores."],
+      ["fantasyorigins:magic_resistance","Imune a veneno e poções de dano."],
+      ["fantasyorigins:moon_strength","Mais forte em noites de lua cheia."],
+      ["fantasyorigins:natural_armor","Defesa natural contra ataques."],
+      ["fantasyorigins:note_block_power","Ganha força e velocidade perto de Note Block tocado."],
+      ["fantasyorigins:ocean_wish","Muito mais fraco fora da água."],
+      ["fantasyorigins:oceans_grace","Mais vida e dano na água ou chuva."],
+      ["fantasyorigins:perfect_shot","Flechas voam perfeitamente retas."],
+      ["fantasyorigins:permanent_horse","Metade cavalo, metade humano."],
+      ["fantasyorigins:poor_shot","Flechas lentas e imprecisas."],
+      ["fantasyorigins:small_body","Só um bloco de altura."],
+      ["fantasyorigins:strong_skin","Flechas causam bem menos dano."],
+      ["fantasyorigins:stronger","Ataques físicos causam muito mais dano."],
+      ["fantasyorigins:super_jump","Pula muito mais alto que um cavalo normal."],
+      ["fantasyorigins:undead_ally","Mortos-vivos não atacam sem provocação."],
+      ["fantasyorigins:vampiric_transformation","Transforma jogadores mortos por você em vampiros."],
+      ["fantasyorigins:water_sensitive","A água drena seu poder e machuca."]
+    ],
+    "Origins-Magic": [
+      ["magicorigins:kill_boost","Absorve vida ao matar, até 30 corações extras."],
+      ["magicorigins:bring_back_dead","Traz de volta jogadores mortos próximos ao golpear o ar."],
+      ["magicorigins:burn_in_light","Pega fogo perto de luz, mesmo fraca."],
+      ["magicorigins:control_monsters","Hipnotiza um monstro ao clicar com o botão direito."],
+      ["magicorigins:cursed_strikes","Aplica um efeito negativo por 15s ao acertar."],
+      ["magicorigins:dark_aura","Emite aura que assusta aldeões."],
+      ["magicorigins:dark_strength","Mais dano no escuro, menos na luz."],
+      ["magicorigins:gold_converter","Transforma cobre em ouro e vice-versa clicando."],
+      ["magicorigins:increased_reach","Alcance muito maior para blocos, itens e entidades."],
+      ["magicorigins:interactions_give_nausea","Dá Náusea por 30s ao clicar em um jogador."],
+      ["magicorigins:interact_regeneration","Dá Regeneração II por 10s ao clicar em algo."],
+      ["magicorigins:invisible_in_darkness","Fica invisível em locais muito escuros."],
+      ["magicorigins:invisible_when_still","Fica invisível ao ficar parado."],
+      ["magicorigins:no_magic","Repele poções e encantamentos."],
+      ["magicorigins:potion_master","Poções bebidas e arremessadas são mais fortes."],
+      ["magicorigins:regeneration_when_still","Regenera vida ao ficar parado."],
+      ["magicorigins:silent","Não é detectado por Sculk Sensors ao se mover ou comer."],
+      ["magicorigins:spare_life","Sobrevive à morte uma vez a cada 10 minutos."],
+      ["magicorigins:spirit_strength","Mais forte no Nether, mais fraco fora dele."],
+      ["magicorigins:telekinesis","Itens soltos vão direto para o inventário."],
+      ["magicorigins:undead_ally","Mortos-vivos não atacam sem provocação."],
+      ["magicorigins:undead_commander","Mortos-vivos próximos atacam quem você atacar."],
+      ["magicorigins:unskilled_warrior","0.75x de dano corpo a corpo."],
+      ["magicorigins:weak_in_water","Só 3 corações de vida na água."],
+      ["magicorigins:double_fire_damage","* Recebe o dobro de dano de fogo."],
+      ["magicorigins:no_fire_resistance","* Não pode usar poções de Resistência a Fogo."]
+    ]
+  };
+
+  // ---------- state ----------
+  let selectedPowers = [];
+  let savedOrigins = [];
+
+  const $ = id => document.getElementById(id);
+
+  // ---------- build powers panel ----------
+  const panel = $('powers-panel');
+  Object.entries(POWERS).forEach(([group, list])=>{
+    const g = document.createElement('div');
+    g.className = 'powers-group';
+    const gt = document.createElement('div');
+    gt.className = 'powers-group-title';
+    gt.textContent = group + ' (' + list.length + ')';
+    g.appendChild(gt);
+    list.forEach(([key, desc])=>{
+      const opt = document.createElement('label');
+      opt.className = 'power-option';
+      opt.dataset.search = (key + ' ' + desc).toLowerCase();
+      opt.innerHTML = `<input type="checkbox" data-key="${key}">
+        <span><span class="k">${key}</span><span class="d">${desc}</span></span>`;
+      opt.querySelector('input').addEventListener('change', (e)=>{
+        if(e.target.checked) addPower(key); else removePower(key);
+      });
+      g.appendChild(opt);
+    });
+    panel.appendChild(g);
+  });
+
+  $('power-search').addEventListener('input', (e)=>{
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.power-option').forEach(opt=>{
+      opt.classList.toggle('hidden', q && !opt.dataset.search.includes(q));
+    });
+  });
+
+  function addPower(key){
+    if(!selectedPowers.includes(key)) selectedPowers.push(key);
+    renderSelectedPowers();
+    updatePreview();
+  }
+  function removePower(key){
+    selectedPowers = selectedPowers.filter(p=>p!==key);
+    const cb = panel.querySelector(`input[data-key="${CSS.escape(key)}"]`);
+    if(cb) cb.checked = false;
+    renderSelectedPowers();
+    updatePreview();
+  }
+  function renderSelectedPowers(){
+    const wrap = $('powers-selected');
+    wrap.innerHTML = '';
+    if(selectedPowers.length === 0){
+      wrap.innerHTML = '<span class="empty-note" style="padding:0;">nenhum power selecionado ainda</span>';
+      return;
+    }
+    selectedPowers.forEach(key=>{
+      const known = Object.values(POWERS).some(list => list.some(([k])=>k===key));
+      const tag = document.createElement('span');
+      tag.className = 'power-tag' + (known ? '' : ' custom');
+      tag.innerHTML = `${key} <button type="button" aria-label="remover">✕</button>`;
+      tag.querySelector('button').addEventListener('click', ()=>removePower(key));
+      wrap.appendChild(tag);
+    });
+  }
+
+  $('add-custom-power').addEventListener('click', ()=>{
+    const inp = $('power-custom');
+    const val = inp.value.trim();
+    if(val){ addPower(val); inp.value=''; }
+  });
+  $('power-custom').addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter'){ e.preventDefault(); $('add-custom-power').click(); }
+  });
+
+  // ---------- icon swatch (simple heuristic emoji preview) ----------
+  const ICON_EMOJI = {
+    apple:'🍎', egg:'🥚', feather:'🪶', bone:'🦴', spider_eye:'👁️', blaze_powder:'🔥',
+    phantom_membrane:'🦇', zombie_head:'🧟', wither_skeleton_skull:'💀', trident:'🔱',
+    heart_of_the_sea:'💠', nautilus_shell:'🐚', golden_apple:'🍏', ender_pearl:'🔮',
+    ghast_tear:'😭', rabbit_foot:'🐇', slime_ball:'🟢', magma_cream:'🟠', honeycomb:'🍯',
+    sweet_berries:'🍒', fox_food:'🦊'
+  };
+  function updateIconSwatch(){
+    const item = $('f-icon-item').value.split(':').pop();
+    $('icon-swatch').textContent = ICON_EMOJI[item] || '❔';
+  }
+  $('f-icon-item').addEventListener('input', ()=>{ updateIconSwatch(); updatePreview(); });
+
+  // ---------- validation ----------
+  function slugify(s){
+    return (s||'').toString().trim().toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'') || 'origin';
+  }
+
+  function buildOriginObject(){
+    const description = $('f-description').value.trim();
+    const iconItem = $('f-icon-item').value.trim();
+    const cmd = $('f-icon-cmd').value;
+    const displayName = $('f-displayname').value.trim();
+    const max = $('f-max').value;
+    const layer = $('f-layer').value.trim();
+    const cost = $('f-cost').value;
+    const permission = $('f-permission').value.trim();
+    const priority = $('f-priority').value;
+    const unchoosable = document.querySelector('input[name=unchoosable]:checked').value;
+
+    const obj = {};
+    obj.powers = selectedPowers.slice();
+    obj.icon = { item: iconItem || "minecraft:apple" };
+    if(cmd !== '' && !isNaN(parseInt(cmd))) obj.icon.custom_model_data = parseInt(cmd);
+    obj.order = parseInt($('f-order').value) || 0;
+    obj.impact = parseInt($('f-impact').value) || 0;
+    obj.description = description;
+
+    if(displayName) obj.name = displayName;
+    if(max !== '') obj.max = parseInt(max);
+    if(layer && layer !== 'origin') obj.layer = layer;
+    if(cost !== '') obj.cost = parseInt(cost);
+    if(permission) obj.permission = permission;
+    if(unchoosable !== 'false') obj.unchoosable = unchoosable;
+    if(priority !== '') obj.priority = parseInt(priority);
+
+    return obj;
+  }
+
+  function validate(){
+    let ok = true;
+    const desc = $('f-description');
+    desc.classList.toggle('err', desc.value.trim()==='');
+    if(desc.value.trim()==='') ok = false;
+
+    const iconItem = $('f-icon-item');
+    iconItem.classList.toggle('err', iconItem.value.trim()==='');
+    if(iconItem.value.trim()==='') ok = false;
+
+    if(selectedPowers.length === 0) ok = false;
+
+    return ok;
+  }
+
+  // ---------- JSON syntax highlight ----------
+  function highlightJSON(obj){
+    const json = JSON.stringify(obj, null, 4);
+    return json
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/("(\\.|[^"\\])*")(\s*:)?/g, (match, str, _g, colon)=>{
+        const cls = colon ? 'k' : 's';
+        return `<span class="${cls}">${str}</span>${colon ? ':' : ''}`;
+      })
+      .replace(/: (-?\d+(\.\d+)?)/g, ': <span class="n">$1</span>');
+  }
+
+  function currentFilename(){
+    const name = $('f-name').value.trim();
+    return slugify(name) + '.json';
+  }
+
+  function updatePreview(){
+    const obj = buildOriginObject();
+    $('json-preview').innerHTML = highlightJSON(obj);
+    $('preview-filename').value = currentFilename();
+  }
+
+  // live update on any input change
+  document.querySelectorAll('.col-form input, .col-form textarea, .col-form select').forEach(el=>{
+    el.addEventListener('input', updatePreview);
+    el.addEventListener('change', updatePreview);
+  });
+
+  // ---------- toast ----------
+  let toastTimer;
+  function toast(msg){
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+  }
+
+  // ---------- download helpers ----------
+  function downloadText(filename, text){
+    const blob = new Blob([text], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  $('download-current').addEventListener('click', ()=>{
+    if(!validate()){ toast('⚠ preencha description, icon.item e ao menos 1 power'); return; }
+    const obj = buildOriginObject();
+    downloadText(currentFilename(), JSON.stringify(obj, null, 4));
+    toast('✔ ' + currentFilename() + ' baixado');
+  });
+
+  // ---------- save / list management ----------
+  const STORAGE_KEY = 'origin_forge_saved_v1';
+
+  function loadFromStorage(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      savedOrigins = raw ? JSON.parse(raw) : [];
+    }catch(e){ savedOrigins = []; }
+  }
+  function persist(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(savedOrigins)); }
+    catch(e){ /* storage unavailable, ignore */ }
+  }
+
+  function renderSavedList(){
+    const list = $('saved-list');
+    const empty = $('empty-note');
+    $('saved-count').textContent = savedOrigins.length;
+    list.innerHTML = '';
+    empty.style.display = savedOrigins.length ? 'none' : 'block';
+    savedOrigins.forEach((entry, idx)=>{
+      const row = document.createElement('div');
+      row.className = 'saved-item';
+      const item = (entry.data.icon && entry.data.icon.item || '').split(':').pop();
+      row.innerHTML = `
+        <div class="sw">${ICON_EMOJI[item] || '❔'}</div>
+        <div class="meta">
+          <div class="nm">${entry.data.name || entry.filename.replace(/\.json$/,'')}</div>
+          <div class="fx">${entry.filename} · ${entry.data.powers.length} power(s)</div>
+        </div>
+        <div class="ops">
+          <button data-act="load">editar</button>
+          <button data-act="dl">baixar</button>
+          <button data-act="del" class="del">remover</button>
+        </div>`;
+      row.querySelector('[data-act=load]').addEventListener('click', ()=>loadIntoForm(idx));
+      row.querySelector('[data-act=dl]').addEventListener('click', ()=>{
+        downloadText(entry.filename, JSON.stringify(entry.data, null, 4));
+      });
+      row.querySelector('[data-act=del]').addEventListener('click', ()=>{
+        savedOrigins.splice(idx,1); persist(); renderSavedList();
+      });
+      list.appendChild(row);
+    });
+  }
+
+  function loadIntoForm(idx){
+    const entry = savedOrigins[idx];
+    const d = entry.data;
+    $('f-name').value = entry.filename.replace(/\.json$/,'');
+    $('f-displayname').value = d.name || '';
+    $('f-description').value = d.description || '';
+    $('f-order').value = d.order ?? 1;
+    $('f-impact').value = d.impact ?? 1;
+    $('f-icon-item').value = (d.icon && d.icon.item) || 'minecraft:apple';
+    $('f-icon-cmd').value = (d.icon && d.icon.custom_model_data) ?? '';
+    $('f-max').value = d.max ?? '';
+    $('f-layer').value = d.layer || 'origin';
+    $('f-cost').value = d.cost ?? '';
+    $('f-permission').value = d.permission || '';
+    $('f-priority').value = d.priority ?? '';
+    document.querySelector(`input[name=unchoosable][value="${d.unchoosable || 'false'}"]`).checked = true;
+
+    selectedPowers = (d.powers || []).slice();
+    panel.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+      cb.checked = selectedPowers.includes(cb.dataset.key);
+    });
+    renderSelectedPowers();
+    updateIconSwatch();
+    updatePreview();
+    window.scrollTo({top:0, behavior:'smooth'});
+    toast('✎ carregado para edição — salve novamente para atualizar');
+  }
+
+  $('save-origin').addEventListener('click', ()=>{
+    if(!validate()){ toast('⚠ preencha description, icon.item e ao menos 1 power'); return; }
+    const filename = currentFilename();
+    const data = buildOriginObject();
+    const existingIdx = savedOrigins.findIndex(o=>o.filename === filename);
+    if(existingIdx >= 0){
+      savedOrigins[existingIdx] = {filename, data};
+      toast('✔ ' + filename + ' atualizado na lista');
+    } else {
+      savedOrigins.push({filename, data});
+      toast('✔ ' + filename + ' salvo na lista');
+    }
+    persist();
+    renderSavedList();
+  });
+
+  $('reset-form').addEventListener('click', ()=>{
+    document.querySelectorAll('.col-form input[type=text], .col-form input[type=number], .col-form textarea').forEach(el=>el.value='');
+    $('f-icon-item').value = 'minecraft:apple';
+    $('f-order').value = 1;
+    $('f-impact').value = 1;
+    $('f-layer').value = 'origin';
+    document.querySelector('input[name=unchoosable][value=false]').checked = true;
+    selectedPowers = [];
+    panel.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.checked=false);
+    document.querySelectorAll('.err').forEach(el=>el.classList.remove('err'));
+    renderSelectedPowers();
+    updateIconSwatch();
+    updatePreview();
+  });
+
+  $('clear-all').addEventListener('click', ()=>{
+    if(savedOrigins.length === 0) return;
+    if(confirm('Apagar todos os ' + savedOrigins.length + ' origins salvos? Essa ação não pode ser desfeita.')){
+      savedOrigins = [];
+      persist();
+      renderSavedList();
+      toast('lista apagada');
+    }
+  });
+
+  $('download-all').addEventListener('click', async ()=>{
+    if(savedOrigins.length === 0){ toast('⚠ nenhum origin salvo para baixar'); return; }
+    const zip = new JSZip();
+    const folder = zip.folder('origins');
+    savedOrigins.forEach(entry=>{
+      folder.file(entry.filename, JSON.stringify(entry.data, null, 4));
+    });
+    const blob = await zip.generateAsync({type:'blob'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'origins.zip';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+    toast('✔ origins.zip baixado');
+  });
+
+  // ---------- init ----------
+  loadFromStorage();
+  renderSavedList();
+  renderSelectedPowers();
+  updateIconSwatch();
+  updatePreview();
+
+})();
+</script>
+</body>
+</html>
