@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Head Soccer Stars - Console Edition & Remote Controllers</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts for arcade & modern typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800;900&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- PeerJS for WebRTC Remote Controller Connection -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      background-color: #060913;
+      color: #fff;
+      overflow: hidden;
+    }
+    .font-arcade {
+      font-family: 'Fredoka One', cursive;
+    }
+    .font-console {
+      font-family: 'Orbitron', sans-serif;
+    }
+    .btn-arcade {
+      transition: all 0.15s ease-out;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.4);
+    }
+    .btn-arcade:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 rgba(0,0,0,0.4);
+    }
+    .btn-arcade:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 rgba(0,0,0,0.4);
+    }
+    .btn-yellow {
+      background: linear-gradient(180deg, #ffde59 0%, #ff914d 100%);
+      border: 3px solid #fff;
+      color: #3b1700;
+    }
+    .btn-blue {
+      background: linear-gradient(180deg, #00c6ff 0%, #0072ff 100%);
+      border: 3px solid #fff;
+      color: #ffffff;
+    }
+    .btn-red {
+      background: linear-gradient(180deg, #ff5f6d 0%, #ffc371 100%);
+      border: 3px solid #fff;
+      color: #ffffff;
+    }
+    .btn-purple {
+      background: linear-gradient(180deg, #a855f7 0%, #6366f1 100%);
+      border: 3px solid #fff;
+      color: #ffffff;
+    }
+    .btn-green {
+      background: linear-gradient(180deg, #11998e 0%, #38ef7d 100%);
+      border: 3px solid #fff;
+      color: #ffffff;
+    }
+    .glass-panel {
+      background: rgba(13, 19, 36, 0.88);
+      backdrop-filter: blur(16px);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 24px;
+    }
+    .console-card {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+    }
+    .console-card:hover, .console-card.active {
+      transform: translateY(-8px) scale(1.03);
+      border-color: #38bdf8;
+      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.35);
+    }
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body class="w-screen h-screen relative bg-slate-950 overflow-hidden flex items-center justify-center">
+
+  <!-- Canvas container for game render loop -->
+  <canvas id="gameCanvas" class="absolute inset-0 z-0"></canvas>
+
+  <!-- UI Overlay Container -->
+  <div id="uiOverlay" class="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between p-4 sm:p-6">
+    
+    <!-- TOP SCOREBAR & CONTROLS DISPLAY (In Match) -->
+    <div id="hudHeader" class="hidden flex justify-between items-start w-full max-w-5xl mx-auto pointer-events-auto">
+      
+      <!-- P1 HUD Card -->
+      <div class="glass-panel px-4 py-2 flex items-center gap-3 border-b-4 border-amber-400">
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2">
+            <span id="hudP1Name" class="font-arcade text-lg sm:text-2xl text-amber-300 drop-shadow">PLAYER 1</span>
+            <span id="hudP1Conn" class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hidden">REMOTO</span>
+          </div>
+          <span id="hudP1Keys" class="text-xs text-slate-300 font-semibold hidden sm:inline">Teclas: Personalizadas</span>
+        </div>
+        <!-- P1 Power Gauge -->
+        <div class="flex flex-col items-center">
+          <button id="btnP1Power" class="relative w-12 h-12 rounded-full border-2 border-white bg-slate-800 flex items-center justify-center overflow-hidden transition transform active:scale-95 shadow-lg">
+            <div id="p1PowerFill" class="absolute bottom-0 w-full bg-amber-400 transition-all duration-200" style="height: 100%;"></div>
+            <i id="p1PowerIcon" class="fa-solid fa-bolt text-xl text-white relative z-10 drop-shadow"></i>
+          </button>
+          <span class="text-[10px] font-arcade mt-1 text-amber-300">PODER</span>
+        </div>
+      </div>
+
+      <!-- TIMER & SCOREBOARD -->
+      <div class="glass-panel px-6 py-2 flex flex-col items-center border-b-4 border-cyan-400 shadow-2xl">
+        <div class="text-xs font-arcade tracking-wider text-cyan-300">TEMPO</div>
+        <div id="hudTimer" class="font-arcade text-3xl sm:text-4xl text-white drop-shadow-md">60</div>
+        <div class="flex items-center gap-4 mt-1">
+          <span id="hudP1Score" class="font-arcade text-4xl sm:text-5xl text-amber-400">0</span>
+          <span class="font-arcade text-2xl text-slate-400">:</span>
+          <span id="hudP2Score" class="font-arcade text-4xl sm:text-5xl text-red-500">0</span>
+        </div>
+      </div>
+
+      <!-- P2 HUD Card -->
+      <div class="glass-panel px-4 py-2 flex items-center gap-3 border-b-4 border-red-500">
+        <!-- P2 Power Gauge -->
+        <div class="flex flex-col items-center">
+          <button id="btnP2Power" class="relative w-12 h-12 rounded-full border-2 border-white bg-slate-800 flex items-center justify-center overflow-hidden transition transform active:scale-95 shadow-lg">
+            <div id="p2PowerFill" class="absolute bottom-0 w-full bg-red-500 transition-all duration-200" style="height: 100%;"></div>
+            <i id="p2PowerIcon" class="fa-solid fa-fire text-xl text-white relative z-10 drop-shadow"></i>
+          </button>
+          <span class="text-[10px] font-arcade mt-1 text-red-300">PODER</span>
+        </div>
+        <div class="flex flex-col items-right text-right">
+          <div class="flex items-center gap-2 justify-end">
+            <span id="hudP2Conn" class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hidden">REMOTO</span>
+            <span id="hudP2Name" class="font-arcade text-lg sm:text-2xl text-red-400 drop-shadow">PLAYER 2</span>
+          </div>
+          <span id="hudP2Keys" class="text-xs text-slate-300 font-semibold hidden sm:inline">Teclas: Personalizadas</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TOUCH CONTROLS OVERLAY (Shown on Touch Devices during Match) -->
+    <div id="touchControls" class="hidden pointer-events-auto flex justify-between items-end w-full max-w-4xl mx-auto pb-4">
+      <div class="flex gap-2">
+        <button id="touchLeft" class="w-16 h-16 rounded-full bg-slate-800/80 border-2 border-white/50 text-white text-2xl flex items-center justify-center active:bg-amber-500"><i class="fa-solid fa-arrow-left"></i></button>
+        <button id="touchRight" class="w-16 h-16 rounded-full bg-slate-800/80 border-2 border-white/50 text-white text-2xl flex items-center justify-center active:bg-amber-500"><i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+      <div class="flex gap-3">
+        <button id="touchJump" class="w-16 h-16 rounded-full bg-cyan-600/80 border-2 border-white/50 text-white text-xl font-arcade flex items-center justify-center active:bg-cyan-400">PULAR</button>
+        <button id="touchKick" class="w-16 h-16 rounded-full bg-amber-600/80 border-2 border-white/50 text-white text-xl font-arcade flex items-center justify-center active:bg-amber-400">CHUTE</button>
+        <button id="touchPower" class="w-16 h-16 rounded-full bg-red-600/80 border-2 border-white/50 text-white text-xl font-arcade flex items-center justify-center active:bg-red-400">PODER</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONSOLE / PLAYSTATION DASHBOARD MENU -->
+  <div id="menuMain" class="absolute inset-0 z-20 flex flex-col justify-between p-6 sm:p-10 bg-slate-950/90 backdrop-blur-xl">
+    
+    <!-- Console Top Bar -->
+    <div class="flex justify-between items-center w-full max-w-6xl mx-auto">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-gamepad text-3xl text-cyan-400 animate-pulse"></i>
+        <h1 class="font-console text-xl sm:text-2xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+          HEAD SOCCER OS
+        </h1>
+      </div>
+
+      <!-- Remote Controllers Status Bar -->
+      <div class="flex items-center gap-4 bg-slate-900/80 border border-slate-700/80 px-4 py-2 rounded-2xl">
+        <div class="flex items-center gap-2 text-xs font-arcade">
+          <span class="text-slate-400">CÓDIGO DA SALA:</span>
+          <span id="roomCodeDisplay" class="text-amber-400 font-console text-base font-bold bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/30">GERANDO...</span>
+        </div>
+        <div class="h-4 w-px bg-slate-700"></div>
+        <div class="flex items-center gap-2 text-xs font-semibold text-slate-300">
+          <i class="fa-solid fa-wifi text-emerald-400"></i>
+          <span id="connectedControllersCount">0 Controles Conectados</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Menu Cards Carousel (PlayStation Dashboard Style) -->
+    <div class="w-full max-w-6xl mx-auto my-auto py-6">
+      <div class="text-slate-400 text-xs font-console tracking-widest mb-4 uppercase flex items-center gap-2">
+        <i class="fa-solid fa-layer-group text-amber-400"></i> SELECIONE O MODO DE JOGO
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        
+        <!-- Card 1: 1 Player VS AI -->
+        <div id="card1P" class="console-card rounded-3xl p-6 cursor-pointer flex flex-col justify-between h-64 group relative overflow-hidden">
+          <div class="absolute -right-6 -bottom-6 text-7xl opacity-10 group-hover:opacity-25 transition text-cyan-400">
+            <i class="fa-solid fa-robot"></i>
+          </div>
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 flex items-center justify-center text-2xl mb-4">
+              <i class="fa-solid fa-user"></i>
+            </div>
+            <h3 class="font-arcade text-2xl text-white group-hover:text-cyan-300 transition">1 JOGADOR</h3>
+            <p class="text-xs text-slate-400 mt-2 font-medium">Enfrente a inteligência artificial com física aprimorada.</p>
+          </div>
+          <button class="btn-arcade btn-blue py-2 px-4 rounded-xl font-arcade text-sm flex items-center justify-between mt-4">
+            JOGAR VS IA <i class="fa-solid fa-chevron-right text-xs"></i>
+          </button>
+        </div>
+
+        <!-- Card 2: 2 Players Local -->
+        <div id="card2P" class="console-card rounded-3xl p-6 cursor-pointer flex flex-col justify-between h-64 group relative overflow-hidden">
+          <div class="absolute -right-6 -bottom-6 text-7xl opacity-10 group-hover:opacity-25 transition text-amber-400">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400/40 text-amber-300 flex items-center justify-center text-2xl mb-4">
+              <i class="fa-solid fa-user-group"></i>
+            </div>
+            <h3 class="font-arcade text-2xl text-white group-hover:text-amber-300 transition">2 JOGADORES</h3>
+            <p class="text-xs text-slate-400 mt-2 font-medium">Dispute no mesmo teclado ou usando controles remotos.</p>
+          </div>
+          <button class="btn-arcade btn-yellow py-2 px-4 rounded-xl font-arcade text-sm flex items-center justify-between mt-4 text-slate-900">
+            MODO VERSUS <i class="fa-solid fa-chevron-right text-xs"></i>
+          </button>
+        </div>
+
+        <!-- Card 3: Remote Controller Join -->
+        <div id="cardRemote" class="console-card rounded-3xl p-6 cursor-pointer flex flex-col justify-between h-64 group relative overflow-hidden">
+          <div class="absolute -right-6 -bottom-6 text-7xl opacity-10 group-hover:opacity-25 transition text-purple-400">
+            <i class="fa-solid fa-mobile-screen"></i>
+          </div>
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-purple-500/20 border border-purple-400/40 text-purple-300 flex items-center justify-center text-2xl mb-4">
+              <i class="fa-solid fa-gamepad"></i>
+            </div>
+            <h3 class="font-arcade text-2xl text-white group-hover:text-purple-300 transition">ENTRAR C/ CÓDIGO</h3>
+            <p class="text-xs text-slate-400 mt-2 font-medium">Conecte este celular/dispositivo para ser um controle remoto.</p>
+          </div>
+          <button class="btn-arcade btn-purple py-2 px-4 rounded-xl font-arcade text-sm flex items-center justify-between mt-4">
+            CONECTAR <i class="fa-solid fa-wifi text-xs"></i>
+          </button>
+        </div>
+
+        <!-- Card 4: Settings & Keybindings -->
+        <div id="cardSettings" class="console-card rounded-3xl p-6 cursor-pointer flex flex-col justify-between h-64 group relative overflow-hidden">
+          <div class="absolute -right-6 -bottom-6 text-7xl opacity-10 group-hover:opacity-25 transition text-emerald-400">
+            <i class="fa-solid fa-sliders"></i>
+          </div>
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 flex items-center justify-center text-2xl mb-4">
+              <i class="fa-solid fa-keyboard"></i>
+            </div>
+            <h3 class="font-arcade text-2xl text-white group-hover:text-emerald-300 transition">TECLAS & CONFIGS</h3>
+            <p class="text-xs text-slate-400 mt-2 font-medium">Personalize os controles e atalhos de ambos os jogadores.</p>
+          </div>
+          <button class="btn-arcade btn-green py-2 px-4 rounded-xl font-arcade text-sm flex items-center justify-between mt-4">
+            CONFIGURAR <i class="fa-solid fa-gear text-xs"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Console Footer -->
+    <div class="flex flex-col sm:flex-row justify-between items-center w-full max-w-6xl mx-auto border-t border-slate-800 pt-4 text-xs text-slate-400 gap-2">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+        <span>SISTEMA ATIVO &amp; CONEXÕES PRONTAS</span>
+      </div>
+      <div>
+        <span>HEAD SOCCER STARS v3.0 • MULTIPLAYER REMOTE</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- KEYBINDINGS CONFIGURATION MODAL -->
+  <div id="menuKeybindings" class="hidden absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl">
+    <div class="glass-panel p-6 sm:p-8 max-w-3xl w-full flex flex-col items-center shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      
+      <h2 class="font-arcade text-3xl text-emerald-400 mb-2 drop-shadow flex items-center gap-2">
+        <i class="fa-solid fa-keyboard"></i> PERSONALIZAR TECLAS
+      </h2>
+      <p class="text-xs text-slate-300 mb-6 text-center">Clique em qualquer ação para redefinir a tecla correspondente.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-6">
+        
+        <!-- P1 Key Mapping -->
+        <div class="bg-slate-800/80 rounded-2xl p-4 border border-amber-400/40">
+          <h3 class="font-arcade text-xl text-amber-300 mb-4 border-b border-slate-700 pb-2">JOGADOR 1</h3>
+          <div class="space-y-3" id="p1KeyList">
+            <!-- Dynamically Rendered -->
+          </div>
+        </div>
+
+        <!-- P2 Key Mapping -->
+        <div class="bg-slate-800/80 rounded-2xl p-4 border border-red-500/40">
+          <h3 class="font-arcade text-xl text-red-400 mb-4 border-b border-slate-700 pb-2">JOGADOR 2</h3>
+          <div class="space-y-3" id="p2KeyList">
+            <!-- Dynamically Rendered -->
+          </div>
+        </div>
+
+      </div>
+
+      <div class="flex gap-4 w-full justify-between">
+        <button id="btnResetKeys" class="btn-arcade btn-red py-3 px-6 rounded-2xl font-arcade text-sm">
+          RESTAURAR PADRÃO
+        </button>
+        <button id="btnCloseKeys" class="btn-arcade btn-green py-3 px-10 rounded-2xl font-arcade text-lg">
+          SALVAR &amp; FECHAR
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- REMOTE CONTROLLER JOIN MODAL (Device Client Mode) -->
+  <div id="menuRemoteJoin" class="hidden absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-xl">
+    <div class="glass-panel p-8 max-w-md w-full flex flex-col items-center text-center shadow-2xl">
+      <div class="w-16 h-16 rounded-3xl bg-purple-500/20 text-purple-300 border border-purple-400/40 flex items-center justify-center text-3xl mb-4">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+      </div>
+
+      <h2 class="font-arcade text-3xl text-purple-300 mb-2">CONECTAR CONTROLE</h2>
+      <p class="text-xs text-slate-300 mb-6">Digite o código de 4 dígitos exibido na tela principal do hospedeiro.</p>
+
+      <div class="w-full mb-6">
+        <input id="inputRoomCode" type="text" maxlength="4" placeholder="Ex: 8492" class="w-full text-center font-console text-3xl tracking-widest py-3 rounded-2xl bg-slate-900 border-2 border-purple-500/60 text-amber-300 focus:outline-none focus:border-purple-400 uppercase">
+        <span id="remoteConnStatus" class="text-xs font-semibold mt-2 block text-slate-400">Aguardando código...</span>
+      </div>
+
+      <div class="flex flex-col gap-3 w-full">
+        <button id="btnConnectRemote" class="btn-arcade btn-purple py-3 px-6 rounded-2xl font-arcade text-xl">
+          ENTRAR COMO CONTROLE <i class="fa-solid fa-plug ml-2"></i>
+        </button>
+        <button id="btnBackRemote" class="btn-arcade btn-red py-2 px-6 rounded-2xl font-arcade text-base">
+          VOLTAR
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SELECTION & SETUP MENU MODAL -->
+  <div id="menuSelect" class="hidden absolute inset-0 z-20 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+    <div class="glass-panel p-6 sm:p-8 max-w-4xl w-full flex flex-col items-center shadow-2xl relative">
+      
+      <h2 id="selectTitle" class="font-arcade text-3xl sm:text-4xl text-amber-400 mb-6 drop-shadow">
+        CONFIGURAR PARTIDA
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-8">
+        
+        <!-- PLAYER 1 SELECTION -->
+        <div class="bg-slate-800/90 rounded-2xl p-4 border-2 border-amber-400/50 flex flex-col items-center">
+          <span class="font-arcade text-2xl text-amber-300 mb-3">JOGADOR 1</span>
+          
+          <div class="flex items-center justify-between w-full mb-4">
+            <button id="p1PrevChar" class="btn-arcade btn-blue w-10 h-10 rounded-xl font-arcade text-xl flex items-center justify-center">&lt;</button>
+            <div class="flex flex-col items-center">
+              <div id="p1CharPreview" class="w-24 h-24 rounded-full bg-slate-700 border-4 border-amber-400 flex items-center justify-center text-4xl shadow-inner">
+                ⚽
+              </div>
+              <span id="p1CharName" class="font-arcade text-xl text-white mt-2">URUBU</span>
+            </div>
+            <button id="p1NextChar" class="btn-arcade btn-blue w-10 h-10 rounded-xl font-arcade text-xl flex items-center justify-center">&gt;</button>
+          </div>
+
+          <!-- P1 Power Selection -->
+          <div class="w-full">
+            <span class="text-xs font-arcade text-slate-400 mb-1 block text-center">PODER ESPECIAL:</span>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="p1PowerTeleport" class="py-2 px-3 rounded-xl border-2 font-arcade text-sm flex items-center justify-center gap-2 transition border-cyan-400 bg-cyan-500/20 text-cyan-200">
+                <i class="fa-solid fa-bolt"></i> TELEPORTE
+              </button>
+              <button id="p1PowerSuperShot" class="py-2 px-3 rounded-xl border-2 font-arcade text-sm flex items-center justify-center gap-2 transition border-slate-600 bg-slate-700/50 text-slate-400">
+                <i class="fa-solid fa-fire"></i> SUPER CHUTE
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLAYER 2 / CPU SELECTION -->
+        <div class="bg-slate-800/90 rounded-2xl p-4 border-2 border-red-500/50 flex flex-col items-center">
+          <span id="p2Title" class="font-arcade text-2xl text-red-400 mb-3">JOGADOR 2 (CPU)</span>
+          
+          <div class="flex items-center justify-between w-full mb-4">
+            <button id="p2PrevChar" class="btn-arcade btn-red w-10 h-10 rounded-xl font-arcade text-xl flex items-center justify-center">&lt;</button>
+            <div class="flex flex-col items-center">
+              <div id="p2CharPreview" class="w-24 h-24 rounded-full bg-slate-700 border-4 border-red-500 flex items-center justify-center text-4xl shadow-inner">
+                🏆
+              </div>
+              <span id="p2CharName" class="font-arcade text-xl text-white mt-2">MERINGUES</span>
+            </div>
+            <button id="p2NextChar" class="btn-arcade btn-red w-10 h-10 rounded-xl font-arcade text-xl flex items-center justify-center">&gt;</button>
+          </div>
+
+          <!-- P2 Power Selection -->
+          <div class="w-full">
+            <span class="text-xs font-arcade text-slate-400 mb-1 block text-center">PODER ESPECIAL:</span>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="p2PowerTeleport" class="py-2 px-3 rounded-xl border-2 font-arcade text-sm flex items-center justify-center gap-2 transition border-slate-600 bg-slate-700/50 text-slate-400">
+                <i class="fa-solid fa-bolt"></i> TELEPORTE
+              </button>
+              <button id="p2PowerSuperShot" class="py-2 px-3 rounded-xl border-2 font-arcade text-sm flex items-center justify-center gap-2 transition border-red-500 bg-red-500/20 text-red-200">
+                <i class="fa-solid fa-fire"></i> SUPER CHUTE
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="flex gap-4 w-full justify-between">
+        <button id="btnSelectBack" class="btn-arcade btn-red py-3 px-8 rounded-2xl font-arcade text-xl">
+          VOLTAR
+        </button>
+        <button id="btnStartGame" class="btn-arcade btn-yellow py-3 px-12 rounded-2xl font-arcade text-2xl flex-1 max-w-xs text-slate-900">
+          JOGAR! <i class="fa-solid fa-play ml-2"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GAME OVER / MATCH END MODAL -->
+  <div id="menuGameOver" class="hidden absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+    <div class="glass-panel p-8 max-w-md w-full flex flex-col items-center text-center shadow-2xl">
+      <h2 id="winnerText" class="font-arcade text-4xl text-amber-300 mb-2 drop-shadow">
+        VITÓRIA DO JOGADOR 1!
+      </h2>
+      <p id="finalScoreText" class="font-arcade text-3xl text-white mb-6">3 : 1</p>
+
+      <div class="flex flex-col gap-3 w-full">
+        <button id="btnRematch" class="btn-arcade btn-yellow py-3 px-6 rounded-2xl font-arcade text-xl text-slate-900">
+          JOGAR NOVAMENTE <i class="fa-solid fa-rotate-right ml-2"></i>
+        </button>
+        <button id="btnReturnMenu" class="btn-arcade btn-blue py-3 px-6 rounded-2xl font-arcade text-xl">
+          MENU PRINCIPAL <i class="fa-solid fa-house ml-2"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Audio Sound Synthesizer Engine
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playUiHover() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.05);
+      }
+
+      playUiSelect() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1046.50, this.ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.12);
+      }
+
+      playKick() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(160, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.8, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.12);
+      }
+
+      playWhistle() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc1 = this.ctx.createOscillator();
+        const osc2 = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc1.type = 'sine';
+        osc2.type = 'sine';
+        osc1.frequency.setValueAtTime(2200, now);
+        osc2.frequency.setValueAtTime(2600, now);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + 0.6);
+        osc2.stop(now + 0.6);
+      }
+
+      playTeleport() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(1800, now + 0.25);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+
+      playSuperShot() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(350, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.4);
+        gain.gain.setValueAtTime(0.9, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      }
+
+      playGoal() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+          gain.gain.setValueAtTime(0.3, now + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 1.2);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.08);
+          osc.stop(now + 1.2);
+        });
+      }
+    }
+
+    const audio = new SoundEngine();
+  </script>
+
+  <script>
+    // Characters profiles
+    const CHARACTERS = [
+      { id: 'urubu', name: 'URUBU', skin: '#d97706', hair: '#1e293b', jersey: '#dc2626', jerseyStripe: '#09090b', icon: '⚽' },
+      { id: 'meringues', name: 'MERINGUES', skin: '#f59e0b', hair: '#475569', jersey: '#ffffff', jerseyStripe: '#2563eb', icon: '👑' },
+      { id: 'samba', name: 'SAMBA', skin: '#b45309', hair: '#000000', jersey: '#facc15', jerseyStripe: '#16a34a', icon: '⚡' },
+      { id: 'champions', name: 'CHAMPIONS', skin: '#fde047', hair: '#7c3aed', jersey: '#2563eb', jerseyStripe: '#dc2626', icon: '🏆' }
+    ];
+
+    const POWERS = { TELEPORT: 'TELEPORT', SUPERSHOT: 'SUPERSHOT' };
+
+    // DEFAULT & CUSTOMIZABLE KEYBINDINGS
+    let customKeys = {
+      p1: { left: 'KeyA', right: 'KeyD', jump: 'KeyW', kick: 'KeyB', power: 'KeyV' },
+      p2: { left: 'ArrowLeft', right: 'ArrowRight', jump: 'ArrowUp', kick: 'KeyL', power: 'KeyK' }
+    };
+
+    // Load saved keybindings from localStorage if available
+    const savedKeys = localStorage.getItem('head_soccer_keys');
+    if (savedKeys) {
+      try { customKeys = JSON.parse(savedKeys); } catch(e) {}
+    }
+
+    // Active key presses state
+    const keysState = {};
+
+    // Remote Controllers State (WebRTC PeerJS)
+    let peerHost = null;
+    let peerClient = null;
+    let roomCode = Math.floor(1000 + Math.random() * 9000).toString();
+    const remoteConnections = { p1: null, p2: null };
+
+    // Canvas setup
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // UI elements references
+    const uiOverlay = document.getElementById('uiOverlay');
+    const hudHeader = document.getElementById('hudHeader');
+    const menuMain = document.getElementById('menuMain');
+    const menuSelect = document.getElementById('menuSelect');
+    const menuGameOver = document.getElementById('menuGameOver');
+    const menuKeybindings = document.getElementById('menuKeybindings');
+    const menuRemoteJoin = document.getElementById('menuRemoteJoin');
+
+    const hudTimer = document.getElementById('hudTimer');
+    const hudP1Score = document.getElementById('hudP1Score');
+    const hudP2Score = document.getElementById('hudP2Score');
+    const hudP1Name = document.getElementById('hudP1Name');
+    const hudP2Name = document.getElementById('hudP2Name');
+
+    const p1PowerFill = document.getElementById('p1PowerFill');
+    const p2PowerFill = document.getElementById('p2PowerFill');
+
+    // Game Variables
+    let gameMode = '1P'; // '1P' or '2P'
+    let isGameRunning = false;
+    let matchTime = 60;
+    let timerInterval = null;
+    let p1Score = 0;
+    let p2Score = 0;
+
+    let p1CharIdx = 0;
+    let p2CharIdx = 1;
+
+    let p1PowerType = POWERS.TELEPORT;
+    let p2PowerType = POWERS.SUPERSHOT;
+
+    // World dimensions
+    const WORLD = {
+      width: 1200,
+      height: 650,
+      groundY: 530,
+      goalWidth: 140,
+      goalHeight: 220,
+      gravity: 0.65
+    };
+
+    let scale = 1;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const scaleX = canvas.width / WORLD.width;
+      const scaleY = canvas.height / WORLD.height;
+      scale = Math.min(scaleX, scaleY);
+      offsetX = (canvas.width - WORLD.width * scale) / 2;
+      offsetY = (canvas.height - WORLD.height * scale) / 2;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Particle System
+    class Particle {
+      constructor(x, y, vx, vy, color, size, life) {
+        this.x = x; this.y = y; this.vx = vx; this.vy = vy;
+        this.color = color; this.size = size; this.life = life; this.maxLife = life;
+      }
+      update() { this.x += this.vx; this.y += this.vy; this.life--; }
+      draw(ctx) {
+        const alpha = Math.max(0, this.life / this.maxLife);
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    let particles = [];
+    function addExplosion(x, y, color, count = 20) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 8 + 2;
+        particles.push(new Particle(
+          x, y, Math.cos(angle) * speed, Math.sin(angle) * speed, color,
+          Math.random() * 6 + 3, Math.random() * 20 + 20
+        ));
+      }
+    }
+
+    // Ball Entity
+    class Ball {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = WORLD.width / 2;
+        this.y = 250;
+        this.radius = 22;
+        this.vx = 0;
+        this.vy = 0;
+        this.rotation = 0;
+        this.isSuperShot = false;
+      }
+
+      update() {
+        this.vy += WORLD.gravity;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vx *= 0.99;
+        this.vy *= 0.99;
+        this.rotation += this.vx * 0.05;
+
+        // Ground Bounce
+        if (this.y + this.radius > WORLD.groundY) {
+          this.y = WORLD.groundY - this.radius;
+          this.vy = -this.vy * 0.72;
+          this.vx *= 0.95;
+          if (Math.abs(this.vy) < 1) this.vy = 0;
+        }
+
+        // Ceiling bounce
+        if (this.y - this.radius < 40) {
+          this.y = 40 + this.radius;
+          this.vy = Math.abs(this.vy) * 0.7;
+        }
+
+        // Pitch Left / Right walls collision
+        if (this.x - this.radius < 20) {
+          this.x = 20 + this.radius;
+          this.vx = Math.abs(this.vx) * 0.7;
+        }
+        if (this.x + this.radius > WORLD.width - 20) {
+          this.x = WORLD.width - 20 - this.radius;
+          this.vx = -Math.abs(this.vx) * 0.7;
+        }
+
+        // Crossbar Precise Physics Bounce
+        const leftPostX = WORLD.goalWidth;
+        const rightPostX = WORLD.width - WORLD.goalWidth;
+        const postY = WORLD.groundY - WORLD.goalHeight;
+
+        if (Math.hypot(this.x - leftPostX, this.y - postY) < this.radius + 10) {
+          this.vy = -Math.abs(this.vy) * 0.8 - 2;
+          this.vx = Math.abs(this.vx) + 2;
+        }
+        if (Math.hypot(this.x - rightPostX, this.y - postY) < this.radius + 10) {
+          this.vy = -Math.abs(this.vy) * 0.8 - 2;
+          this.vx = -Math.abs(this.vx) - 2;
+        }
+
+        if (this.isSuperShot) {
+          for (let i = 0; i < 3; i++) {
+            particles.push(new Particle(
+              this.x + (Math.random() - 0.5) * 15,
+              this.y + (Math.random() - 0.5) * 15,
+              -this.vx * 0.2, -this.vy * 0.2,
+              Math.random() > 0.5 ? '#ff4500' : '#ffcc00',
+              Math.random() * 8 + 4, 25
+            ));
+          }
+        }
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        if (this.isSuperShot) {
+          ctx.beginPath();
+          ctx.arc(0, 0, this.radius + 12, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 69, 0, 0.4)';
+          ctx.fill();
+        }
+        ctx.rotate(this.rotation);
+        ctx.beginPath();
+        ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#1e293b';
+        ctx.stroke();
+
+        ctx.fillStyle = this.isSuperShot ? '#d97706' : '#0f172a';
+        for (let i = 0; i < 5; i++) {
+          const angle = (i * Math.PI * 2) / 5;
+          const px = Math.cos(angle) * (this.radius * 0.5);
+          const py = Math.sin(angle) * (this.radius * 0.5);
+          ctx.beginPath();
+          ctx.arc(px, py, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    // Player Entity
+    class Player {
+      constructor(isP1, charData, powerType) {
+        this.isP1 = isP1;
+        this.charData = charData;
+        this.powerType = powerType;
+        this.radius = 35;
+        this.powerGauge = 100;
+        this.resetPosition();
+      }
+
+      resetPosition() {
+        this.x = this.isP1 ? 250 : WORLD.width - 250;
+        this.y = WORLD.groundY - 50;
+        this.vx = 0;
+        this.vy = 0;
+        this.isGrounded = false;
+        this.isKicking = false;
+        this.kickAnim = 0;
+        this.stunned = false;
+        this.stunTimer = 0;
+        this.facing = this.isP1 ? 1 : -1;
+      }
+
+      update(ball) {
+        if (this.stunned) {
+          this.stunTimer--;
+          if (this.stunTimer <= 0) this.stunned = false;
+        }
+
+        this.vy += WORLD.gravity;
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.y >= WORLD.groundY - 50) {
+          this.y = WORLD.groundY - 50;
+          this.vy = 0;
+          this.isGrounded = true;
+        } else {
+          this.isGrounded = false;
+        }
+
+        const minX = this.isP1 ? 40 : WORLD.width / 2 - 20;
+        const maxX = this.isP1 ? WORLD.width / 2 + 20 : WORLD.width - 40;
+        this.x = Math.max(minX, Math.min(maxX, this.x));
+
+        if (this.isKicking) {
+          this.kickAnim += 0.2;
+          if (this.kickAnim >= Math.PI) {
+            this.isKicking = false;
+            this.kickAnim = 0;
+          }
+        }
+
+        if (this.powerGauge < 100) this.powerGauge += 0.15;
+        this.checkBallCollision(ball);
+      }
+
+      jump() { if (this.isGrounded && !this.stunned) this.vy = -14.5; }
+      moveLeft() { if (!this.stunned) this.vx = -6.5; }
+      moveRight() { if (!this.stunned) this.vx = 6.5; }
+      stopHorizontal() { this.vx = 0; }
+
+      kick(ball) {
+        if (this.stunned) return;
+        this.isKicking = true;
+        this.kickAnim = 0.1;
+        audio.playKick();
+
+        const dist = Math.hypot(this.x - ball.x, this.y - ball.y);
+        if (dist < 85) {
+          const angle = this.facing > 0 ? -Math.PI / 4 : -3 * Math.PI / 4;
+          const power = 17;
+          ball.vx = Math.cos(angle) * power * this.facing;
+          ball.vy = Math.sin(angle) * power - 4;
+          ball.isSuperShot = false;
+          addExplosion(ball.x, ball.y, '#ffffff', 8);
+        }
+      }
+
+      usePower(ball, opponent) {
+        if (this.powerGauge < 100 || this.stunned) return;
+        this.powerGauge = 0;
+
+        if (this.powerType === POWERS.TELEPORT) {
+          audio.playTeleport();
+          addExplosion(this.x, this.y, '#00c6ff', 25);
+          this.x = ball.x - (this.facing * 35);
+          this.y = Math.min(ball.y, WORLD.groundY - 50);
+          this.vx = this.facing * 8;
+          this.vy = -6;
+          ball.vx = this.facing * 18;
+          ball.vy = -8;
+          ball.isSuperShot = false;
+          addExplosion(this.x, this.y, '#0072ff', 25);
+        } else if (this.powerType === POWERS.SUPERSHOT) {
+          audio.playSuperShot();
+          addExplosion(this.x, this.y, '#ff4500', 30);
+          ball.x = this.x + (this.facing * 40);
+          ball.y = this.y - 10;
+          ball.vx = this.facing * 28;
+          ball.vy = -3;
+          ball.isSuperShot = true;
+        }
+      }
+
+      checkBallCollision(ball) {
+        const dx = ball.x - this.x;
+        const dy = ball.y - this.y;
+        const dist = Math.hypot(dx, dy);
+        const minDist = this.radius + ball.radius;
+
+        if (dist < minDist) {
+          const angle = Math.atan2(dy, dx);
+          ball.x = this.x + Math.cos(angle) * minDist;
+          ball.y = this.y + Math.sin(angle) * minDist;
+
+          if (ball.isSuperShot) {
+            if (!this.isP1) {
+              ball.isSuperShot = false;
+              ball.vx = this.facing * 8;
+              ball.vy = -6;
+              audio.playKick();
+              addExplosion(this.x, this.y, '#38ef7d', 30);
+            } else {
+              this.vx = ball.vx * 0.8;
+              this.vy = -8;
+              this.stunned = true;
+              this.stunTimer = 40;
+              audio.playKick();
+              addExplosion(this.x, this.y, '#ff0000', 25);
+            }
+          } else {
+            const force = 10;
+            ball.vx = Math.cos(angle) * force + this.vx * 0.5;
+            ball.vy = Math.sin(angle) * force + this.vy * 0.5;
+            audio.playKick();
+          }
+        }
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        const shadowY = WORLD.groundY - 50 - this.y + 40;
+        ctx.beginPath();
+        ctx.ellipse(0, shadowY, 30, 8, 0, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+        ctx.fill();
+
+        ctx.fillStyle = this.charData.jersey;
+        ctx.beginPath();
+        ctx.roundRect(-18, 10, 36, 32, 10);
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#000000';
+        ctx.stroke();
+
+        ctx.fillStyle = this.charData.jerseyStripe;
+        ctx.fillRect(-6, 10, 12, 32);
+
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(-22 + (this.isKicking ? Math.sin(this.kickAnim) * 20 * this.facing : 0), 38, 16, 10);
+        ctx.fillRect(6, 38, 16, 10);
+
+        if (this.stunned) {
+          ctx.beginPath();
+          ctx.arc(0, -20, 48, 0, Math.PI * 2);
+          ctx.strokeStyle = '#ef4444';
+          ctx.lineWidth = 4;
+          ctx.stroke();
+        }
+
+        ctx.scale(this.facing, 1);
+
+        ctx.beginPath();
+        ctx.arc(0, -22, 36, 0, Math.PI * 2);
+        ctx.fillStyle = this.charData.skin;
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#0f172a';
+        ctx.stroke();
+
+        ctx.fillStyle = this.charData.hair;
+        ctx.beginPath();
+        ctx.arc(0, -32, 36, Math.PI * 0.8, Math.PI * 2.2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(14, -22, 9, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.arc(17, -22, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = this.charData.hair;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(6, -32);
+        ctx.lineTo(24, -28);
+        ctx.stroke();
+
+        ctx.beginPath();
+        if (this.stunned) {
+          ctx.arc(14, -10, 6, 0, Math.PI * 2);
+          ctx.fillStyle = '#000';
+          ctx.fill();
+        } else {
+          ctx.arc(12, -12, 8, 0.1, Math.PI * 0.9);
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      }
+    }
+
+    // CPU Smart AI Controller (FIXED: AI doesn't score self-goals)
+    function updateCPUAI(cpu, ball, humanP1) {
+      if (cpu.stunned) return;
+
+      const ballDistX = ball.x - cpu.x;
+      const ballDistY = ball.y - cpu.y;
+
+      // AI is Player 2 (defending right goal at x=1200, shooting towards left goal at x=0)
+      // FIX: Ensure CPU gets behind the ball (to the right of ball) before kicking!
+      if (cpu.x > ball.x + 10) {
+        // CPU is positioned correctly to the RIGHT of the ball -> Push left towards goal
+        if (ballDistX < -15) {
+          cpu.moveLeft();
+        } else {
+          cpu.stopHorizontal();
+        }
+
+        // Jump to head / kick high ball
+        if (ball.y < cpu.y - 15 && Math.abs(ballDistX) < 70) {
+          cpu.jump();
+        }
+
+        // Only kick if CPU is properly situated to the RIGHT of the ball
+        if (Math.hypot(ballDistX, ballDistY) < 85 && cpu.x > ball.x + 5) {
+          cpu.kick(ball);
+        }
+      } else {
+        // CPU is trapped IN FRONT (to the left) of the ball!
+        // DANGER: Kicking here would create an auto-goal! Retreat right to get behind ball.
+        if (cpu.x < WORLD.width - 160) {
+          cpu.moveRight();
+          if (Math.abs(ballDistX) < 45 && cpu.isGrounded) {
+            cpu.jump(); // Jump over the ball safely if trapped
+          }
+        } else {
+          cpu.stopHorizontal();
+        }
+      }
+
+      // Strategic Power Usage
+      if (cpu.powerGauge >= 100) {
+        if (cpu.powerType === POWERS.TELEPORT && ball.x > WORLD.width / 2) {
+          cpu.usePower(ball, humanP1);
+        } else if (cpu.powerType === POWERS.SUPERSHOT && cpu.x > ball.x && ball.y > WORLD.groundY - 140) {
+          cpu.usePower(ball, humanP1);
+        }
+      }
+    }
+
+    let ball = new Ball();
+    let p1 = null;
+    let p2 = null;
+
+    // Draw Stadium
+    function drawStadium(ctx) {
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, WORLD.groundY);
+      skyGrad.addColorStop(0, '#0a0f1d');
+      skyGrad.addColorStop(0.6, '#151d30');
+      skyGrad.addColorStop(1, '#1e293b');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, WORLD.width, WORLD.height);
+
+      ctx.fillStyle = '#1e1b4b';
+      ctx.fillRect(0, 120, WORLD.width, 240);
+
+      for (let x = 40; x < WORLD.width - 40; x += 30) {
+        for (let y = 140; y < 340; y += 25) {
+          const bounce = Math.sin(Date.now() * 0.005 + x + y) * 3;
+          ctx.fillStyle = (x + y) % 60 === 0 ? '#38bdf8' : (x + y) % 40 === 0 ? '#f43f5e' : '#f59e0b';
+          ctx.beginPath();
+          ctx.arc(x, y + bounce, 7, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      ctx.fillStyle = '#fef08a';
+      ctx.beginPath();
+      ctx.arc(150, 60, 25, 0, Math.PI * 2);
+      ctx.arc(WORLD.width - 150, 60, 25, 0, Math.PI * 2);
+      ctx.fill();
+
+      const pitchGrad = ctx.createLinearGradient(0, WORLD.groundY, 0, WORLD.height);
+      pitchGrad.addColorStop(0, '#22c55e');
+      pitchGrad.addColorStop(0.2, '#16a34a');
+      pitchGrad.addColorStop(1, '#15803d');
+      ctx.fillStyle = pitchGrad;
+      ctx.fillRect(0, WORLD.groundY, WORLD.width, WORLD.height - WORLD.groundY);
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+      for (let x = 0; x < WORLD.width; x += 120) {
+        ctx.fillRect(x, WORLD.groundY, 60, WORLD.height - WORLD.groundY);
+      }
+
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(WORLD.width / 2, WORLD.groundY);
+      ctx.lineTo(WORLD.width / 2, WORLD.height);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(WORLD.width / 2, WORLD.groundY + 60, 70, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // GOALS
+      const gW = WORLD.goalWidth;
+      const gH = WORLD.goalHeight;
+      const gY = WORLD.groundY - gH;
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+      ctx.lineWidth = 1.5;
+      for (let x = 0; x <= gW; x += 15) {
+        ctx.beginPath(); ctx.moveTo(x, gY); ctx.lineTo(x, WORLD.groundY); ctx.stroke();
+      }
+      for (let y = gY; y <= WORLD.groundY; y += 15) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(gW, y); ctx.stroke();
+      }
+      for (let x = WORLD.width - gW; x <= WORLD.width; x += 15) {
+        ctx.beginPath(); ctx.moveTo(x, gY); ctx.lineTo(x, WORLD.groundY); ctx.stroke();
+      }
+      for (let y = gY; y <= WORLD.groundY; y += 15) {
+        ctx.beginPath(); ctx.moveTo(WORLD.width - gW, y); ctx.lineTo(WORLD.width, y); ctx.stroke();
+      }
+
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(0, gY, gW, gH);
+      ctx.strokeRect(WORLD.width - gW, gY, gW, gH);
+    }
+
+    // Input Handling
+    window.addEventListener('keydown', (e) => {
+      keysState[e.code] = true;
+    });
+    window.addEventListener('keyup', (e) => {
+      keysState[e.code] = false;
+    });
+
+    function setupTouchControls() {
+      const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      if (isTouch) {
+        document.getElementById('touchControls').classList.remove('hidden');
+      }
+
+      const bindTouch = (id, action) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); keysState['touch_' + action] = true; });
+        btn.addEventListener('touchend', (e) => { e.preventDefault(); keysState['touch_' + action] = false; });
+      };
+
+      bindTouch('touchLeft', 'left');
+      bindTouch('touchRight', 'right');
+      bindTouch('touchJump', 'jump');
+      bindTouch('touchKick', 'kick');
+      bindTouch('touchPower', 'power');
+    }
+    setupTouchControls();
+
+    function processInputs() {
+      if (!isGameRunning || !p1 || !p2) return;
+
+      // PLAYER 1 Controls
+      const p1L = keysState[customKeys.p1.left] || keysState['touch_left'];
+      const p1R = keysState[customKeys.p1.right] || keysState['touch_right'];
+      const p1J = keysState[customKeys.p1.jump] || keysState['touch_jump'];
+      const p1K = keysState[customKeys.p1.kick] || keysState['touch_kick'];
+      const p1P = keysState[customKeys.p1.power] || keysState['touch_power'];
+
+      if (p1L) p1.moveLeft();
+      else if (p1R) p1.moveRight();
+      else p1.stopHorizontal();
+
+      if (p1J) p1.jump();
+      if (p1K) { p1.kick(ball); keysState[customKeys.p1.kick] = false; keysState['touch_kick'] = false; }
+      if (p1P) { p1.usePower(ball, p2); keysState[customKeys.p1.power] = false; keysState['touch_power'] = false; }
+
+      // PLAYER 2 Controls
+      if (gameMode === '2P') {
+        const p2L = keysState[customKeys.p2.left];
+        const p2R = keysState[customKeys.p2.right];
+        const p2J = keysState[customKeys.p2.jump];
+        const p2K = keysState[customKeys.p2.kick];
+        const p2P = keysState[customKeys.p2.power];
+
+        if (p2L) p2.moveLeft();
+        else if (p2R) p2.moveRight();
+        else p2.stopHorizontal();
+
+        if (p2J) p2.jump();
+        if (p2K) { p2.kick(ball); keysState[customKeys.p2.kick] = false; }
+        if (p2P) { p2.usePower(ball, p1); keysState[customKeys.p2.power] = false; }
+      } else {
+        updateCPUAI(p2, ball, p1);
+      }
+    }
+
+    // Check Goal Scoring Condition (FIXED: Ball must be strictly below crossbar and inside net)
+    function checkGoal() {
+      const gW = WORLD.goalWidth;
+      const gY = WORLD.groundY - WORLD.goalHeight;
+
+      // Left Goal (Player 2 scores)
+      if (ball.x < gW - 12 && ball.y > gY + 12 && ball.y < WORLD.groundY + 10) {
+        p2Score++;
+        onGoalScored('PLAYER 2');
+      }
+      // Right Goal (Player 1 scores)
+      else if (ball.x > WORLD.width - gW + 12 && ball.y > gY + 12 && ball.y < WORLD.groundY + 10) {
+        p1Score++;
+        onGoalScored('PLAYER 1');
+      }
+    }
+
+    function onGoalScored(scorerName) {
+      audio.playGoal();
+      audio.playWhistle();
+      addExplosion(ball.x, ball.y, '#f59e0b', 50);
+
+      hudP1Score.innerText = p1Score;
+      hudP2Score.innerText = p2Score;
+
+      ball.reset();
+      p1.resetPosition();
+      p2.resetPosition();
+    }
+
+    // Main Render Loop
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.save();
+      ctx.translate(offsetX, offsetY);
+      ctx.scale(scale, scale);
+
+      drawStadium(ctx);
+
+      if (isGameRunning) {
+        processInputs();
+
+        ball.update();
+        p1.update(ball);
+        p2.update(ball);
+
+        checkGoal();
+
+        particles = particles.filter(p => p.life > 0);
+        particles.forEach(p => { p.update(); p.draw(ctx); });
+
+        p1.draw(ctx);
+        p2.draw(ctx);
+        ball.draw(ctx);
+
+        p1PowerFill.style.height = `${p1.powerGauge}%`;
+        p2PowerFill.style.height = `${p2.powerGauge}%`;
+      }
+
+      ctx.restore();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // Start match
+    function startMatch() {
+      p1Score = 0; p2Score = 0; matchTime = 60;
+      hudP1Score.innerText = '0';
+      hudP2Score.innerText = '0';
+      hudTimer.innerText = matchTime;
+
+      p1 = new Player(true, CHARACTERS[p1CharIdx], p1PowerType);
+      p2 = new Player(false, CHARACTERS[p2CharIdx], p2PowerType);
+      ball.reset();
+
+      hudP1Name.innerText = p1.charData.name;
+      hudP2Name.innerText = p2.charData.name + (gameMode === '1P' ? ' (CPU)' : '');
+
+      menuMain.classList.add('hidden');
+      menuSelect.classList.add('hidden');
+      menuGameOver.classList.add('hidden');
+      hudHeader.classList.remove('hidden');
+
+      isGameRunning = true;
+      audio.playWhistle();
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        matchTime--;
+        hudTimer.innerText = matchTime;
+        if (matchTime <= 0) endMatch();
+      }, 1000);
+    }
+
+    function endMatch() {
+      isGameRunning = false;
+      clearInterval(timerInterval);
+      audio.playWhistle();
+
+      const winnerText = document.getElementById('winnerText');
+      const finalScoreText = document.getElementById('finalScoreText');
+      finalScoreText.innerText = `${p1Score} : ${p2Score}`;
+
+      if (p1Score > p2Score) {
+        winnerText.innerText = 'VITÓRIA DO JOGADOR 1!';
+        winnerText.className = 'font-arcade text-4xl text-amber-300 mb-2 drop-shadow';
+      } else if (p2Score > p1Score) {
+        winnerText.innerText = gameMode === '1P' ? 'VITÓRIA DA IA (CPU)!' : 'VITÓRIA DO JOGADOR 2!';
+        winnerText.className = 'font-arcade text-4xl text-red-400 mb-2 drop-shadow';
+      } else {
+        winnerText.innerText = 'EMPATE EMPOLGANTE!';
+        winnerText.className = 'font-arcade text-4xl text-cyan-300 mb-2 drop-shadow';
+      }
+
+      menuGameOver.classList.remove('hidden');
+    }
+
+    // INITIALIZE PEERJS SERVER FOR HOST ROOM CODE
+    function initPeerHost() {
+      const display = document.getElementById('roomCodeDisplay');
+      try {
+        const fullPeerId = 'head-soccer-' + roomCode;
+        peerHost = new Peer(fullPeerId);
+
+        peerHost.on('open', (id) => {
+          display.innerText = roomCode;
+        });
+
+        peerHost.on('connection', (conn) => {
+          audio.playUiSelect();
+          
+          let assignedPlayer = null;
+          if (!remoteConnections.p1) {
+            remoteConnections.p1 = conn;
+            assignedPlayer = 'p1';
+            document.getElementById('hudP1Conn').classList.remove('hidden');
+          } else if (!remoteConnections.p2) {
+            remoteConnections.p2 = conn;
+            assignedPlayer = 'p2';
+            document.getElementById('hudP2Conn').classList.remove('hidden');
+          }
+
+          updateConnectedCount();
+
+          conn.on('data', (data) => {
+            // Receive key/touch inputs from remote smartphone controller
+            if (data && data.action) {
+              const stateKey = customKeys[assignedPlayer][data.action] || ('touch_' + data.action);
+              keysState[stateKey] = data.pressed;
+            }
+          });
+
+          conn.on('close', () => {
+            if (remoteConnections.p1 === conn) {
+              remoteConnections.p1 = null;
+              document.getElementById('hudP1Conn').classList.add('hidden');
+            } else if (remoteConnections.p2 === conn) {
+              remoteConnections.p2 = null;
+              document.getElementById('hudP2Conn').classList.add('hidden');
+            }
+            updateConnectedCount();
+          });
+        });
+
+        peerHost.on('error', (err) => {
+          display.innerText = 'ERRO PEER';
+        });
+
+      } catch(e) {
+        display.innerText = roomCode;
+      }
+    }
+
+    function updateConnectedCount() {
+      let count = 0;
+      if (remoteConnections.p1) count++;
+      if (remoteConnections.p2) count++;
+      document.getElementById('connectedControllersCount').innerText = `${count} Controle(s) Conectados`;
+    }
+
+    // CONNECT AS A REMOTE CONTROLLER CLIENT
+    function connectAsRemoteController(code) {
+      const status = document.getElementById('remoteConnStatus');
+      status.innerText = 'Conectando ao hospedeiro...';
+      status.className = 'text-xs font-semibold mt-2 block text-purple-400 animate-pulse';
+
+      try {
+        peerClient = new Peer();
+        peerClient.on('open', () => {
+          const hostId = 'head-soccer-' + code;
+          const conn = peerClient.connect(hostId);
+
+          conn.on('open', () => {
+            status.innerText = 'CONECTADO COM SUCESSO!';
+            status.className = 'text-xs font-semibold mt-2 block text-emerald-400';
+            
+            // Switch UI to fullscreen Touch Gamepad Mode
+            menuRemoteJoin.classList.add('hidden');
+            menuMain.classList.add('hidden');
+            document.getElementById('touchControls').classList.remove('hidden');
+
+            const sendAction = (act, pressed) => {
+              conn.send({ action: act, pressed: pressed });
+            };
+
+            const bindRemoteBtn = (id, act) => {
+              const btn = document.getElementById(id);
+              if (!btn) return;
+              btn.addEventListener('touchstart', (e) => { e.preventDefault(); sendAction(act, true); });
+              btn.addEventListener('touchend', (e) => { e.preventDefault(); sendAction(act, false); });
+              btn.addEventListener('mousedown', (e) => { e.preventDefault(); sendAction(act, true); });
+              btn.addEventListener('mouseup', (e) => { e.preventDefault(); sendAction(act, false); });
+            };
+
+            bindRemoteBtn('touchLeft', 'left');
+            bindRemoteBtn('touchRight', 'right');
+            bindRemoteBtn('touchJump', 'jump');
+            bindRemoteBtn('touchKick', 'kick');
+            bindRemoteBtn('touchPower', 'power');
+          });
+
+          conn.on('error', () => {
+            status.innerText = 'Falha ao conectar. Verifique o código.';
+            status.className = 'text-xs font-semibold mt-2 block text-red-400';
+          });
+        });
+      } catch(e) {
+        status.innerText = 'Erro de conexão PeerJS.';
+        status.className = 'text-xs font-semibold mt-2 block text-red-400';
+      }
+    }
+
+    // RENDER KEYBINDINGS UI
+    const actionLabels = {
+      left: 'Mover Esquerda',
+      right: 'Mover Direita',
+      jump: 'Pular',
+      kick: 'Chutar',
+      power: 'Usar Poder'
+    };
+
+    let listeningTarget = null; // Stores currently selected key to rebind
+
+    function renderKeybindingsUI() {
+      ['p1', 'p2'].forEach(player => {
+        const container = document.getElementById(`${player}KeyList`);
+        container.innerHTML = '';
+
+        Object.keys(customKeys[player]).forEach(action => {
+          const keyName = customKeys[player][action];
+          const row = document.createElement('div');
+          row.className = 'flex justify-between items-center bg-slate-900/60 p-2 rounded-xl border border-slate-700';
+
+          const label = document.createElement('span');
+          label.className = 'text-xs font-bold text-slate-300';
+          label.innerText = actionLabels[action];
+
+          const btn = document.createElement('button');
+          btn.className = 'btn-arcade py-1 px-3 rounded-lg font-console text-xs bg-slate-800 text-amber-300 border border-amber-400/50';
+          btn.innerText = (listeningTarget && listeningTarget.player === player && listeningTarget.action === action) ? 'pressione...' : keyName.replace('Key', '').replace('Arrow', 'Seta ');
+
+          btn.onclick = () => {
+            audio.playUiSelect();
+            listeningTarget = { player, action };
+            renderKeybindingsUI();
+          };
+
+          row.appendChild(label);
+          row.appendChild(btn);
+          container.appendChild(row);
+        });
+      });
+    }
+
+    // Key Rebind Keydown Listener
+    window.addEventListener('keydown', (e) => {
+      if (listeningTarget) {
+        e.preventDefault();
+        customKeys[listeningTarget.player][listeningTarget.action] = e.code;
+        localStorage.setItem('head_soccer_keys', JSON.stringify(customKeys));
+        audio.playUiSelect();
+        listeningTarget = null;
+        renderKeybindingsUI();
+      }
+    });
+
+    // Event Listeners for Dashboard & Cards
+    document.getElementById('card1P').addEventListener('click', () => {
+      audio.playUiSelect();
+      gameMode = '1P';
+      document.getElementById('p2Title').innerText = 'JOGADOR 2 (CPU)';
+      menuMain.classList.add('hidden');
+      menuSelect.classList.remove('hidden');
+    });
+
+    document.getElementById('card2P').addEventListener('click', () => {
+      audio.playUiSelect();
+      gameMode = '2P';
+      document.getElementById('p2Title').innerText = 'JOGADOR 2 (HUMANO/REMOTO)';
+      menuMain.classList.add('hidden');
+      menuSelect.classList.remove('hidden');
+    });
+
+    document.getElementById('cardRemote').addEventListener('click', () => {
+      audio.playUiSelect();
+      menuRemoteJoin.classList.remove('hidden');
+    });
+
+    document.getElementById('cardSettings').addEventListener('click', () => {
+      audio.playUiSelect();
+      renderKeybindingsUI();
+      menuKeybindings.classList.remove('hidden');
+    });
+
+    // Keybindings Modal Buttons
+    document.getElementById('btnCloseKeys').addEventListener('click', () => {
+      audio.playUiSelect();
+      menuKeybindings.classList.add('hidden');
+    });
+
+    document.getElementById('btnResetKeys').addEventListener('click', () => {
+      audio.playUiSelect();
+      customKeys = {
+        p1: { left: 'KeyA', right: 'KeyD', jump: 'KeyW', kick: 'KeyB', power: 'KeyV' },
+        p2: { left: 'ArrowLeft', right: 'ArrowRight', jump: 'ArrowUp', kick: 'KeyL', power: 'KeyK' }
+      };
+      localStorage.removeItem('head_soccer_keys');
+      renderKeybindingsUI();
+    });
+
+    // Remote Controller Client Buttons
+    document.getElementById('btnConnectRemote').addEventListener('click', () => {
+      audio.playUiSelect();
+      const code = document.getElementById('inputRoomCode').value.trim();
+      if (code.length === 4) {
+        connectAsRemoteController(code);
+      }
+    });
+
+    document.getElementById('btnBackRemote').addEventListener('click', () => {
+      audio.playUiSelect();
+      menuRemoteJoin.classList.add('hidden');
+    });
+
+    document.getElementById('btnSelectBack').addEventListener('click', () => {
+      audio.playUiSelect();
+      menuSelect.classList.add('hidden');
+      menuMain.classList.remove('hidden');
+    });
+
+    document.getElementById('btnStartGame').addEventListener('click', () => {
+      audio.playUiSelect();
+      startMatch();
+    });
+
+    document.getElementById('btnRematch').addEventListener('click', () => {
+      audio.playUiSelect();
+      startMatch();
+    });
+
+    document.getElementById('btnReturnMenu').addEventListener('click', () => {
+      audio.playUiSelect();
+      menuGameOver.classList.add('hidden');
+      hudHeader.classList.add('hidden');
+      menuMain.classList.remove('hidden');
+    });
+
+    // Character Navigation
+    function updateCharPreviewUI() {
+      const c1 = CHARACTERS[p1CharIdx];
+      const c2 = CHARACTERS[p2CharIdx];
+      document.getElementById('p1CharPreview').innerText = c1.icon;
+      document.getElementById('p1CharName').innerText = c1.name;
+      document.getElementById('p2CharPreview').innerText = c2.icon;
+      document.getElementById('p2CharName').innerText = c2.name;
+    }
+
+    document.getElementById('p1PrevChar').addEventListener('click', () => {
+      audio.playUiHover();
+      p1CharIdx = (p1CharIdx - 1 + CHARACTERS.length) % CHARACTERS.length;
+      updateCharPreviewUI();
+    });
+    document.getElementById('p1NextChar').addEventListener('click', () => {
+      audio.playUiHover();
+      p1CharIdx = (p1CharIdx + 1) % CHARACTERS.length;
+      updateCharPreviewUI();
+    });
+
+    document.getElementById('p2PrevChar').addEventListener('click', () => {
+      audio.playUiHover();
+      p2CharIdx = (p2CharIdx - 1 + CHARACTERS.length) % CHARACTERS.length;
+      updateCharPreviewUI();
+    });
+    document.getElementById('p2NextChar').addEventListener('click', () => {
+      audio.playUiHover();
+      p2CharIdx = (p2CharIdx + 1) % CHARACTERS.length;
+      updateCharPreviewUI();
+    });
+
+    // Power Buttons Toggle
+    const p1PowerTeleport = document.getElementById('p1PowerTeleport');
+    const p1PowerSuperShot = document.getElementById('p1PowerSuperShot');
+    const p2PowerTeleport = document.getElementById('p2PowerTeleport');
+    const p2PowerSuperShot = document.getElementById('p2PowerSuperShot');
+
+    p1PowerTeleport.addEventListener('click', () => {
+      audio.playUiHover();
+      p1PowerType = POWERS.TELEPORT;
+      p1PowerTeleport.className = "py-2 px-3 rounded-xl border-2 font-arcade text-sm flex items-center justify-center gap-2 transition border-cyan-400 bg-cyan-500/20 text-cyan-200";
+      p1PowerSuperShot.className = "py-2 px-3 rounded-xl border-2 font-arcade text-sm flex items-center justify-center gap-2 transition border-slate-600 bg-slate-700/50 text-slate-400";
+    });
+
+    p1PowerSuperShot.addEventListener('click', () => {
+      audio.playUiHover();
+      p1PowerType = POWERS.SUPERSHOT;
+      p1PowerSuperShot.className = "py-2 px-3 rounded-xl border-2 font-arcade text-sm flex items-center justify-center gap-2 transition border-red-500 bg-red-500/20 text-red-200";
+      p1PowerTeleport.className = "py-2 px-3 rounded-xl border-2 font-arcade text-sm flex items-center justify-center gap-2 transition border-slate-600 bg-slate-700/50 text-slate-400";
+    });
+
+    p2PowerTeleport.addEventListener('click', () => {
+      audio.playUiHover();
+      p2PowerType = POWERS.TELEPORT;
+      p2PowerTeleport.className = "py-2 px-3 rounded-xl border-2 font-arcade text-sm flex items-center justify-center gap-2 transition border-cyan-400 bg-cyan-500/20 text-cyan-200";
+      p2PowerSuperShot.className = "py-2 px-3 rounded-xl border-2 font-arcade text-sm flex items-center justify-center gap-2 transition border-slate-600 bg-slate-700/50 text-slate-400";
+    });
+
+    p2PowerSuperShot.addEventListener('click', () => {
+      audio.playUiHover();
+      p2PowerType = POWERS.SUPERSHOT;
+      p2PowerSuperShot.className = "py-2 px-3 rounded-xl border-2 font-arcade text-sm flex items-center justify-center gap-2 transition border-red-500 bg-red-500/20 text-red-200";
+      p2PowerTeleport.className = "py-2 px-3 rounded-xl border-2 font-arcade text-sm flex items-center justify-center gap-2 transition border-slate-600 bg-slate-700/50 text-slate-400";
+    });
+
+    // Start Game Loop & Init Peer Server on window load
+    window.onload = function() {
+      updateCharPreviewUI();
+      initPeerHost();
+      gameLoop();
+    };
+  </script>
+</body>
+</html>
